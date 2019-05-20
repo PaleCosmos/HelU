@@ -16,7 +16,7 @@
             android:layout_marginBottom="243dp"/>
 
     <TextView android:layout_width="match_parent" android:layout_height="60dp"
-              android:text="Copyright 2019. HalilarmTeam. all right reserved"
+              android:text="Copyright 2019. HELU Team. all right reserved"
               android:textColor="@color/white"
               android:layout_gravity="bottom"
               android:textAlignment="center"

@@ -1,7 +1,6 @@
 package com.example.halilarm
 
 
-import android.app.ActionBar
 import android.app.Activity
 import android.content.Context
 
@@ -31,7 +30,6 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 import androidx.drawerlayout.widget.DrawerLayout
 
 
-
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
 
@@ -39,6 +37,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     var builder: AlertDialog.Builder? = null
     var dialogView: View? = null
     var backKeyPressedTime: Long = 0L
+
     companion object {
         @JvmStatic
         var frag1: androidx.fragment.app.Fragment? = Fragment1()
@@ -49,7 +48,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         @JvmStatic
         var frag4: androidx.fragment.app.Fragment? = Fragment4()
         @JvmStatic
-        var frag3_0 : androidx.fragment.app.Fragment?= Fragment3_0()
+        var frag3_0: androidx.fragment.app.Fragment? = Fragment3_0()
     }
 
     // var mWeekView: WeekView?=null
@@ -74,7 +73,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         fab.setOnClickListener {
             (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
-                .hideSoftInputFromWindow(currentFocus.windowToken,0)
+                .hideSoftInputFromWindow(currentFocus.windowToken, 0)
             drawer_layout.openDrawer(GravityCompat.START)
         }
 
@@ -86,11 +85,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         val toggle = object : ActionBarDrawerToggle(
             this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
-        ){
+        ) {
             override fun onDrawerStateChanged(newState: Int) {
                 if (newState == DrawerLayout.STATE_SETTLING) {
                     (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
-                        .hideSoftInputFromWindow(currentFocus.windowToken,0)
+                        .hideSoftInputFromWindow(currentFocus.windowToken, 0)
                 }
             }
         }
@@ -108,7 +107,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setCheckedItem(R.id.Schedule)
         nav_view.menu.performIdentifierAction(R.id.Schedule, 0)
-
 
 
     }
@@ -223,7 +221,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         hideFragment(frag4)
                     }
                     if (frag3_0 != null) {
-                       showFragment(frag3_0)
+                        showFragment(frag3_0)
                     }
                     im = item.itemId
                 }

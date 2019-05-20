@@ -26,7 +26,7 @@
         </group>
     </item>
 
-    <item android:title="Halilarm v1.0">
+    <item android:title="HELU v1.0">
         <menu>
             <item
                     android:id="@+id/nav_share"
