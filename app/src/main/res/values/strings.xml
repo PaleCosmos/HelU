@@ -1,0 +1,57 @@
+<resources>
+    <string name="app_name">Halilarm</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string name="AVLoadingIndicatorView">
+
+         Copyright 2015 jack wang
+        \n
+        \n Licensed under the Apache License, Version 2.0 (the "License");
+        \n you may not use this file except in compliance with the License.
+        \n You may obtain a copy of the License at
+        \n
+        \n http://www.apache.org/licenses/LICENSE-2.0
+        \n
+        \n Unless required by applicable law or agreed to in writing, software
+        \n distributed under the License is distributed on an "AS IS" BASIS,
+        \n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        \n See the License for the specific language
+    </string>
+    <string name="AndroidWeekView">
+        Copyright 2014 Raquib-ul-Alam
+        \n
+        \n Licensed under the Apache License, Version 2.0 (the "License");
+        \n you may not use this file except in compliance with the License.
+        \n You may obtain a copy of the License at
+        \n
+        \n http://www.apache.org/licenses/LICENSE-2.0
+        \n
+        \n Unless required by applicable law or agreed to in writing, software
+        \n distributed under the License is distributed on an "AS IS" BASIS,
+        \n WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        \n See the License for the specific language governing permissions and
+        \n limitations under the License.
+    </string>
+<string name="ChatMessageView">
+    \n Copyright [2019] [Tsubasa Nakayama]
+    \n
+    \n Licensed under the Apache License, Version 2.0 (the "License");
+    \n  you may not use this file except in compliance with the License.
+    \n  You may obtain a copy of the License at
+    \n
+    \n   http://www.apache.org/licenses/LICENSE-2.0
+    \n
+    \n   Unless required by applicable law or agreed to in writing, software
+    \n  distributed under the License is distributed on an "AS IS" BASIS,
+    \n  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    \n  See the License for the specific language governing permissions and
+    \n  limitations under the License.
+</string>
+
+    <string name="notification_channel_id">"notification_channel_id"</string>
+    <string name="notification_channel_name">"notification_channel_name"</string>
+</resources>

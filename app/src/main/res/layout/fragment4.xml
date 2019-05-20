@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="vertical" android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/white"
+              tools:context=".Fragment4"
+>
+    <Button android:layout_width="74dp" android:layout_height="151dp"
+            android:text="ok"
+            android:id="@+id/btbt"/>
+    <EditText android:layout_width="30dp" android:layout_height="77dp"
+              android:hint="시발"
+              android:id="@+id/eet"/>
+    <TextView android:layout_width="match_parent" android:layout_height="match_parent"
+              android:id="@+id/tvtv"
+              android:text="채팅"
+
+              android:textColor="@color/primary"
+    />
+</LinearLayout>

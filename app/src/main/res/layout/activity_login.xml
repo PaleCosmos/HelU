@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:fitsSystemWindows="true">
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="56dp"
+            android:paddingLeft="24dp"
+            android:paddingRight="24dp">
+
+        <ImageView android:src="@drawable/logo"
+                   android:id="@+id/ester"
+                   android:layout_width="wrap_content"
+                   android:layout_height="72dp"
+                   android:layout_marginBottom="24dp"
+                   android:layout_gravity="center_horizontal" />
+
+        <!-- Email Label -->
+        <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp">
+            <EditText android:id="@+id/input_email"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:inputType="textEmailAddress"
+                      android:hint="이메일" />
+        </android.support.design.widget.TextInputLayout>
+
+        <!-- Password Label -->
+        <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp">
+            <EditText android:id="@+id/input_password"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:inputType="textPassword"
+                      android:hint="비밀번호"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:id="@+id/chB"
+        android:layout_marginTop="10dp">
+            <CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:id="@+id/saveID"
+                      android:layout_alignParentLeft="true"
+                      android:text="이메일 저장"
+                      android:layout_marginLeft="40dp"
+            />
+
+            <CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/loging"
+                      android:text="자동 로그인"
+                      android:layout_marginRight="40dp"
+                      android:layout_alignParentRight="true"/>
+        </RelativeLayout>
+
+        <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btn_login"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp"
+                android:padding="12dp"
+                android:text="로그인"/>
+
+
+        <TextView android:id="@+id/link_signup"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_marginBottom="24dp"
+                  android:text="회원가입, 하실래요?"
+                  android:gravity="center"
+                  android:textSize="16dip"/>
+
+    </LinearLayout>
+</ScrollView>

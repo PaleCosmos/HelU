@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:showIn="navigation_view">
+
+    <item android:id="@+id/nicknametitle"
+            android:title="Menu">
+
+        <group android:checkableBehavior="single">
+            <item
+                    android:id="@+id/Schedule"
+                    android:icon="@drawable/paburic"
+                    android:title="U Talk"/>
+            <item
+                    android:id="@+id/nav_gallery"
+                    android:icon="@drawable/ppap"
+                    android:title="친구"/>
+            <item
+                    android:id="@+id/nav_slideshow"
+                    android:icon="@drawable/talk"
+                    android:title="대화"/>
+            <item
+                    android:id="@+id/nav_manage"
+                    android:icon="@drawable/setting"
+                    android:title="관리"/>
+        </group>
+    </item>
+
+    <item android:title="Halilarm v1.0">
+        <menu>
+            <item
+                    android:id="@+id/nav_share"
+                    android:icon="@drawable/logouts"
+                    android:title="로그아웃"/>
+            <item
+                    android:id="@+id/License"
+                    android:icon="@drawable/infos"
+                    android:title="라이센스"/>
+        </menu>
+    </item>
+
+</menu>
