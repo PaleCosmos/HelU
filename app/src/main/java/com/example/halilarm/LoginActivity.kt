@@ -20,6 +20,7 @@ import com.google.firebase.database.*
 import android.view.WindowManager
 import android.os.Build
 import kotlinx.android.synthetic.main.activity_login.*
+import java.util.regex.Pattern
 
 
 class LoginActivity : AppCompatActivity() {
@@ -83,36 +84,19 @@ class LoginActivity : AppCompatActivity() {
 
             var id: String? = input_email.text.toString().trim()
             var pass: String? = input_password.text.toString().trim()
-            if (!(id.isNullOrBlank()) && !(pass.isNullOrBlank())) {
-                btn_login.isEnabled = false
-                input_email.isEnabled = false
-                input_password.isEnabled = false
-                link_signup.isEnabled = false
-                saveID.isEnabled = false
-                loging.isEnabled = false
-                LoginCheck(id, pass)
-                if (saveID.isChecked) {
-
-                    toEdit?.putBoolean("SAVEFLAG", true)
-                    toEdit?.putString("Email", id)
-                } else {
-                    toEdit?.putBoolean("SAVEFLAG", false)
-                }
-                if (loging.isChecked) {
-                    toEdit?.putBoolean("AUTOLOGIN", true)
-                    toEdit?.putString("PASSWORD", pass)
-                } else {
-                    toEdit?.putBoolean("AUTOLOGIN", false)
-                }
-                toEdit?.commit()
+            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(id).matches()) {
+                input_email.error = "이메일 형식이 아닙니다."
+                allEnabled()
+            } else if (!Pattern.matches("^(?=.*\\d)(?=.*[~`!@#$%\\^&*()-])(?=.*[a-zA-Z]).{8,20}$", pass)) {
+                input_email.error=null
+                input_password.error = "비밀번호는 8자 이상 20자 이하의 대소문자, 숫자, 특수문자로만 구성되어야 합니다."
+                allEnabled()
             } else {
-                btn_login.isEnabled = true
-                input_email.isEnabled = true
-                input_password.isEnabled = true
-                link_signup.isEnabled = true
-                saveID.isEnabled = true
-                loging.isEnabled = true
-                makeCustomToast("정보를 확인해주세요.", 0, 500)
+                allNotEnabled()
+                input_email.error=null
+                input_password.error =null
+                LoginCheck(id!!, pass!!)
+
             }
         }
 
@@ -122,8 +106,25 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
         }
         applySharedPreference()
-        /////////////////For Developers
-        // DevelopMoreEasy()  // 출시때 빼야함@@@@@@@@@@@@@@@@@@@@
+
+    }
+
+    private fun allNotEnabled() {
+        btn_login.isEnabled = false
+        input_email.isEnabled = false
+        input_password.isEnabled = false
+        link_signup.isEnabled = false
+        saveID.isEnabled = false
+        loging.isEnabled = false
+    }
+
+    private fun allEnabled() {
+        btn_login.isEnabled = true
+        input_email.isEnabled = true
+        input_password.isEnabled = true
+        link_signup.isEnabled = true
+        saveID.isEnabled = true
+        loging.isEnabled = true
     }
 
     override fun onBackPressed() {
@@ -150,6 +151,20 @@ class LoginActivity : AppCompatActivity() {
                                 nicks = p0.value.toString()
                                 var intents = Intent(this@LoginActivity, MainActivity::class.java)
                                 intents.putExtra("nickname", nicks)
+                                if (saveID.isChecked) {
+
+                                    toEdit?.putBoolean("SAVEFLAG", true)
+                                    toEdit?.putString("Email", id)
+                                } else {
+                                    toEdit?.putBoolean("SAVEFLAG", false)
+                                }
+                                if (loging.isChecked) {
+                                    toEdit?.putBoolean("AUTOLOGIN", true)
+                                    toEdit?.putString("PASSWORD", pw)
+                                } else {
+                                    toEdit?.putBoolean("AUTOLOGIN", false)
+                                }
+                                toEdit?.commit()
                                 startActivityForResult(intents, 101)
 
                                 //Toast.makeText(this@LoginActivity,"nickname = $nicks",Toast.LENGTH_SHORT).show()
@@ -161,14 +176,9 @@ class LoginActivity : AppCompatActivity() {
                         })
 
                     } else {
-                        btn_login.isEnabled = true
-                        input_email.isEnabled = true
-                        input_password.isEnabled = true
-                        link_signup.isEnabled = true
-                        saveID.isEnabled = true
-                        loging.isEnabled = true
-                        //Toast.makeText(this@LoginActivity, "LogIn Error", Toast.LENGTH_SHORT).show()
-                        makeCustomToast("로그인 실패", 0, 500)
+                        allEnabled()
+                        input_password.error = "비밀번호가 올바르지 않습니다."
+                            Log.d("gimma",task.toString())
                     }
                 })
     }
@@ -182,12 +192,7 @@ class LoginActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
 
-            btn_login.isEnabled = true
-            input_email.isEnabled = true
-            input_password.isEnabled = true
-            link_signup.isEnabled = true
-            saveID.isEnabled = true
-            loging.isEnabled = true
+            allEnabled()
 
             if (!saveID.isChecked) {
                 input_email.setText("")
@@ -228,12 +233,7 @@ class LoginActivity : AppCompatActivity() {
         if (sh_Pref != null && sh_Pref!!.contains("Email") &&
             sh_Pref!!.getBoolean("AUTOLOGIN", false)
         ) {
-            btn_login.isEnabled = false
-            input_email.isEnabled = false
-            input_password.isEnabled = false
-            link_signup.isEnabled = false
-            saveID.isEnabled = false
-            loging.isEnabled = false
+            allNotEnabled()
             var ML = sh_Pref?.getString("Email", "")
             input_email.setText(ML)
             var PW = sh_Pref?.getString("PASSWORD", "")

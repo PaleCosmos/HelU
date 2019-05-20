@@ -76,13 +76,17 @@ private fun errorMaker(num:Int,msg:String){
         // 2 -> passWord2
         // 3 -> nickname
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(idInBox).matches()) {
-           errorMaker(0,"이메일 형식이 아닙니다")
+           errorMaker(0,"이메일 형식이 아닙니다.")
+            allEnabled()
         } else if (!Pattern.matches("^(?=.*\\d)(?=.*[~`!@#$%\\^&*()-])(?=.*[a-zA-Z]).{8,20}$", passInBox)) {
            errorMaker(1,"비밀번호는 8자 이상 20자 이하의 대소문자, 숫자, 특수문자로만 구성되어야 합니다.")
+            allEnabled()
         } else if (!passInBox.equals(passInBox2)) {
            errorMaker(2,"비밀번호가 올바르지 않습니다.")
+            allEnabled()
         } else if (nickInBox.length < 2 || nickInBox.length > 8) {
             errorMaker(3,"닉네임은 2자 이상 8자 이하로 구성되어야 합니다.")
+            allEnabled()
         } else {
             auth?.createUserWithEmailAndPassword(idInBox, passInBox)
                 ?.addOnCompleteListener(this,
@@ -97,19 +101,18 @@ private fun errorMaker(num:Int,msg:String){
                             finish()
                         } else {
                             Toast.makeText(this@RegisterActivity, "등록 에러", Toast.LENGTH_SHORT).show()
-                          allEnabled()
+
 
                             return@OnCompleteListener
                         }
                     })
                 ?.addOnFailureListener {
-                    //task->
+
                     Toast.makeText(this@RegisterActivity, "등록 에러", Toast.LENGTH_SHORT).show()
+                    allEnabled()
                 }
-
-
-           allEnabled()
         }
+
     }
 
     override fun onDestroy() {

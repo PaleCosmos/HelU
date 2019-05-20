@@ -1,7 +1,9 @@
 package com.example.halilarm
 
 
+import android.app.ActionBar
 import android.app.Activity
+import android.content.Context
 
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -21,10 +23,14 @@ import androidx.appcompat.app.AppCompatActivity
 
 import android.util.Log
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import androidx.drawerlayout.widget.DrawerLayout
+
+
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -33,10 +39,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     var builder: AlertDialog.Builder? = null
     var dialogView: View? = null
     var backKeyPressedTime: Long = 0L
-    var frag1: androidx.fragment.app.Fragment? = null
-    var frag2: androidx.fragment.app.Fragment? = null
-    var frag3: androidx.fragment.app.Fragment? = null
-    var frag4: androidx.fragment.app.Fragment? = null
+    companion object {
+        @JvmStatic
+        var frag1: androidx.fragment.app.Fragment? = Fragment1()
+        @JvmStatic
+        var frag2: androidx.fragment.app.Fragment? = Fragment2()
+        @JvmStatic
+        var frag3: androidx.fragment.app.Fragment? = Fragment3()
+        @JvmStatic
+        var frag4: androidx.fragment.app.Fragment? = Fragment4()
+        @JvmStatic
+        var frag3_0 : androidx.fragment.app.Fragment?= Fragment3_0()
+    }
 
     // var mWeekView: WeekView?=null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,15 +64,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         dialogView = layoutInflater.inflate(R.layout.license, null)
         builder?.setView(dialogView)
 
-        frag1 = Fragment1()
-        addFragment(frag1)
-        showFragment(frag1)
+        initialization()
+
+
         fab.tag = "DRAG Button"
 
 
 
 
-        fab.setOnClickListener { drawer_layout.openDrawer(GravityCompat.START) }
+        fab.setOnClickListener {
+            (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+                .hideSoftInputFromWindow(currentFocus.windowToken,0)
+            drawer_layout.openDrawer(GravityCompat.START)
+        }
 
         fab.setOnLongClickListener {
 
@@ -66,10 +84,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
 
-        val toggle = ActionBarDrawerToggle(
+        val toggle = object : ActionBarDrawerToggle(
             this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
-        )
+        ){
+            override fun onDrawerStateChanged(newState: Int) {
+                if (newState == DrawerLayout.STATE_SETTLING) {
+                    (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+                        .hideSoftInputFromWindow(currentFocus.windowToken,0)
+                }
+            }
+        }
+
+
+
         drawer_layout.addDrawerListener(toggle)
+
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
@@ -80,6 +109,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         nav_view.setCheckedItem(R.id.Schedule)
         nav_view.menu.performIdentifierAction(R.id.Schedule, 0)
 
+
+
+    }
+
+    private fun initialization() {
+        addFragment(frag1)
+        addFragment(frag2)
+        addFragment(frag3)
+        addFragment(frag4)
+        addFragment(frag3_0)
+        hideFragment(frag3_0)
+        hideFragment(frag3)
+        hideFragment(frag2)
+        hideFragment(frag4)
+        showFragment(frag1)
     }
 
 
@@ -110,7 +154,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
 
-
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
 
@@ -120,10 +163,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                 if (item.itemId != im) {
 
-                    if (frag1 == null) {
-                        frag1 = Fragment1()
-                        addFragment(frag1)
-                    }
+
                     if (frag1 != null) {
                         showFragment(frag1)
                     }
@@ -136,6 +176,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     if (frag4 != null) {
                         hideFragment(frag4)
                     }
+                    if (frag3_0 != null) {
+                        hideFragment(frag3_0)
+                    }
 
                     im = item.itemId
                 }
@@ -143,10 +186,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.nav_gallery -> {
                 if (item.itemId != im) {
-                    if (frag2 == null) {
-                        frag2 = Fragment2()
-                        addFragment(frag2)
-                    }
+
                     if (frag1 != null) {
                         hideFragment(frag1)
                     }
@@ -159,6 +199,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     if (frag4 != null) {
                         hideFragment(frag4)
                     }
+                    if (frag3_0 != null) {
+                        hideFragment(frag3_0)
+                    }
                     im = item.itemId
                 }
 
@@ -166,10 +209,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_slideshow -> {
                 if (item.itemId != im) {
 
-                    if (frag3 == null) {
-                        frag3 = Fragment3()
-                        addFragment(frag3)
-                    }
+
                     if (frag1 != null) {
                         hideFragment(frag1)
                     }
@@ -177,10 +217,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         hideFragment(frag2)
                     }
                     if (frag3 != null) {
-                        showFragment(frag3)
+                        hideFragment(frag3)
                     }
                     if (frag4 != null) {
                         hideFragment(frag4)
+                    }
+                    if (frag3_0 != null) {
+                       showFragment(frag3_0)
                     }
                     im = item.itemId
                 }
@@ -189,10 +232,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_manage -> {
                 if (item.itemId != im) {
 
-                    if (frag4 == null) {
-                        frag4 = Fragment4()
-                        addFragment(frag4)
-                    }
+
                     if (frag1 != null) {
                         hideFragment(frag1)
                     }
@@ -204,6 +244,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     }
                     if (frag4 != null) {
                         showFragment(frag4)
+                    }
+                    if (frag3_0 != null) {
+                        hideFragment(frag3_0)
                     }
                     im = item.itemId
                 }
@@ -233,19 +276,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    private fun replaceFragment(fragment: androidx.fragment.app.Fragment?) {
+    fun replaceFragment(fragment: androidx.fragment.app.Fragment?) {
         supportFragmentManager.beginTransaction().replace(R.id.fragmentS, fragment!!).commit()
     }
 
-    private fun addFragment(fragment: androidx.fragment.app.Fragment?) {
+    fun addFragment(fragment: androidx.fragment.app.Fragment?) {
         supportFragmentManager.beginTransaction().add(R.id.fragmentS, fragment!!).commit()
     }
 
-    private fun hideFragment(fragment: androidx.fragment.app.Fragment?) {
+    fun hideFragment(fragment: androidx.fragment.app.Fragment?) {
         supportFragmentManager.beginTransaction().hide(fragment!!).commit()
     }
 
-    private fun showFragment(fragment: androidx.fragment.app.Fragment?) {
+    fun showFragment(fragment: androidx.fragment.app.Fragment?) {
         supportFragmentManager.beginTransaction().show(fragment!!).commit()
     }
 

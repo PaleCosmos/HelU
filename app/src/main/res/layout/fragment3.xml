@@ -5,9 +5,8 @@
               android:background="@color/white"
               tools:context=".Fragment3"
 >
-    <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-              android:text="FRAGMENT3\nFRAGMENT3\nFRAGMENT3\nFRAGMENT3\nFRAGMENT3\nFRAGMENT3\nFRAGMENT3\nFRAGMENT3\nFRAGMENT3\n"
-              android:textColor="@color/primary"
-    />
-
+    <com.github.bassaer.chatmessageview.view.ChatView
+            android:id="@+id/chat_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 </LinearLayout>
