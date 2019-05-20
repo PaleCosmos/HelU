@@ -1,7 +1,7 @@
 package com.example.halilarm
 
 import android.app.Activity
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.content.Context
 import android.content.Intent
@@ -9,7 +9,6 @@ import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Handler
-import android.support.design.widget.Snackbar
 import android.util.Log
 import android.view.*
 import android.widget.*
@@ -20,26 +19,15 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.database.*
 import android.view.WindowManager
 import android.os.Build
-
-
+import kotlinx.android.synthetic.main.activity_login.*
 
 
 class LoginActivity : AppCompatActivity() {
 
     companion object {
-        val dbName="Halilarm"
-        val tableName="person"
-
-        var personList:ArrayList<HashMap<String,String>>?=null
         var mHandler: Handler? = null
-        var id_box: EditText? = null
-        var pw_box: EditText? = null
-        var logIn_button: Button? = null
-        var register_button: TextView? = null
-        var ester:ImageView?=null
         @JvmStatic
         var AC: Context? = null
-        var returnB: Button? = null
         var auth: FirebaseAuth? = null
         var userModel: UserInfo? = null
         var database: FirebaseDatabase? = null
@@ -47,83 +35,70 @@ class LoginActivity : AppCompatActivity() {
         var nicks: String? = null
         var sh_Pref: SharedPreferences? = null
         var toEdit: SharedPreferences.Editor? = null
-        var ch1: CheckBox? = null
-        var ch2: CheckBox? = null
-        var counter=0
+        var counter = 0
     }
 
     var backKeyPressedTime: Long = 0L
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-       // getWindow().setFlags(
-         //   WindowManager.LayoutParams.FLAG_FULLSCREEN,
-          //  WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_login)
         updateStatusBarColor("#E43F3F")
-        //statusBarColorChanger()
         sh_Pref = getSharedPreferences("Login credentials", Context.MODE_PRIVATE)
         toEdit = sh_Pref?.edit()
         supportActionBar?.hide()
         AC = applicationContext
-        ester=findViewById(R.id.ester)
         ester?.setOnClickListener {
-            if(counter<5);
-            else{
-               makeCustomToast("이걸 왜 ${counter}번이나 눌렀니",0,-700)
+            if (counter < 5) ;
+            else {
+                makeCustomToast("이걸 왜 ${counter}번이나 눌렀니", 0, -700)
             }
             counter++
         }
         auth = FirebaseAuth.getInstance()
         mHandler = Handler()
-        id_box = findViewById(R.id.input_email)
-        pw_box = findViewById(R.id.input_password)
-        id_box?.setText("")
-        pw_box?.setText("")
-        logIn_button = findViewById(R.id.btn_login)
-        ch1 = findViewById(R.id.saveID)
-        ch1?.setOnCheckedChangeListener { buttonView, isChecked ->
+        input_email.setText("")
+        input_password.setText("")
+
+        saveID.setOnCheckedChangeListener { _, isChecked ->
             when (isChecked) {
                 false -> {
-                    ch2?.isChecked = false
+                    loging.isChecked = false
                 }
             }
         }
-        ch2 = findViewById(R.id.loging)
-        ch2?.setOnCheckedChangeListener { buttonView, isChecked ->
+
+        loging.setOnCheckedChangeListener { _, isChecked ->
             when (isChecked) {
                 true -> {
-                    ch1?.isChecked = true
+                    saveID.isChecked = true
                 }
             }
-        }
-        returnB?.setOnClickListener {
-            finish()
         }
         database = FirebaseDatabase.getInstance()
 
-        register_button = findViewById(R.id.link_signup)
 
-        logIn_button?.setOnClickListener {
 
-            var id: String? = id_box?.text.toString().trim()
-            var pass: String? = pw_box?.text.toString().trim()
+        btn_login.setOnClickListener {
+
+            var id: String? = input_email.text.toString().trim()
+            var pass: String? = input_password.text.toString().trim()
             if (!(id.isNullOrBlank()) && !(pass.isNullOrBlank())) {
-                logIn_button?.isEnabled = false
-                id_box?.isEnabled = false
-                pw_box?.isEnabled = false
-                register_button?.isEnabled = false
-                ch1?.isEnabled = false
-                ch2?.isEnabled = false
+                btn_login.isEnabled = false
+                input_email.isEnabled = false
+                input_password.isEnabled = false
+                link_signup.isEnabled = false
+                saveID.isEnabled = false
+                loging.isEnabled = false
                 LoginCheck(id, pass)
-                if (ch1?.isChecked!!) {
+                if (saveID.isChecked) {
 
                     toEdit?.putBoolean("SAVEFLAG", true)
                     toEdit?.putString("Email", id)
                 } else {
                     toEdit?.putBoolean("SAVEFLAG", false)
                 }
-                if (ch2?.isChecked!!) {
+                if (loging.isChecked) {
                     toEdit?.putBoolean("AUTOLOGIN", true)
                     toEdit?.putString("PASSWORD", pass)
                 } else {
@@ -131,19 +106,17 @@ class LoginActivity : AppCompatActivity() {
                 }
                 toEdit?.commit()
             } else {
-                logIn_button?.isEnabled = true
-                id_box?.isEnabled = true
-                pw_box?.isEnabled = true
-                register_button?.isEnabled = true
-                ch1?.isEnabled = true
-                ch2?.isEnabled = true
-                //Snackbar.make(applicationContext, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show()
-                makeCustomToast("정보를 확인해주세요.",0,500)
+                btn_login.isEnabled = true
+                input_email.isEnabled = true
+                input_password.isEnabled = true
+                link_signup.isEnabled = true
+                saveID.isEnabled = true
+                loging.isEnabled = true
+                makeCustomToast("정보를 확인해주세요.", 0, 500)
             }
-
         }
 
-        register_button?.setOnClickListener {
+        link_signup.setOnClickListener {
             val intent = Intent(this@LoginActivity, RegisterActivity::class.java)
 
             startActivity(intent)
@@ -188,14 +161,14 @@ class LoginActivity : AppCompatActivity() {
                         })
 
                     } else {
-                        logIn_button?.isEnabled = true
-                        id_box?.isEnabled = true
-                        pw_box?.isEnabled = true
-                        register_button?.isEnabled = true
-                        ch1?.isEnabled = true
-                        ch2?.isEnabled = true
+                        btn_login.isEnabled = true
+                        input_email.isEnabled = true
+                        input_password.isEnabled = true
+                        link_signup.isEnabled = true
+                        saveID.isEnabled = true
+                        loging.isEnabled = true
                         //Toast.makeText(this@LoginActivity, "LogIn Error", Toast.LENGTH_SHORT).show()
-                        makeCustomToast("로그인 실패",0,500)
+                        makeCustomToast("로그인 실패", 0, 500)
                     }
                 })
     }
@@ -209,27 +182,26 @@ class LoginActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
 
-            logIn_button?.isEnabled = true
-            id_box?.isEnabled = true
-            pw_box?.isEnabled = true
-            register_button?.isEnabled = true
-            ch1?.isEnabled = true
-            ch2?.isEnabled = true
+            btn_login.isEnabled = true
+            input_email.isEnabled = true
+            input_password.isEnabled = true
+            link_signup.isEnabled = true
+            saveID.isEnabled = true
+            loging.isEnabled = true
 
-            if (ch1?.isChecked == false) {
-                id_box?.setText("")
+            if (!saveID.isChecked) {
+                input_email.setText("")
             }
-            if (ch2?.isChecked == false) {
-                pw_box?.setText("")
+            if (!loging.isChecked) {
+                input_password.setText("")
             }
-        }
-        else if(resultCode == 1004){
+        } else if (resultCode == 1004) {
             setResult(Activity.RESULT_OK)
             finish()
         }
     }
 
-    private fun makeCustomToast(msg: String, xSet:Int,ySet:Int) {
+    private fun makeCustomToast(msg: String, xSet: Int, ySet: Int) {
         var view: View =
             getLayoutInflater().inflate(R.layout.toastborder, findViewById<ViewGroup>(R.id.toast_layout_root))
         var text: TextView = view.findViewById(R.id.text)
@@ -249,28 +221,29 @@ class LoginActivity : AppCompatActivity() {
             sh_Pref!!.getBoolean("SAVEFLAG", false)
         ) {
             var ML = sh_Pref?.getString("Email", "NULL")
-            id_box?.setText(ML)
-            ch1?.isChecked = true
+            input_email.setText(ML)
+            saveID.isChecked = true
             Log.d("SAVEFLAG", ML)
         }
         if (sh_Pref != null && sh_Pref!!.contains("Email") &&
             sh_Pref!!.getBoolean("AUTOLOGIN", false)
         ) {
-            logIn_button?.isEnabled = false
-            id_box?.isEnabled = false
-            pw_box?.isEnabled = false
-            register_button?.isEnabled = false
-            ch1?.isEnabled = false
-            ch2?.isEnabled = false
+            btn_login.isEnabled = false
+            input_email.isEnabled = false
+            input_password.isEnabled = false
+            link_signup.isEnabled = false
+            saveID.isEnabled = false
+            loging.isEnabled = false
             var ML = sh_Pref?.getString("Email", "")
-            id_box?.setText(ML)
+            input_email.setText(ML)
             var PW = sh_Pref?.getString("PASSWORD", "")
-            pw_box?.setText(PW)
+            input_password.setText(PW)
             LoginCheck(ML!!, PW!!)
-            ch2?.isChecked = true
+            loging.isChecked = true
             Log.d("AUTOLOGIN", PW)
         }
     }
+
     private fun updateStatusBarColor(color: String) {// Color must be in hexadecimal fromat
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val window = window

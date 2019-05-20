@@ -8,7 +8,7 @@ import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
 import android.widget.TextView
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
 import android.view.Window.FEATURE_NO_TITLE
 import android.content.pm.ActivityInfo
@@ -18,10 +18,6 @@ import kotlinx.android.synthetic.main.license.*
 
 class LicenseActivity : AppCompatActivity() {
 
-    private var txtText: TextView? = null // context
-    private var licenseText: TextView? = null // name
-    private var button2: Button? = null
-    private var button2INV: Button? = null
 
     private var clips: ClipboardManager? = null
     private var clipData: ClipData? = null
@@ -31,42 +27,43 @@ class LicenseActivity : AppCompatActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContentView(R.layout.license)
         window.setFeatureDrawableResource(FEATURE_NO_TITLE, android.R.drawable.ic_dialog_alert)
-        txtText = findViewById(R.id.txtText)
+
         clips = applicationContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
-        licenseText = findViewById(R.id.licenseText)
-        bt1?.setOnClickListener {
-            txtText?.text = getString(R.string.AVLoadingIndicatorView)
-            licenseText?.text = "AVLoadingIndicatorView"
+        bt1.setOnClickListener {
+            txtText.text = getString(R.string.AVLoadingIndicatorView)
+            licenseText.text = "AVLoadingIndicatorView"
         }
 
-        bt1I?.setOnClickListener {
+        bt1I.setOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/81813780/AVLoadingIndicatorView")))
         }
-        bt1I?.setOnLongClickListener {
+        bt1I.setOnLongClickListener {
             clipData = ClipData.newPlainText("", "https://github.com/81813780/AVLoadingIndicatorView")
             clips?.primaryClip = clipData
             clipCopy("AVLoadingIndicatorView")
             true
         }
-        button2 = findViewById(R.id.bt2)
-        button2?.setOnClickListener {
-            txtText?.text = getString(R.string.AndroidWeekView)
+
+        bt2.setOnClickListener {
+            txtText.text = getString(R.string.AndroidWeekView)
             licenseText?.text = "Android Week View"
         }
-        button2INV = findViewById(R.id.bt2I)
-        button2INV?.setOnClickListener {
+
+        bt2I.setOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/alamkanak/Android-Week-View")))
         }
-        button2INV?.setOnLongClickListener {
+        bt2I.setOnLongClickListener {
             clipData = ClipData.newPlainText("", "https://github.com/alamkanak/Android-Week-View")
             clips?.primaryClip = clipData
             clipCopy("Android Week View")
             true
         }
 
-        bt3.setOnClickListener { txtText?.text = getString(R.string.ChatMessageView)
-            licenseText?.text = "Chat Message View"}
+        bt3.setOnClickListener {
+            txtText.text = getString(R.string.ChatMessageView)
+            licenseText?.text = "Chat Message View"
+        }
         bt3I.setOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/bassaer/ChatMessageView")))
 

@@ -8,6 +8,7 @@ import kotlin.collections.HashMap
 class UserInfo(){
     var email: String? = ""
     var nickname: String? = ""
+    var gender:Boolean?=null
     var count:Boolean?=true
     /*
     var mon: Array<String>? = null

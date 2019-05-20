@@ -2,25 +2,23 @@ package com.example.halilarm
 
 
 import android.app.Activity
-import android.content.ClipData
-import android.content.ClipDescription
+
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.graphics.Canvas
+
 import android.graphics.Color
-import android.graphics.Point
+
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.support.design.widget.Snackbar
-import android.support.design.widget.NavigationView
-import android.support.v4.app.Fragment
-import android.support.v4.view.GravityCompat
-import android.support.v4.widget.DrawerLayout
-import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
-import android.util.EventLog
+
+import com.google.android.material.navigation.NavigationView
+import androidx.core.view.GravityCompat
+
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+
 import android.util.Log
 import android.view.*
 import android.widget.TextView
@@ -35,10 +33,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     var builder: AlertDialog.Builder? = null
     var dialogView: View? = null
     var backKeyPressedTime: Long = 0L
-    var frag1: Fragment? = null
-    var frag2: Fragment? = null
-    var frag3: Fragment? = null
-    var frag4: Fragment? = null
+    var frag1: androidx.fragment.app.Fragment? = null
+    var frag2: androidx.fragment.app.Fragment? = null
+    var frag3: androidx.fragment.app.Fragment? = null
+    var frag4: androidx.fragment.app.Fragment? = null
 
     // var mWeekView: WeekView?=null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,7 +95,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 setResult(1004)
                 finish()
             }
-            //Toast.makeText(applicationContext,"한번 더 누르면 종료됩니다.",Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -106,34 +103,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         menuInflater.inflate(R.menu.main, menu)
         var nickname = getIntent().getStringExtra("nickname")
-        Log.d("Main", "${nickname}")
+
         var item: MenuItem = menu.getItem(0)
         item.title = "로그아웃"
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-/*
-        when (item.itemId) {
-            R.id.action_logout -> {
 
-                Handler().post(Runnable {
-                    setResult(RESULT_OK)
-                    finish()
-                })
-
-                return true
-            }
-            else -> return super.onOptionsItemSelected(item)
-        }*/
-
-        Handler().post(Runnable {
-            setResult(RESULT_OK)
-            finish()
-        })
-
-        return true
-    }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
@@ -257,19 +233,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    private fun replaceFragment(fragment: Fragment?) {
+    private fun replaceFragment(fragment: androidx.fragment.app.Fragment?) {
         supportFragmentManager.beginTransaction().replace(R.id.fragmentS, fragment!!).commit()
     }
 
-    private fun addFragment(fragment: Fragment?) {
+    private fun addFragment(fragment: androidx.fragment.app.Fragment?) {
         supportFragmentManager.beginTransaction().add(R.id.fragmentS, fragment!!).commit()
     }
 
-    private fun hideFragment(fragment: Fragment?) {
+    private fun hideFragment(fragment: androidx.fragment.app.Fragment?) {
         supportFragmentManager.beginTransaction().hide(fragment!!).commit()
     }
 
-    private fun showFragment(fragment: Fragment?) {
+    private fun showFragment(fragment: androidx.fragment.app.Fragment?) {
         supportFragmentManager.beginTransaction().show(fragment!!).commit()
     }
 

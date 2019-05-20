@@ -20,7 +20,7 @@
                    android:layout_gravity="center_horizontal" />
 
         <!--  Name Label -->
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -30,23 +30,12 @@
                       android:layout_height="wrap_content"
                       android:inputType="textEmailAddress"
                       android:hint="이메일" />
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Email Label -->
-        <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp">
-            <EditText android:id="@+id/nickname"
-                      android:layout_width="match_parent"
-                      android:layout_height="wrap_content"
-                      android:inputType="textPersonName"
-                      android:hint="닉네임" />
-        </android.support.design.widget.TextInputLayout>
+
 
         <!-- Password Label -->
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -56,8 +45,8 @@
                       android:layout_height="wrap_content"
                       android:inputType="textPassword"
                       android:hint="비밀번호"/>
-        </android.support.design.widget.TextInputLayout>
-        <android.support.design.widget.TextInputLayout
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -68,9 +57,45 @@
                       android:inputType="textPassword"
                       android:hint="비밀번호 확인"
             />
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
+        <!-- Email Label -->
+        <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp">
+            <EditText android:id="@+id/nickname"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:inputType="textPersonName"
+                      android:hint="닉네임" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+ <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+
+     <RadioGroup android:layout_width="wrap_content" android:layout_height="wrap_content"
+     android:id="@+id/genderChecker" android:orientation="horizontal"
+                 android:layout_centerHorizontal="true"
+     >
+     <androidx.appcompat.widget.AppCompatRadioButton android:layout_width="wrap_content"
+                                                     android:layout_height="wrap_content"
+                                                     android:text="남성"
+                                                     android:layout_marginRight="50dp"
+     android:id="@+id/mancheck"/>
+         <androidx.appcompat.widget.AppCompatRadioButton android:layout_width="wrap_content"
+                                                         android:layout_height="wrap_content"
+                                                         android:layout_marginLeft="50dp"
+                                                         android:layout_toRightOf="@+id/mancheck"
+                                                         android:id="@+id/womancheck"
+                                                         android:text="여성"
+                                                         android:layout_alignTop="@+id/genderChecker"/>
+     </RadioGroup>
+
+
+
+ </RelativeLayout>
         <!-- Signup Button -->
-        <android.support.v7.widget.AppCompatButton
+        <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/email_Register_button2"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
