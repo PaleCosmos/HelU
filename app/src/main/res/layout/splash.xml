@@ -5,9 +5,11 @@
               android:orientation="vertical"
               android:theme="@style/AppTheme.Dark"
 >
-    <ImageView android:layout_width="wrap_content" android:layout_height="684dp"
+    <ImageView android:layout_width="300dp" android:layout_height="300dp"
                android:scaleType="fitCenter"
-               android:src="@drawable/splash"/>
+               android:src="@drawable/splash"
+               android:layout_alignParentTop="true" android:layout_marginTop="146dp"
+               android:layout_centerInParent="true"/>
     <com.wang.avi.AVLoadingIndicatorView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -16,7 +18,7 @@
             android:layout_marginBottom="243dp"/>
 
     <TextView android:layout_width="match_parent" android:layout_height="60dp"
-              android:text="Copyright 2019. HELU Team. all right reserved"
+              android:text="Copyright 2019. PaleCosmos. all right reserved"
               android:textColor="@color/white"
               android:layout_gravity="bottom"
               android:textAlignment="center"
