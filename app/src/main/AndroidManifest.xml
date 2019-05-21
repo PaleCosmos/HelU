@@ -58,6 +58,13 @@
                 android:label=""
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <uses-library android:name="android.test.runner"
+        android:required="false"></uses-library>
+        <uses-library android:name="android.test.base"
+                      android:required="false" />
+        <uses-library android:name="android.test.mock"
+                      android:required="false" />
+
     </application>
 
 </manifest>

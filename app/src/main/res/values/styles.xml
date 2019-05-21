@@ -30,8 +30,12 @@
         <item name="colorAccent">@color/white</item>
         <item name="android:textColorPrimary">@color/iron</item>
         <item name="android:background">@color/primary</item>
+        <item name="android:windowAnimationStyle">@style/PauseDialogAnimation</item>
     </style>
-
+<style name="PauseDialogAnimation">
+   <item name="android:windowEnterAnimation">@anim/fadein</item>
+    <item name="android:windowExitAnimation">@anim/fadeout</item>
+</style>
    <style name="Alarm" parent="Theme.AppCompat.Light.Dialog">
        <item name="windowNoTitle">true</item>
        <item name="android:textColorPrimary">@color/white</item>

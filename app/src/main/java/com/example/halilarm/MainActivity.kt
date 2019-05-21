@@ -65,15 +65,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         initialization()
 
-
         fab.tag = "DRAG Button"
 
 
-
-
         fab.setOnClickListener {
+            if(currentFocus!=null){
             (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
-                .hideSoftInputFromWindow(currentFocus.windowToken, 0)
+                .hideSoftInputFromWindow(currentFocus?.windowToken, 0)}
             drawer_layout.openDrawer(GravityCompat.START)
         }
 
@@ -88,8 +86,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         ) {
             override fun onDrawerStateChanged(newState: Int) {
                 if (newState == DrawerLayout.STATE_SETTLING) {
-                    (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
-                        .hideSoftInputFromWindow(currentFocus.windowToken, 0)
+                    if(currentFocus!=null){
+                        (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+                            .hideSoftInputFromWindow(currentFocus?.windowToken, 0)}
                 }
             }
         }
