@@ -10,6 +10,7 @@ class UserInfo(){
     var nickname: String? = ""
     var gender:Boolean?=null
     var count:Boolean?=true
+    var phone:String?=""
     /*
     var mon: Array<String>? = null
     var tue: Array<String>? = null
@@ -26,6 +27,8 @@ class UserInfo(){
         result.put("email",email)
         result.put("nickname",nickname)
         result.put("count",count)
+        result.put("gender",gender)
+        result.put("phone",phone)
         return result
     }
 }

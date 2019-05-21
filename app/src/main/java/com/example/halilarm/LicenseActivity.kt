@@ -78,7 +78,7 @@ class LicenseActivity : AppCompatActivity() {
 
 
     private fun clipCopy(name: String?) {
-        Toast.makeText(applicationContext, "클립보드에 복사되었습니다 [$name]", Toast.LENGTH_SHORT).show()
+        Toast.makeText(applicationContext, "클립보드에 복사했어! [$name]", Toast.LENGTH_SHORT).show()
     }
 
     override fun onBackPressed() {

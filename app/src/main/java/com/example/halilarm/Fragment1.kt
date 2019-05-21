@@ -1,5 +1,6 @@
 package com.example.halilarm
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -20,7 +21,7 @@ class Fragment1 : Fragment() {
         val view = inflater.inflate(R.layout.fragment1, container, false) as ViewGroup
         initialization(view)
         but.setOnClickListener {
-            Toast.makeText(view!!.context,"$choice_univ $choice_dm",Toast.LENGTH_SHORT).show()
+            startActivity(Intent(view.context,UchatActivity::class.java))
         }
         return view
     }

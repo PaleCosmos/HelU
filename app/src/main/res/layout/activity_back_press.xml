@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+        android:theme="@style/AppTheme.Dark.Dialog"
+        android:layout_gravity="center"
+        android:background="@drawable/layoutround"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content">
+
+
+    <!-- 타이틀바 -->
+    <RelativeLayout
+            android:background="@drawable/layoutss"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+
+            android:id="@+id/asd"
+
+            android:layout_height="wrap_content">
+        <TextView
+
+                android:text="U chat이 종료됩니다!"
+                android:textSize="12sp"
+                android:textColor="@color/white"
+                android:layout_centerInParent="true"
+                android:id="@+id/qkqh"
+                android:background="@color/primary_darker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+
+    </RelativeLayout>
+    <!-- //end 타이틀바 -->
+    <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_below="@+id/asd"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/custom_button"
+            android:textColor="@color/primary_dark"
+            android:id="@+id/ccc1"
+            android:text="나가기"/>
+    <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_below="@+id/asd"
+            android:layout_marginRight="50dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:textColor="@color/primary_dark"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/custom_button"
+            android:text="머무르기"
+            android:id="@+id/ccc2"/>
+    <!-- Notice -->
+
+    <!-- Notice -->
+
+</RelativeLayout>

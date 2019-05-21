@@ -88,13 +88,13 @@ class LoginActivity : AppCompatActivity() {
                 input_email.error = "이메일 형식이 아닙니다."
                 allEnabled()
             } else if (!Pattern.matches("^(?=.*\\d)(?=.*[~`!@#$%\\^&*()-])(?=.*[a-zA-Z]).{8,20}$", pass)) {
-                input_email.error=null
+                input_email.error = null
                 input_password.error = "비밀번호는 8자 이상 20자 이하의 대소문자, 숫자, 특수문자로만 구성되어야 합니다."
                 allEnabled()
             } else {
                 allNotEnabled()
-                input_email.error=null
-                input_password.error =null
+                input_email.error = null
+                input_password.error = null
                 LoginCheck(id!!, pass!!)
 
             }
@@ -130,7 +130,7 @@ class LoginActivity : AppCompatActivity() {
     override fun onBackPressed() {
         if (System.currentTimeMillis() > backKeyPressedTime + 2000L) {
             backKeyPressedTime = System.currentTimeMillis()
-            Toast.makeText(applicationContext, "One more you press back, EXIT", Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, "나갈거야?", Toast.LENGTH_SHORT).show()
             return
         } else {
             setResult(RESULT_OK)
@@ -145,12 +145,47 @@ class LoginActivity : AppCompatActivity() {
                     if (task.isSuccessful) {
                         //var user = auth?.currentUser?.displayName
                         var uid = auth?.currentUser!!.uid
+                        var phone: String = ""
+                        var gender: Boolean? = null
+
+
+                        database?.getReference("users")?.child(uid)?.child("gender")
+                            ?.addListenerForSingleValueEvent(object : ValueEventListener {
+                                override fun onDataChange(p0: DataSnapshot) {
+                                    var str = p0.value.toString()
+                                    if (str.equals("true", ignoreCase = true)) gender = true
+                                    else gender = false
+                                }
+
+                                override fun onCancelled(p0: DatabaseError) {
+                                }
+                            })
+                        database?.getReference("users")?.child(uid)?.child("phone")
+                            ?.addListenerForSingleValueEvent(object : ValueEventListener {
+                                override fun onCancelled(p0: DatabaseError) {
+
+                                }
+
+                                override fun onDataChange(p0: DataSnapshot) {
+                                    phone=p0.value.toString()
+                                }
+                            })
+
+
+
                         myRef = database?.getReference("users")?.child(uid)?.child("nickname")
+
                         myRef?.addListenerForSingleValueEvent(object : ValueEventListener {
                             override fun onDataChange(p0: DataSnapshot) {
                                 nicks = p0.value.toString()
                                 var intents = Intent(this@LoginActivity, MainActivity::class.java)
                                 intents.putExtra("nickname", nicks)
+                                intents.putExtra("key", uid)
+                                intents.putExtra("gender",gender)
+                                intents.putExtra("phone",phone)
+                                intents.putExtra("id",id)
+                                // 전화번호랑 성별 받아와야함.
+
                                 if (saveID.isChecked) {
 
                                     toEdit?.putBoolean("SAVEFLAG", true)
@@ -178,7 +213,7 @@ class LoginActivity : AppCompatActivity() {
                     } else {
                         allEnabled()
                         input_password.error = "비밀번호가 올바르지 않습니다."
-                            Log.d("gimma",task.toString())
+                        Log.d("gimma", task.toString())
                     }
                 })
     }

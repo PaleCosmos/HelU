@@ -17,17 +17,18 @@
             android:roundIcon="@mipmap/helu_circle"
             android:supportsRtl="true"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme">
-        <activity android:name=".ringing"
-                  android:theme="@style/AppTheme.Dark.Dialog"/>
-        <service android:name=".MyFirebaseMessagingService">
+            android:theme="@style/AppTheme" tools:ignore="GoogleAppIndexingWarning">
+
+        <service android:name=".MyFirebaseMessagingService" >
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
-        <service android:name=".NotificationJobFireBaseService"></service>
+        <receiver android:name=".AlarmBroadcastReceiver"/>
+        <activity android:name=".BackKeyPress" android:theme="@style/AppTheme.Dark.Dialog"/>
+        <service android:name=".NotificationJobFireBaseService"/>
         <activity android:name=".LogoutActivity"
-                  android:theme="@style/AppTheme.Dark.Dialog"></activity>
+                  android:theme="@style/AppTheme.Dark.Dialog"/>
         <activity android:name=".LicenseActivity"
                   android:theme="@style/AppTheme.Dark.Dialog"/>
         <activity
@@ -39,14 +40,17 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity
+        <activity android:name=".UchatActivity"
+                  android:label=""
+                  android:theme="@style/AppTheme.Dark"
+
+        />        <activity
                 android:name=".LoginActivity"
                 android:label=""
                 android:theme="@style/AppTheme.Dark"
                 android:windowSoftInputMode="adjustNothing">
         </activity>
-        <activity android:name=".AlarmActivity"
-                  android:theme="@style/AppTheme.Dark.Dialog"/>
+
         <activity
 
                 android:name=".RegisterActivity"
@@ -59,7 +63,7 @@
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <uses-library android:name="android.test.runner"
-        android:required="false"></uses-library>
+                      android:required="false"/>
         <uses-library android:name="android.test.base"
                       android:required="false" />
         <uses-library android:name="android.test.mock"

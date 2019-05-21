@@ -20,7 +20,6 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 
-import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
@@ -37,6 +36,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     var builder: AlertDialog.Builder? = null
     var dialogView: View? = null
     var backKeyPressedTime: Long = 0L
+    var myClass: UserInfo? = null
 
     companion object {
         @JvmStatic
@@ -47,8 +47,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         var frag3: androidx.fragment.app.Fragment? = Fragment3()
         @JvmStatic
         var frag4: androidx.fragment.app.Fragment? = Fragment4()
-        @JvmStatic
-        var frag3_0: androidx.fragment.app.Fragment? = Fragment3_0()
     }
 
     // var mWeekView: WeekView?=null
@@ -58,20 +56,37 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         updateStatusBarColor("#E43F3F")
         setContentView(R.layout.activity_main)
+        this.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         setSupportActionBar(toolbar)
         builder = AlertDialog.Builder(this)
         dialogView = layoutInflater.inflate(R.layout.license, null)
         builder?.setView(dialogView)
 
+        myClass = UserInfo()
+        myClass?.gender = intent.getBooleanExtra("gender", true)
+        myClass?.phone = intent.getStringExtra("phone")
+        myClass?.nickname = intent.getStringExtra("nickname")
+        myClass?.email = intent.getStringExtra("id")
+        myClass?.count = true
+
+        var bd = Bundle(4)
+
+        bd.putBoolean("gender", intent.getBooleanExtra("gender", true))  /// 번들에 집어넣기@@
+        bd.putString("phone", intent.getStringExtra("phone"))
+        bd.putString("nickname", intent.getStringExtra("nickname"))
+        //bd.putString("email",intent.getStringExtra("email"))
+        bd.putString("key", intent.getStringExtra("key"))
+        frag4?.arguments = bd
         initialization()
 
         fab.tag = "DRAG Button"
 
 
         fab.setOnClickListener {
-            if(currentFocus!=null){
-            (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
-                .hideSoftInputFromWindow(currentFocus?.windowToken, 0)}
+            if (currentFocus != null) {
+                (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+                    .hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+            }
             drawer_layout.openDrawer(GravityCompat.START)
         }
 
@@ -86,9 +101,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         ) {
             override fun onDrawerStateChanged(newState: Int) {
                 if (newState == DrawerLayout.STATE_SETTLING) {
-                    if(currentFocus!=null){
+                    if (currentFocus != null) {
                         (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
-                            .hideSoftInputFromWindow(currentFocus?.windowToken, 0)}
+                            .hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+                    }
                 }
             }
         }
@@ -115,8 +131,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         addFragment(frag2)
         addFragment(frag3)
         addFragment(frag4)
-        addFragment(frag3_0)
-        hideFragment(frag3_0)
         hideFragment(frag3)
         hideFragment(frag2)
         hideFragment(frag4)
@@ -130,11 +144,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         } else {
             if (System.currentTimeMillis() > backKeyPressedTime + 2000L) {
                 backKeyPressedTime = System.currentTimeMillis()
-                Toast.makeText(applicationContext, "백키를 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "나갈거야?", Toast.LENGTH_SHORT).show()
                 return
             } else {
-                setResult(1004)
-                finish()
+                val back = Intent(this,BackKeyPress::class.java)
+                back.putExtra("code",1)
+                startActivityForResult(back,3)
             }
         }
     }
@@ -173,9 +188,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     if (frag4 != null) {
                         hideFragment(frag4)
                     }
-                    if (frag3_0 != null) {
-                        hideFragment(frag3_0)
-                    }
+
 
                     im = item.itemId
                 }
@@ -196,9 +209,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     if (frag4 != null) {
                         hideFragment(frag4)
                     }
-                    if (frag3_0 != null) {
-                        hideFragment(frag3_0)
-                    }
+
                     im = item.itemId
                 }
 
@@ -214,13 +225,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         hideFragment(frag2)
                     }
                     if (frag3 != null) {
-                        hideFragment(frag3)
+                        showFragment(frag3)
                     }
                     if (frag4 != null) {
                         hideFragment(frag4)
-                    }
-                    if (frag3_0 != null) {
-                        showFragment(frag3_0)
                     }
                     im = item.itemId
                 }
@@ -242,9 +250,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     if (frag4 != null) {
                         showFragment(frag4)
                     }
-                    if (frag3_0 != null) {
-                        hideFragment(frag3_0)
-                    }
+
                     im = item.itemId
                 }
             }
@@ -271,11 +277,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             setResult(Activity.RESULT_OK)
             finish()
         }
+        if(resultCode == 99)
+        {
+            setResult(1004)
+            finish()
+        }
     }
 
-    fun replaceFragment(fragment: androidx.fragment.app.Fragment?) {
-        supportFragmentManager.beginTransaction().replace(R.id.fragmentS, fragment!!).commit()
-    }
 
     fun addFragment(fragment: androidx.fragment.app.Fragment?) {
         supportFragmentManager.beginTransaction().add(R.id.fragmentS, fragment!!).commit()

@@ -28,8 +28,7 @@ class LogoutActivity : AppCompatActivity() {
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        // 바깥 클릭하면 안닫히게
-        // 레지스터 이벤트 조정 필요
+
         return super.onTouchEvent(event)
     }
 

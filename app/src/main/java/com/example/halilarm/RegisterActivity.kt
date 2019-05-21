@@ -96,6 +96,8 @@ private fun errorMaker(num:Int,msg:String){
                             var userModel = UserInfo()
                             userModel.email = user?.email
                             userModel.nickname = nickInBox
+                            userModel.gender=gender
+                            userModel.phone="nalo"
                             databaseReference?.child("users")?.child(user!!.uid)
                                 ?.setValue(userModel)
                             finish()

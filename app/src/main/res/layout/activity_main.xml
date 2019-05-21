@@ -8,7 +8,7 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
         android:theme="@style/AppTheme.Dark"
-
+        android:windowSoftInputMode = "adjustResize"
         tools:openDrawer="start"
 
 
