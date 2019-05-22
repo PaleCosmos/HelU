@@ -16,6 +16,7 @@ import android.provider.MediaStore
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter.*
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_register.*
@@ -24,9 +25,13 @@ import java.util.regex.Pattern
 
 class RegisterActivity : AppCompatActivity() {
 
-        var databaseReference: DatabaseReference? = null
-        var mHandler: Handler? = null
-        var auth: FirebaseAuth? = null
+    var databaseReference: DatabaseReference? = null
+    var mHandler: Handler? = null
+    var auth: FirebaseAuth? = null
+    var choice_univ: String? = null
+    var choice_depart: String? = null
+    lateinit var spinCheck_univ: ArrayAdapter<CharSequence>
+    lateinit var spinCheck_depart: ArrayAdapter<CharSequence>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,59 +40,91 @@ class RegisterActivity : AppCompatActivity() {
         mHandler = Handler()
         auth = FirebaseAuth.getInstance()
         databaseReference = FirebaseDatabase.getInstance().reference
-        mancheck.isChecked=true
+        mancheck.isChecked = true
         link_return.setOnClickListener {
             finish()
         }
         email_Register_button2.setOnClickListener {
             validChecker()
         }
+        spinCheck_univ = createFromResource(
+            applicationContext, R.array.spinner_univ,
+            android.R.layout.simple_spinner_dropdown_item
+        )
+        spinner_univ.adapter = spinCheck_univ
+        spinner_univ.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                if (spinCheck_univ.getItem(position).toString().equals("가천대학교", ignoreCase = true)) {
+                    choice_univ = "가천대학교"
+                    spinCheck_depart= createFromResource(applicationContext,R.array.spinner_dm,android.R.layout.simple_spinner_dropdown_item)
+                    spinner_depart.adapter=spinCheck_depart
+                    spinner_depart.onItemSelectedListener=object:AdapterView.OnItemSelectedListener{
+                        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                            choice_depart=spinCheck_depart.getItem(position).toString()
+                        }
+
+                        override fun onNothingSelected(parent: AdapterView<*>?) {
+
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    private fun errorDeleter()
-    {
+    private fun errorDeleter() {
         email.error = null
         password1.error = null
         password2.error = null
         nickname.error = null
-
+        phone.error=null
     }
 
-private fun errorMaker(num:Int,msg:String){
-    errorDeleter()
-    when(num){
-        0-> email.error =msg
-        1-> password1.error = msg
-        2->password2.error = msg
-        3->nickname.error=msg
+    private fun errorMaker(num: Int, msg: String) {
+        errorDeleter()
+        when (num) {
+            0 -> email.error = msg
+            1 -> password1.error = msg
+            2 -> password2.error = msg
+            3 -> nickname.error = msg
+            4-> phone.error=msg
+        }
     }
-}
 
     private fun validChecker() {
         val idInBox = email.text.toString().trim()
         val passInBox = password1.text.toString().trim()
         val passInBox2 = password2?.text.toString().trim()
         val nickInBox = nickname.text.toString().trim()
-        var gender: Boolean = (genderChecker.checkedRadioButtonId == R.id.mancheck)
+        var gender: Boolean = (mancheck.isChecked)
+        var phones = phone.text.toString().trim()
         allNotEnabled()
 
         // 0 -> Email
         // 1 -> passWord1
         // 2 -> passWord2
         // 3 -> nickname
+        // 4 ->Phone
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(idInBox).matches()) {
-           errorMaker(0,"이메일 형식이 아닙니다.")
+            errorMaker(0, "이메일 형식이 아닙니다.")
             allEnabled()
         } else if (!Pattern.matches("^(?=.*\\d)(?=.*[~`!@#$%\\^&*()-])(?=.*[a-zA-Z]).{8,20}$", passInBox)) {
-           errorMaker(1,"비밀번호는 8자 이상 20자 이하의 대소문자, 숫자, 특수문자로만 구성되어야 합니다.")
+            errorMaker(1, "비밀번호는 8자 이상 20자 이하의 대소문자, 숫자, 특수문자로만 구성되어야 합니다.")
             allEnabled()
         } else if (!passInBox.equals(passInBox2)) {
-           errorMaker(2,"비밀번호가 올바르지 않습니다.")
+            errorMaker(2, "비밀번호가 올바르지 않습니다.")
             allEnabled()
         } else if (nickInBox.length < 2 || nickInBox.length > 8) {
-            errorMaker(3,"닉네임은 2자 이상 8자 이하로 구성되어야 합니다.")
+            errorMaker(3, "닉네임은 2자 이상 8자 이하로 구성되어야 합니다.")
             allEnabled()
-        } else {
+        }else if(!android.util.Patterns.PHONE.matcher(phones).matches()){
+            errorMaker(4,"번호의 형식이 올바르지않습니다.")
+            allEnabled()
+        }
+        else {
             auth?.createUserWithEmailAndPassword(idInBox, passInBox)
                 ?.addOnCompleteListener(this,
                     OnCompleteListener<AuthResult> { task ->
@@ -96,8 +133,10 @@ private fun errorMaker(num:Int,msg:String){
                             var userModel = UserInfo()
                             userModel.email = user?.email
                             userModel.nickname = nickInBox
-                            userModel.gender=gender
-                            userModel.phone="nalo"
+                            userModel.gender = gender
+                            userModel.university=choice_univ
+                            userModel.department=choice_depart
+                            userModel.phone =phones
                             databaseReference?.child("users")?.child(user!!.uid)
                                 ?.setValue(userModel)
                             finish()
@@ -122,6 +161,7 @@ private fun errorMaker(num:Int,msg:String){
 
         Log.d("hala", "Register terminated")
     }
+
     private fun allNotEnabled() {
         password1.isEnabled = false
         password2?.isEnabled = false
@@ -130,16 +170,24 @@ private fun errorMaker(num:Int,msg:String){
         email_Register_button2.isEnabled = false
         link_return.isEnabled = false
         genderChecker.isEnabled = false
+        spinner_depart.isEnabled=false
+        spinner_univ.isEnabled=false
+        phone.isEnabled=false
     }
-    private  fun allEnabled(){
+
+    private fun allEnabled() {
         password1.isEnabled = true
         password2?.isEnabled = true
         nickname.isEnabled = true
         email.isEnabled = true
         email_Register_button2.isEnabled = true
-        link_return.isEnabled =true
-        genderChecker.isEnabled =true
+        link_return.isEnabled = true
+        genderChecker.isEnabled = true
+        spinner_depart.isEnabled=true
+        spinner_univ.isEnabled=true
+        phone.isEnabled=true
     }
+
     private fun makeCustomToast(msg: String) {
         var view: View =
             layoutInflater.inflate(R.layout.toastborder, findViewById<ViewGroup>(R.id.toast_layout_root))

@@ -3,6 +3,5 @@
 
     <solid android:color="@color/primary"></solid>
     <stroke></stroke>
-    <corners android:radius="50dp"></corners>
     <padding></padding>
 </shape>

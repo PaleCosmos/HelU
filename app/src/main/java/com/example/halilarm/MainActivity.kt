@@ -62,20 +62,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         dialogView = layoutInflater.inflate(R.layout.license, null)
         builder?.setView(dialogView)
 
-        myClass = UserInfo()
-        myClass?.gender = intent.getBooleanExtra("gender", true)
-        myClass?.phone = intent.getStringExtra("phone")
-        myClass?.nickname = intent.getStringExtra("nickname")
-        myClass?.email = intent.getStringExtra("id")
-        myClass?.count = true
 
-        var bd = Bundle(4)
+
+        var bd = Bundle(6)
 
         bd.putBoolean("gender", intent.getBooleanExtra("gender", true))  /// 번들에 집어넣기@@
         bd.putString("phone", intent.getStringExtra("phone"))
         bd.putString("nickname", intent.getStringExtra("nickname"))
-        //bd.putString("email",intent.getStringExtra("email"))
         bd.putString("key", intent.getStringExtra("key"))
+        bd.putString("university",intent.getStringExtra("university"))
+        bd.putString("department",intent.getStringExtra("department"))
+
         frag1?.arguments = bd
         initialization()
 

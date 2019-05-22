@@ -2,12 +2,14 @@ package com.example.halilarm
 
 import android.content.Intent
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import android.widget.ArrayAdapter.createFromResource
 import androidx.fragment.app.Fragment
+import kotlinx.android.synthetic.main.fragment1.*
 
 class Fragment1 : Fragment() {
     lateinit var spin_univ: ArrayAdapter<CharSequence>
@@ -20,8 +22,12 @@ class Fragment1 : Fragment() {
     var nick:String?=null
     var gender:String?=null
     var phone:String?=null
+    var myuniv:String?=null
+    var mydepart:String?=null
     var choice_univ = ""
     var choice_dm = ""
+    var man:RadioButton?=null
+    var woman:RadioButton?=null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment1, container, false) as ViewGroup
         initialization(view)
@@ -31,19 +37,32 @@ class Fragment1 : Fragment() {
         if(genders)gender="true"
         else gender="false"
         phone=arguments?.getString("phone")
-        intents = Intent(view.context,UchatActivity::class.java)
 
-        intents.putExtra("key",key)
-        intents.putExtra("nickname",nick)
+        myuniv=arguments?.getString("university")
 
-        intents.putExtra("gender",gender)
-        intents.putExtra("phone",phone)
+        mydepart=arguments?.getString("department")
 
+
+        man=view.findViewById(R.id.man)
+        woman=view.findViewById(R.id.woman)
+        man?.isChecked=true
 
         but.setOnClickListener {
+
+            intents = Intent(view.context,UchatActivity::class.java)
+            intents.putExtra("wantgender",man?.isChecked)
+            intents.putExtra("key",key)
+            intents.putExtra("nickname",nick)
+
+            intents.putExtra("gender",gender)
+            intents.putExtra("phone",phone)
             intents.putExtra("univ",choice_univ)
             intents.putExtra("depart",choice_dm)
-            startActivity(intents)
+
+            intents.putExtra("myuniv",myuniv)
+
+            intents.putExtra("mydepart",mydepart)
+            startActivityForResult(intents,1)
         }
         return view
     }

@@ -11,6 +11,8 @@ class UserInfo(){
     var gender:Boolean?=null
     var count:Boolean?=true
     var phone:String?=""
+    var university:String?=""
+    var department:String?=""
     /*
     var mon: Array<String>? = null
     var tue: Array<String>? = null
@@ -29,6 +31,8 @@ class UserInfo(){
         result.put("count",count)
         result.put("gender",gender)
         result.put("phone",phone)
+        result.put("university",university)
+        result.put("department",department)
         return result
     }
 }

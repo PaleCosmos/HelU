@@ -147,8 +147,29 @@ class LoginActivity : AppCompatActivity() {
                         var uid = auth?.currentUser!!.uid
                         var phone: String = ""
                         var gender: Boolean? = null
+                        var university:String=""
+                        var department:String=""
 
+                        database?.getReference("users")?.child(uid)?.child("university")
+                            ?.addListenerForSingleValueEvent(object : ValueEventListener {
+                                override fun onDataChange(p0: DataSnapshot) {
+                                    university = p0.value.toString()
 
+                                }
+
+                                override fun onCancelled(p0: DatabaseError) {
+                                }
+                            })
+                        database?.getReference("users")?.child(uid)?.child("department")
+                            ?.addListenerForSingleValueEvent(object : ValueEventListener {
+                                override fun onDataChange(p0: DataSnapshot) {
+                                    department = p0.value.toString()
+
+                                }
+
+                                override fun onCancelled(p0: DatabaseError) {
+                                }
+                            })
                         database?.getReference("users")?.child(uid)?.child("gender")
                             ?.addListenerForSingleValueEvent(object : ValueEventListener {
                                 override fun onDataChange(p0: DataSnapshot) {
@@ -184,6 +205,8 @@ class LoginActivity : AppCompatActivity() {
                                 intents.putExtra("gender",gender)
                                 intents.putExtra("phone",phone)
                                 intents.putExtra("id",id)
+                                intents.putExtra("university",university)
+                                intents.putExtra("department",department)
                                 // 전화번호랑 성별 받아와야함.
 
                                 if (saveID.isChecked) {
