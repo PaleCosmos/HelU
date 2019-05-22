@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         bd.putString("nickname", intent.getStringExtra("nickname"))
         //bd.putString("email",intent.getStringExtra("email"))
         bd.putString("key", intent.getStringExtra("key"))
-        frag4?.arguments = bd
+        frag1?.arguments = bd
         initialization()
 
         fab.tag = "DRAG Button"
