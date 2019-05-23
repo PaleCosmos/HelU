@@ -147,9 +147,11 @@ class LoginActivity : AppCompatActivity() {
                         var uid = auth?.currentUser!!.uid
                         var phone: String = ""
                         var gender: Boolean? = null
-                        var university:String=""
-                        var department:String=""
+                        var university: String = ""
+                        var department: String = ""
+                        var myInfo: UserInfo?
 
+/*
                         database?.getReference("users")?.child(uid)?.child("university")
                             ?.addListenerForSingleValueEvent(object : ValueEventListener {
                                 override fun onDataChange(p0: DataSnapshot) {
@@ -191,13 +193,15 @@ class LoginActivity : AppCompatActivity() {
                                     phone=p0.value.toString()
                                 }
                             })
+*/
 
 
-
-                        myRef = database?.getReference("users")?.child(uid)?.child("nickname")
+                        myRef = database?.getReference("users")?.child(uid)
 
                         myRef?.addListenerForSingleValueEvent(object : ValueEventListener {
                             override fun onDataChange(p0: DataSnapshot) {
+                                myInfo = p0.getValue(UserInfo::class.java)
+                                /*
                                 nicks = p0.value.toString()
                                 var intents = Intent(this@LoginActivity, MainActivity::class.java)
                                 intents.putExtra("nickname", nicks)
@@ -207,7 +211,17 @@ class LoginActivity : AppCompatActivity() {
                                 intents.putExtra("id",id)
                                 intents.putExtra("university",university)
                                 intents.putExtra("department",department)
-                                // 전화번호랑 성별 받아와야함.
+
+*/
+                                var intents = Intent(this@LoginActivity, MainActivity::class.java)
+                                intents.putExtra("nickname", myInfo?.nickname)
+                                intents.putExtra("key", uid)
+                                intents.putExtra("gender", myInfo?.gender)
+                                intents.putExtra("phone", myInfo?.phone)
+                                intents.putExtra("id", myInfo?.email)
+                                intents.putExtra("university", myInfo?.university)
+                                intents.putExtra("department", myInfo?.department)
+                                Log.d("INTENTEXTRA",myInfo?.university)
 
                                 if (saveID.isChecked) {
 
@@ -232,7 +246,7 @@ class LoginActivity : AppCompatActivity() {
                                 TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                             }
                         })
-
+// 수정해야함
                     } else {
                         allEnabled()
                         input_password.error = "비밀번호가 올바르지 않습니다."
@@ -240,6 +254,7 @@ class LoginActivity : AppCompatActivity() {
                     }
                 })
     }
+
 
     override fun onDestroy() {
         super.onDestroy()
