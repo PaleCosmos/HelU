@@ -21,4 +21,5 @@
     <color name="iron">#CCCCCC</color>
     <color name="white">#FFFFFF</color>
     <color name="qtqt">#CC1D1D</color>
+    <color name="my_spinner_text_color">#FFFFFF</color>
 </resources>

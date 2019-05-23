@@ -64,7 +64,7 @@
                 android:label=""
 
                 android:theme="@style/AppTheme.Dark"
-                android:windowSoftInputMode="adjustNothing"/>
+             />
         <activity
                 android:name=".MainActivity"
 

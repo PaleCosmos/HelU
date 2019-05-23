@@ -21,6 +21,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 
 import android.view.*
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import android.widget.ArrayAdapter.*
@@ -32,7 +34,7 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    var im = R.id.Schedule
+    var im = R.id.nav_gallery
     var builder: AlertDialog.Builder? = null
     var dialogView: View? = null
     var backKeyPressedTime: Long = 0L
@@ -46,7 +48,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var spinner_child:Spinner
     var choice_univ: String? = null
     var choice_dm: String? = null
+    lateinit var fab_open:Animation
+    lateinit var fab_close:Animation
     lateinit var header:View
+    var FLAG = 0
     companion object {
         @JvmStatic
         var frag1: androidx.fragment.app.Fragment? = Fragment1()
@@ -70,7 +75,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         builder = AlertDialog.Builder(this)
         dialogView = layoutInflater.inflate(R.layout.license, null)
         builder?.setView(dialogView)
-
+        fab_open=AnimationUtils.loadAnimation(applicationContext,R.anim.fab_open)
+        fab_close=AnimationUtils.loadAnimation(applicationContext,R.anim.fab_close)
         header=nav_view2.getHeaderView(0)
         man=header.findViewById(R.id.man)
         man.isChecked = true
@@ -123,12 +129,30 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val toggle = object : ActionBarDrawerToggle(
             this, drawer_layout, null, R.string.navigation_drawer_open, R.string.navigation_drawer_close
         ) {
+
+
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+                when(slideOffset)
+                {
+                    0f->{
+
+                        fab.startAnimation(fab_open)
+
+                    }
+                    else->{
+                        fab.startAnimation(fab_close)
+                    }
+                }
+                super.onDrawerSlide(drawerView, slideOffset)
+            }
+
             override fun onDrawerStateChanged(newState: Int) {
                 if (newState == DrawerLayout.STATE_SETTLING) {
                     if (currentFocus != null) {
                         (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
                             .hideSoftInputFromWindow(currentFocus?.windowToken, 0)
                     }
+
                 }
             }
         }
@@ -140,7 +164,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
-        nav_view2.setNavigationItemSelectedListener {
+        nav_view2.setNavigationItemSelectedListener{
 
             true
         }
@@ -148,24 +172,23 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         nav_view.getHeaderView(0).findViewById<TextView>(R.id.myNicknamess).text =
             "${getIntent().getStringExtra("nickname")}님 환영합니다!"
 
-        nav_view.setCheckedItem(R.id.Schedule)
-        nav_view.menu.performIdentifierAction(R.id.Schedule, 0)
-
+        nav_view.setCheckedItem(R.id.nav_gallery)
+        nav_view.menu.performIdentifierAction(R.id.nav_gallery, 0)
 
     }
 
     private fun initialization() {
-        addFragment(frag1)
+
         addFragment(frag2)
         addFragment(frag3)
         addFragment(frag4)
         hideFragment(frag3)
-        hideFragment(frag2)
         hideFragment(frag4)
-        showFragment(frag1)
+        showFragment(frag2)
 
         spin_univ =
-            createFromResource(applicationContext, R.array.spinner_univ, android.R.layout.simple_spinner_dropdown_item)
+            createFromResource(applicationContext, R.array.spinner_univ, R.layout.spinner_item)
+        spin_univ.setDropDownViewResource(R.layout.spinner_dropdown_item)
         spinner_parent.adapter = spin_univ
         spinner_parent.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -173,8 +196,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     choice_univ = "가천대학교"
                     spin_dm = createFromResource(
                         view!!.context, R.array.spinner_dm
-                        , android.R.layout.simple_spinner_dropdown_item
+                        ,R.layout.spinner_item
                     )
+                    spin_dm.setDropDownViewResource(R.layout.spinner_dropdown_item)
                     spinner_child.adapter = spin_dm
                     spinner_child.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                         override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -219,35 +243,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
         when (item.itemId) {
-            R.id.Schedule -> {
 
-                if (item.itemId != im) {
-
-
-                    if (frag1 != null) {
-                        showFragment(frag1)
-                    }
-                    if (frag2 != null) {
-                        hideFragment(frag2)
-                    }
-                    if (frag3 != null) {
-                        hideFragment(frag3)
-                    }
-                    if (frag4 != null) {
-                        hideFragment(frag4)
-                    }
-
-
-                    im = item.itemId
-                }
-
-            }
             R.id.nav_gallery -> {
                 if (item.itemId != im) {
 
-                    if (frag1 != null) {
-                        hideFragment(frag1)
-                    }
                     if (frag2 != null) {
                         showFragment(frag2)
                     }
@@ -266,9 +265,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 if (item.itemId != im) {
 
 
-                    if (frag1 != null) {
-                        hideFragment(frag1)
-                    }
+
                     if (frag2 != null) {
                         hideFragment(frag2)
                     }
@@ -286,9 +283,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 if (item.itemId != im) {
 
 
-                    if (frag1 != null) {
-                        hideFragment(frag1)
-                    }
+
                     if (frag2 != null) {
                         hideFragment(frag2)
                     }
@@ -307,10 +302,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.License -> {
                 Handler().post(Runnable {
-
                     startActivity(Intent(applicationContext, LicenseActivity::class.java))
                     // builder?.show()
                 })
+            }
+            R.id.Schedule->{
+                drawer_layout.openDrawer(GravityCompat.END)
             }
 
         }

@@ -7,10 +7,7 @@
             android:title="Menu">
 
         <group android:checkableBehavior="single">
-            <item
-                    android:id="@+id/Schedule"
-                    android:icon="@drawable/paburic"
-                    android:title="U Talk"/>
+
             <item
                     android:id="@+id/nav_gallery"
                     android:icon="@drawable/ppap"
@@ -36,6 +33,10 @@
                     android:id="@+id/License"
                     android:icon="@drawable/infos"
                     android:title="라이센스"/>
+            <item
+                    android:id="@+id/Schedule"
+                    android:icon="@drawable/paburic"
+                    android:title="U Talk"/>
         </menu>
     </item>
 

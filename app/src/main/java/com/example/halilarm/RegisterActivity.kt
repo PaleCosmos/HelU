@@ -50,9 +50,11 @@ class RegisterActivity : AppCompatActivity() {
         }
         spinCheck_univ = createFromResource(
             applicationContext, R.array.spinner_univ,
-            android.R.layout.simple_spinner_dropdown_item
+            R.layout.spinner_item
         )
+        spinCheck_univ.setDropDownViewResource(R.layout.spinner_dropdown_item)
         spinner_univ.adapter = spinCheck_univ
+
         spinner_univ.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
@@ -60,7 +62,9 @@ class RegisterActivity : AppCompatActivity() {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 if (spinCheck_univ.getItem(position).toString().equals("가천대학교", ignoreCase = true)) {
                     choice_univ = "가천대학교"
-                    spinCheck_depart= createFromResource(applicationContext,R.array.spinner_dm,android.R.layout.simple_spinner_dropdown_item)
+                    spinCheck_depart= createFromResource(applicationContext,R.array.spinner_dm,R.layout.spinner_item)
+
+                    spinCheck_depart.setDropDownViewResource(R.layout.spinner_dropdown_item)
                     spinner_depart.adapter=spinCheck_depart
                     spinner_depart.onItemSelectedListener=object:AdapterView.OnItemSelectedListener{
                         override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
