@@ -9,14 +9,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import kotlinx.android.synthetic.main.activity_back_press.*
 import kotlinx.android.synthetic.main.activity_main.*
+import android.os.Build
+
+
 
 class BackKeyPress :AppCompatActivity(){
 
     var CODE:Int=-1
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_back_press)
         if(intent.getIntExtra("code",-1)==0)
         {
@@ -40,4 +45,10 @@ class BackKeyPress :AppCompatActivity(){
         ccc2.setOnClickListener { finish() }
     }
 
+    override fun setRequestedOrientation(requestedOrientation: Int) {
+        if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
+            super.setRequestedOrientation(requestedOrientation)
+        }
+
+    }
 }

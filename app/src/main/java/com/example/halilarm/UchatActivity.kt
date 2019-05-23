@@ -39,12 +39,12 @@ class UchatActivity : AppCompatActivity() {
     lateinit var yournickname: String
     lateinit var yourphone: String
     lateinit var receiver: Receiver
-    lateinit var myuniv:String
-    lateinit var mydepart:String
+    lateinit var myuniv: String
+    lateinit var mydepart: String
     lateinit var me: ChatUser
     lateinit var you: ChatUser
     lateinit var wantgenderString: String
-    var wantgender=true
+    var wantgender = true
 
     var myId: Int = 0
     lateinit var myIcon: Bitmap
@@ -55,6 +55,7 @@ class UchatActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
         updateStatusBarColor("#E43F3F")
         setContentView(R.layout.activity_u_chat)
         myId = 0
@@ -62,8 +63,12 @@ class UchatActivity : AppCompatActivity() {
         yourId = 1
         yourIcon = BitmapFactory.decodeResource(resources, R.drawable.face_1)
 
-        wantgender=intent.getBooleanExtra("wantgender",true)
-        wantgenderString = if(wantgender){"true"}else{"false"}
+        wantgender = intent.getBooleanExtra("wantgender", true)
+        wantgenderString = if (wantgender) {
+            "true"
+        } else {
+            "false"
+        }
         nicknames = intent.getStringExtra("nickname")
         key = intent.getStringExtra("key")
         univ = intent.getStringExtra("univ")
@@ -71,9 +76,9 @@ class UchatActivity : AppCompatActivity() {
         gender = intent.getStringExtra("gender")
         phone = intent.getStringExtra("phone")
 
-        mydepart=intent.getStringExtra("mydepart")
+        mydepart = intent.getStringExtra("mydepart")
 
-       myuniv=intent.getStringExtra("myuniv")
+        myuniv = intent.getStringExtra("myuniv")
 
         me = ChatUser(0, nicknames, myIcon)
 
@@ -122,7 +127,7 @@ class UchatActivity : AppCompatActivity() {
             }
         }
         )
-        mChatView.isEnabled=false
+        mChatView.isEnabled = false
     }
 
 
@@ -142,7 +147,7 @@ class UchatActivity : AppCompatActivity() {
             finish()
             socket.close()
         }
-        if (requestCode == 32) {
+        if (resultCode == 32) {
 
             switch = false
             finish()
@@ -197,7 +202,7 @@ class UchatActivity : AppCompatActivity() {
                                 yournickname = data[1]
                                 yourphone = data[2]
                                 write("ACTION:NULL:NULL")
-                                runOnUiThread{mChatView.isEnabled=true}
+                                runOnUiThread { mChatView.isEnabled = true }
                                 you = ChatUser(1, yournickname, yourIcon)
                             }
                         }

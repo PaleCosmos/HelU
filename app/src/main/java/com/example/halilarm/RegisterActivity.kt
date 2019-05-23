@@ -36,6 +36,7 @@ class RegisterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
         setContentView(R.layout.activity_register)
         mHandler = Handler()
         auth = FirebaseAuth.getInstance()

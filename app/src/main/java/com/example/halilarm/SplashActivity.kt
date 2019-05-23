@@ -17,6 +17,7 @@ class SplashActivity:AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
        updateStatusBarColor("#E43F3F")
         setContentView(R.layout.splash)
         var h = Handler()

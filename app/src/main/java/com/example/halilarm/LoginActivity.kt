@@ -41,8 +41,10 @@ class LoginActivity : AppCompatActivity() {
 
     var backKeyPressedTime: Long = 0L
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
+        super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_login)
         updateStatusBarColor("#E43F3F")
         sh_Pref = getSharedPreferences("Login credentials", Context.MODE_PRIVATE)

@@ -3,20 +3,19 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tool"
+        xmlns:sothree="http://schemas.android.com/apk/res-auto"
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
+
         android:theme="@style/AppTheme.Dark"
         android:windowSoftInputMode = "adjustResize"
-        tools:openDrawer="start"
-
-
->
+        tools:openDrawer="start">
+        <!--android:fitsSystemWindows="true"-->
 
 <RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent">
         <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent"
-        android:id="@+id/fragmentS"></FrameLayout>
+        android:id="@+id/fragmentS"/>
 </RelativeLayout>
 
     <include
@@ -27,13 +26,25 @@
 
     <com.google.android.material.navigation.NavigationView
             android:id="@+id/nav_view"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="start"
             android:fitsSystemWindows="true"
+            android:layout_marginRight="64dp"
             app:headerLayout="@layout/nav_header_main"
             app:itemIconTint="@drawable/drawer_item_color"
             app:itemTextColor="@drawable/drawer_item_color"
             app:menu="@menu/activity_main_drawer"/>
 
+    <com.google.android.material.navigation.NavigationView
+            android:id="@+id/nav_view2"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_gravity="end"
+            android:layout_marginLeft="-64dp"
+            android:fitsSystemWindows="true"
+            app:headerLayout="@layout/nav_header_sub"
+            app:itemIconTint="@drawable/drawer_item_color"
+            app:itemTextColor="@drawable/drawer_item_color"
+          />
 </androidx.drawerlayout.widget.DrawerLayout>

@@ -9,7 +9,7 @@
                android:scaleType="fitCenter"
                android:src="@drawable/splash"
                android:layout_alignParentTop="true" android:layout_marginTop="146dp"
-               android:layout_centerInParent="true"/>
+               android:layout_centerInParent="true" android:contentDescription="TODO"/>
     <com.wang.avi.AVLoadingIndicatorView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -5,7 +5,6 @@
         xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
         android:theme="@style/AppTheme.Dark.Dialog"
         android:layout_gravity="center"
-
         android:layout_width="300dp"
         android:layout_height="wrap_content">
 
@@ -80,7 +79,7 @@
     >
         <TableLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                      android:background="@color/primary"
-                     android:layout_alignParentEnd="true"
+
                      android:stretchColumns="*"
         >
             <TableRow>

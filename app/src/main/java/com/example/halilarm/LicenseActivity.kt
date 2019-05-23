@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
 import android.view.Window.FEATURE_NO_TITLE
 import android.content.pm.ActivityInfo
+import android.os.Build
 import android.widget.Toast
 import kotlinx.android.synthetic.main.license.*
 
@@ -23,8 +24,10 @@ class LicenseActivity : AppCompatActivity() {
     private var clipData: ClipData? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestWindowFeature(FEATURE_NO_TITLE)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
+        requestWindowFeature(FEATURE_NO_TITLE)
+
         setContentView(R.layout.license)
         window.setFeatureDrawableResource(FEATURE_NO_TITLE, android.R.drawable.ic_dialog_alert)
 
@@ -84,6 +87,12 @@ class LicenseActivity : AppCompatActivity() {
     override fun onBackPressed() {
         finish()
         return
+    }
+    override fun setRequestedOrientation(requestedOrientation: Int) {
+        if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
+            super.setRequestedOrientation(requestedOrientation)
+        }
+
     }
 }
 

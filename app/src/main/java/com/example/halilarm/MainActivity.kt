@@ -22,22 +22,31 @@ import androidx.appcompat.app.AppCompatActivity
 
 import android.view.*
 import android.view.inputmethod.InputMethodManager
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
+import android.widget.ArrayAdapter.*
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.app_bar_main.*
 import androidx.drawerlayout.widget.DrawerLayout
+import kotlinx.android.synthetic.main.app_bar_main.*
+
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-
-    var im = R.id.action_logout
+    var im = R.id.Schedule
     var builder: AlertDialog.Builder? = null
     var dialogView: View? = null
     var backKeyPressedTime: Long = 0L
     var myClass: UserInfo? = null
-
+    lateinit var man:RadioButton
+    lateinit var startChat:Button
+    lateinit var spin_univ: ArrayAdapter<CharSequence>
+    lateinit var spin_dm: ArrayAdapter<CharSequence>
+    lateinit var intents: Intent
+    lateinit var spinner_parent:Spinner
+    lateinit var spinner_child:Spinner
+    var choice_univ: String? = null
+    var choice_dm: String? = null
+    lateinit var header:View
     companion object {
         @JvmStatic
         var frag1: androidx.fragment.app.Fragment? = Fragment1()
@@ -52,29 +61,42 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     // var mWeekView: WeekView?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        updateStatusBarColor("#E43F3F")
+
+        updateStatusBarColor("#CC1D1D")
         setContentView(R.layout.activity_main)
         this.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-        setSupportActionBar(toolbar)
+        //setSupportActionBar(toolbar)
         builder = AlertDialog.Builder(this)
         dialogView = layoutInflater.inflate(R.layout.license, null)
         builder?.setView(dialogView)
 
-
-
-        var bd = Bundle(6)
-
-        bd.putBoolean("gender", intent.getBooleanExtra("gender", true))  /// 번들에 집어넣기@@
-        bd.putString("phone", intent.getStringExtra("phone"))
-        bd.putString("nickname", intent.getStringExtra("nickname"))
-        bd.putString("key", intent.getStringExtra("key"))
-        bd.putString("university",intent.getStringExtra("university"))
-        bd.putString("department",intent.getStringExtra("department"))
-
-        frag1?.arguments = bd
+        header=nav_view2.getHeaderView(0)
+        man=header.findViewById(R.id.man)
+        man.isChecked = true
+        spinner_parent=header.findViewById(R.id.spinner_parent)
+        spinner_child=header.findViewById(R.id.spinner_child)
+        startChat=header.findViewById(R.id.startChat)
         initialization()
+        startChat.setOnClickListener {
+            intents = Intent(applicationContext, UchatActivity::class.java)
+            intents.putExtra("wantgender", man.isChecked)
+            intents.putExtra("key", intent.getStringExtra("key"))
+            intents.putExtra("nickname", intent.getStringExtra("nickname"))
+            var gendy:String?=null
+            if(intent.getBooleanExtra("gender", true))gendy="true"
+            else gendy="false"
+            intents.putExtra("gender", gendy)
+            intents.putExtra("phone", intent.getStringExtra("phone"))
+            intents.putExtra("univ", choice_univ)
+            intents.putExtra("depart", choice_dm)
+
+            intents.putExtra("myuniv", intent.getStringExtra("university"))
+
+            intents.putExtra("mydepart", intent.getStringExtra("department"))
+            startActivityForResult(intents, 1)
+            drawer_layout.closeDrawer(GravityCompat.END)
+        }
 
         fab.tag = "DRAG Button"
 
@@ -88,13 +110,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         fab.setOnLongClickListener {
-
+            if (currentFocus != null) {
+                (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+                    .hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+            }
+            drawer_layout.openDrawer(GravityCompat.END)
             true
         }
 
 
+/*                                                       toolbar = null*/
         val toggle = object : ActionBarDrawerToggle(
-            this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
+            this, drawer_layout, null, R.string.navigation_drawer_open, R.string.navigation_drawer_close
         ) {
             override fun onDrawerStateChanged(newState: Int) {
                 if (newState == DrawerLayout.STATE_SETTLING) {
@@ -113,6 +140,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
+        nav_view2.setNavigationItemSelectedListener {
+
+            true
+        }
 
         nav_view.getHeaderView(0).findViewById<TextView>(R.id.myNicknamess).text =
             "${getIntent().getStringExtra("nickname")}님 환영합니다!"
@@ -132,6 +163,35 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         hideFragment(frag2)
         hideFragment(frag4)
         showFragment(frag1)
+
+        spin_univ =
+            createFromResource(applicationContext, R.array.spinner_univ, android.R.layout.simple_spinner_dropdown_item)
+        spinner_parent.adapter = spin_univ
+        spinner_parent.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                if (spin_univ.getItem(position).toString().equals("가천대학교", ignoreCase = true)) {
+                    choice_univ = "가천대학교"
+                    spin_dm = createFromResource(
+                        view!!.context, R.array.spinner_dm
+                        , android.R.layout.simple_spinner_dropdown_item
+                    )
+                    spinner_child.adapter = spin_dm
+                    spinner_child.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                            choice_dm = spin_dm.getItem(position).toString()
+                        }
+                        override fun onNothingSelected(parent: AdapterView<*>?) {
+                        }
+                    }
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+        }
+
+
     }
 
 
@@ -144,23 +204,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 Toast.makeText(applicationContext, "나갈거야?", Toast.LENGTH_SHORT).show()
                 return
             } else {
-                val back = Intent(this,BackKeyPress::class.java)
-                back.putExtra("code",1)
-                startActivityForResult(back,3)
+                val back = Intent(this, BackKeyPress::class.java)
+                back.putExtra("code", 1)
+                startActivityForResult(back, 3)
             }
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
 
-        menuInflater.inflate(R.menu.main, menu)
-        var nickname = getIntent().getStringExtra("nickname")
-
-        var item: MenuItem = menu.getItem(0)
-        item.title = "로그아웃"
-        return true
-    }
 
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -274,8 +325,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             setResult(Activity.RESULT_OK)
             finish()
         }
-        if(resultCode == 99)
-        {
+        if (resultCode == 99) {
             setResult(1004)
             finish()
         }

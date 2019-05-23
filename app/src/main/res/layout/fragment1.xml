@@ -6,29 +6,7 @@
                                                      tools:context=".Fragment1"
 >
 
-    <Spinner android:layout_width="wrap_content" android:layout_height="wrap_content"
-             android:id="@+id/spinner_parent"
-             android:layout_alignParentStart="true"
-    >    </Spinner>
-        <Spinner android:layout_width="wrap_content" android:layout_height="wrap_content"
-                 android:layout_toRightOf="@+id/spinner_parent"
-                 android:id="@+id/spinner_child"></Spinner>
-<RadioGroup android:layout_width="wrap_content" android:layout_height="wrap_content"
-android:id="@+id/whatgender"
-           android:layout_below="@+id/spinner_parent"
-android:orientation="horizontal">
-    <androidx.appcompat.widget.AppCompatRadioButton android:layout_width="wrap_content"
-                                                    android:id="@+id/man"
-                                                    android:text="남성"
-                                                    android:layout_height="wrap_content"/>
-    <androidx.appcompat.widget.AppCompatRadioButton android:layout_width="wrap_content"
-                                                    android:id="@+id/woman"
-                                                    android:text="여성"
-                                                    android:layout_height="wrap_content"/>
-</RadioGroup>
-    <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/spinner_child"
-            android:text="시작" android:id="@+id/startChat"/>
+
 
 
 </RelativeLayout>
