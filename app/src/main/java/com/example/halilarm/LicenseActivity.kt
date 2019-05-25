@@ -77,6 +77,21 @@ class LicenseActivity : AppCompatActivity() {
             clipCopy("Chat Message View")
             true
         }
+
+        bt4.setOnClickListener {
+            txtText.text = getString(R.string.AndroidImageCropper)
+            licenseText?.text = "Android Image Cropper"
+        }
+        bt4I.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/ArthurHub/Android-Image-Cropper")))
+
+        }
+        bt4I.setOnLongClickListener {
+            clipData = ClipData.newPlainText("", "https://github.com/ArthurHub/Android-Image-Cropper")
+            clips?.primaryClip = clipData
+            clipCopy("Chat Message View")
+            true
+        }
     }
 
 

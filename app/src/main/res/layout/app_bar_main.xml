@@ -11,16 +11,41 @@
 
 
     <include layout="@layout/content_main"/>
-
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="25dp"
+            android:layout_marginBottom="200dp"
+            app:pressedTranslationZ="12dp"
+            app:elevation="6dp"
+            android:visibility="invisible"
+            app:backgroundTint="@color/primary"
+            app:srcCompat="@drawable/upto"/>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="25dp"
+            app:elevation="6dp"
+            android:visibility="invisible"
+            android:layout_marginBottom="130dp"
+            app:pressedTranslationZ="12dp"
+            app:backgroundTint="@color/primary"
+            app:srcCompat="@drawable/downto"/>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_marginEnd="25dp"
-            android:layout_marginBottom="20dp"
-
+            android:layout_marginBottom="25dp"
+            app:elevation="6dp"
+            app:pressedTranslationZ="12dp"
             app:backgroundTint="@color/primary"
             app:srcCompat="@drawable/outline_add_white_18dp"/>
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

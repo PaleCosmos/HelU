@@ -10,16 +10,23 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import android.widget.Toast
 import android.content.pm.ActivityInfo
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.icu.text.IDNA
+import android.net.Uri
 import android.provider.MediaStore
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter.*
+import androidx.core.content.FileProvider
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.activity_register.*
+import java.io.ByteArrayOutputStream
 import java.util.regex.Pattern
 
 
@@ -32,6 +39,10 @@ class RegisterActivity : AppCompatActivity() {
     var choice_depart: String? = null
     lateinit var spinCheck_univ: ArrayAdapter<CharSequence>
     lateinit var spinCheck_depart: ArrayAdapter<CharSequence>
+    lateinit var storage: FirebaseStorage
+    lateinit var storageReference: StorageReference
+    lateinit var authReference: StorageReference
+    lateinit var uidReference: StorageReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +56,9 @@ class RegisterActivity : AppCompatActivity() {
         link_return.setOnClickListener {
             finish()
         }
+        storage = FirebaseStorage.getInstance("gs://fir-setting-4ea55.appspot.com/")
+        storageReference = storage.reference
+
         email_Register_button2.setOnClickListener {
             validChecker()
         }
@@ -62,13 +76,13 @@ class RegisterActivity : AppCompatActivity() {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 if (spinCheck_univ.getItem(position).toString().equals("가천대학교", ignoreCase = true)) {
                     choice_univ = "가천대학교"
-                    spinCheck_depart= createFromResource(applicationContext,R.array.spinner_dm,R.layout.spinner_item)
+                    spinCheck_depart = createFromResource(applicationContext, R.array.spinner_dm, R.layout.spinner_item)
 
                     spinCheck_depart.setDropDownViewResource(R.layout.spinner_dropdown_item)
-                    spinner_depart.adapter=spinCheck_depart
-                    spinner_depart.onItemSelectedListener=object:AdapterView.OnItemSelectedListener{
+                    spinner_depart.adapter = spinCheck_depart
+                    spinner_depart.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                         override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                            choice_depart=spinCheck_depart.getItem(position).toString()
+                            choice_depart = spinCheck_depart.getItem(position).toString()
                         }
 
                         override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -85,7 +99,7 @@ class RegisterActivity : AppCompatActivity() {
         password1.error = null
         password2.error = null
         nickname.error = null
-        phone.error=null
+        phone.error = null
     }
 
     private fun errorMaker(num: Int, msg: String) {
@@ -95,7 +109,7 @@ class RegisterActivity : AppCompatActivity() {
             1 -> password1.error = msg
             2 -> password2.error = msg
             3 -> nickname.error = msg
-            4-> phone.error=msg
+            4 -> phone.error = msg
         }
     }
 
@@ -125,11 +139,10 @@ class RegisterActivity : AppCompatActivity() {
         } else if (nickInBox.length < 2 || nickInBox.length > 8) {
             errorMaker(3, "닉네임은 2자 이상 8자 이하로 구성되어야 합니다.")
             allEnabled()
-        }else if(!android.util.Patterns.PHONE.matcher(phones).matches()){
-            errorMaker(4,"번호의 형식이 올바르지않습니다.")
+        } else if (!android.util.Patterns.PHONE.matcher(phones).matches()) {
+            errorMaker(4, "번호의 형식이 올바르지않습니다.")
             allEnabled()
-        }
-        else {
+        } else {
             auth?.createUserWithEmailAndPassword(idInBox, passInBox)
                 ?.addOnCompleteListener(this,
                     OnCompleteListener<AuthResult> { task ->
@@ -139,11 +152,19 @@ class RegisterActivity : AppCompatActivity() {
                             userModel.email = user?.email
                             userModel.nickname = nickInBox
                             userModel.gender = gender
-                            userModel.university=choice_univ
-                            userModel.department=choice_depart
-                            userModel.phone =phones
+                            userModel.university = choice_univ
+                            userModel.department = choice_depart
+                            userModel.phone = phones
                             databaseReference?.child("users")?.child(user!!.uid)
                                 ?.setValue(userModel)
+                            // JPG 파일인지 확인 필요
+                            authReference=storageReference.child("profile")
+                            uidReference = authReference.child("${task.result?.user?.uid}.png")
+
+                            val bitmap = BitmapFactory.decodeResource(resources,R.drawable.profile)
+                            val baos = ByteArrayOutputStream()
+                            bitmap.compress(Bitmap.CompressFormat.PNG,100,baos)
+                            var uploadTask = uidReference.putBytes(baos.toByteArray())
                             finish()
                         } else {
                             Toast.makeText(this@RegisterActivity, "등록 에러", Toast.LENGTH_SHORT).show()
@@ -175,9 +196,9 @@ class RegisterActivity : AppCompatActivity() {
         email_Register_button2.isEnabled = false
         link_return.isEnabled = false
         genderChecker.isEnabled = false
-        spinner_depart.isEnabled=false
-        spinner_univ.isEnabled=false
-        phone.isEnabled=false
+        spinner_depart.isEnabled = false
+        spinner_univ.isEnabled = false
+        phone.isEnabled = false
     }
 
     private fun allEnabled() {
@@ -188,9 +209,9 @@ class RegisterActivity : AppCompatActivity() {
         email_Register_button2.isEnabled = true
         link_return.isEnabled = true
         genderChecker.isEnabled = true
-        spinner_depart.isEnabled=true
-        spinner_univ.isEnabled=true
-        phone.isEnabled=true
+        spinner_depart.isEnabled = true
+        spinner_univ.isEnabled = true
+        phone.isEnabled = true
     }
 
     private fun makeCustomToast(msg: String) {

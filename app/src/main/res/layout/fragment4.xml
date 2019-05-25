@@ -5,15 +5,6 @@
               android:background="@color/white"
               tools:context=".Fragment4"
 >
-    <Button android:layout_width="74dp" android:layout_height="151dp"
-            android:text="ok"
-            android:id="@+id/btbt"/>
-    <EditText android:layout_width="30dp" android:layout_height="77dp"
-              android:hint="시발"
-              android:id="@+id/eet"/>
-    <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-              android:id="@+id/tvtv"
-              android:text="채팅"
-              android:textColor="@color/primary"
-    />
+    <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="FRAG3"/>
 </LinearLayout>

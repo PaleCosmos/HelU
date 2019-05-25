@@ -12,6 +12,14 @@
         <item name="android:textColor">@color/my_spinner_text_color</item>
     </style>
 
+    <style name="myTheme" parent="@style/Theme.AppCompat">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="titleTextColor">@color/white</item>
+        <item name="actionMenuTextColor">@color/white</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name ="android:statusBarColor">@color/primary_darker</item>
+    </style>
+
     <style name="AppTheme.Dark" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>

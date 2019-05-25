@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+        android:theme="@style/AppTheme.Dark.Dialog"
+        android:layout_gravity="center"
+        android:layout_width="200dp"
+        android:layout_height="80dp">
+
+
+
+
+
+<RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent"
+android:layout_centerInParent="true">
+
+    <RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent"
+                    android:layout_toStartOf="@+id/centrals">
+<ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"
+android:id="@+id/Cameras"
+
+           android:layout_centerInParent="true"
+           android:src="@drawable/cameras"
+/>
+    </RelativeLayout>
+    <!-- 타이틀바 -->
+
+<View android:layout_width="3dp" android:layout_height="match_parent"
+      android:id="@+id/centrals"
+      android:background="@color/white"
+android:layout_centerHorizontal="true"/>
+
+    <RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent"
+                    android:layout_toEndOf="@id/centrals">
+    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"
+               android:layout_centerInParent="true"
+
+               android:src="@drawable/collections"
+               android:id="@+id/Albums"/></RelativeLayout>
+</RelativeLayout>
+    <!-- Notice -->
+
+</RelativeLayout>

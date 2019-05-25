@@ -120,7 +120,18 @@
 
                         android:background="@drawable/custom_button"/>
             </TableRow>
+            <TableRow>
+                <Button android:layout_height="wrap_content" android:layout_width="match_parent"
+                        android:text="AndroidImageCropper"
+                        android:background="@drawable/custom_button"
+                        android:id="@+id/bt4" android:textColor="@color/primary_darker"
+                />
+                <Button android:layout_height="wrap_content" android:layout_width="50dp"
+                        android:text="방문" android:textColor="@color/primary_darker"
+                        android:id="@+id/bt4I"
 
+                        android:background="@drawable/custom_button"/>
+            </TableRow>
         </TableLayout>
     </ScrollView>
     <!-- 닫기 버튼 -->

@@ -8,6 +8,11 @@
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.camera2"/>
+
 
     <application
             android:name=".MyApplication"
@@ -17,7 +22,19 @@
             android:roundIcon="@mipmap/helu_circle"
             android:supportsRtl="true"
 
-            android:theme="@style/AppTheme" tools:ignore="GoogleAppIndexingWarning" >
+            android:theme="@style/AppTheme" tools:ignore="GoogleAppIndexingWarning">
+
+        <provider
+                android:name="androidx.core.content.FileProvider"
+                android:authorities="com.example.halilarm.provider"
+                android:exported="false"
+                android:grantUriPermissions="true">
+
+            <meta-data
+                    android:name="android.support.FILE_PROVIDER_PATHS"
+                    android:resource="@xml/provider_path" />
+        </provider>
+
 
         <service android:name=".MyFirebaseMessagingService">
             <intent-filter>
@@ -26,10 +43,16 @@
         </service>
         <receiver android:name=".AlarmBroadcastReceiver"/>
         <activity android:name=".BackKeyPress" android:theme="@style/AppTheme.Dark.Dialog"
-       />
+        />
         <service android:name=".NotificationJobFireBaseService"/>
+
+        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+                  android:theme="@style/myTheme"/>
+
         <activity android:name=".LogoutActivity"
 
+                  android:theme="@style/AppTheme.Dark.Dialog"/>
+        <activity android:name=".ProfileActivity"
                   android:theme="@style/AppTheme.Dark.Dialog"/>
         <activity android:name=".LicenseActivity"
 
@@ -49,35 +72,43 @@
                   android:label=""
                   android:theme="@style/AppTheme.Dark"
 
-        />        <activity
+        />
+        <activity
                 android:name=".LoginActivity"
                 android:label=""
                 android:theme="@style/AppTheme.Dark"
 
                 android:windowSoftInputMode="adjustNothing">
         </activity>
-<activity android:name=".ConnectingException"
-          android:theme="@style/AppTheme.Dark.Dialog"/>
+        <activity android:name=".ConnectingException"
+                  android:theme="@style/AppTheme.Dark.Dialog"/>
         <activity
 
                 android:name=".RegisterActivity"
                 android:label=""
 
                 android:theme="@style/AppTheme.Dark"
-             />
+        />
         <activity
                 android:name=".MainActivity"
 
                 android:theme="@style/AppTheme.NoActionBar"
                 android:label="">
-               <!-- android:theme="@style/AppTheme.NoActionBar"-->
+
         </activity>
+
+        <activity android:name="com.soundcloud.android.crop.CropImageActivity"
+                  android:screenOrientation="portrait"
+                  android:theme="@style/Theme.AppCompat.NoActionBar"
+
+        />
+
         <uses-library android:name="android.test.runner"
                       android:required="false"/>
         <uses-library android:name="android.test.base"
-                      android:required="false" />
+                      android:required="false"/>
         <uses-library android:name="android.test.mock"
-                      android:required="false" />
+                      android:required="false"/>
 
     </application>
 

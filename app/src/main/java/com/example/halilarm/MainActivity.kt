@@ -1,17 +1,25 @@
 package com.example.halilarm
 
 
+
 import android.app.Activity
 import android.content.Context
 
 import android.content.Intent
 import android.content.pm.ActivityInfo
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+
 import android.graphics.Color
+
+import android.net.Uri
 
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.os.Vibrator
+import android.provider.MediaStore
 
 import com.google.android.material.navigation.NavigationView
 import androidx.core.view.GravityCompat
@@ -21,40 +29,53 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 
 import android.view.*
-import android.view.animation.Animation
+
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import android.widget.ArrayAdapter.*
 import kotlinx.android.synthetic.main.activity_main.*
 import androidx.drawerlayout.widget.DrawerLayout
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.app_bar_main.*
+import java.io.ByteArrayOutputStream
 
 
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, View.OnClickListener,
+    View.OnLongClickListener {
 
     var im = R.id.nav_gallery
     var builder: AlertDialog.Builder? = null
     var dialogView: View? = null
     var backKeyPressedTime: Long = 0L
     var myClass: UserInfo? = null
-    lateinit var man:RadioButton
-    lateinit var startChat:Button
-    lateinit var spin_univ: ArrayAdapter<CharSequence>
-    lateinit var spin_dm: ArrayAdapter<CharSequence>
+    lateinit var man: RadioButton
+    lateinit var startChat: Button
+    lateinit var adapter_univ: ArrayAdapter<CharSequence>
+    lateinit var adapter_depart: ArrayAdapter<CharSequence>
     lateinit var intents: Intent
-    lateinit var spinner_parent:Spinner
-    lateinit var spinner_child:Spinner
+    lateinit var spinner_parent: Spinner
+    lateinit var spinner_child: Spinner
+    private lateinit var profile:CircleImageView
+    lateinit var storage: FirebaseStorage
+    lateinit var storageReference: StorageReference
+    lateinit var authReference: StorageReference
+    lateinit var uidReference: StorageReference
+
     var choice_univ: String? = null
     var choice_dm: String? = null
-    lateinit var fab_open:Animation
-    lateinit var fab_close:Animation
-    lateinit var header:View
+    var isFabOpen = false
+    var initFrag = 0  // 0-> frag2 ,1->frag3, 2->frag4
+    lateinit var header: View
+    lateinit var myUid:String
     var FLAG = 0
+
     companion object {
-        @JvmStatic
-        var frag1: androidx.fragment.app.Fragment? = Fragment1()
         @JvmStatic
         var frag2: androidx.fragment.app.Fragment? = Fragment2()
         @JvmStatic
@@ -67,7 +88,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-
         updateStatusBarColor("#CC1D1D")
         setContentView(R.layout.activity_main)
         this.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
@@ -75,23 +95,32 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         builder = AlertDialog.Builder(this)
         dialogView = layoutInflater.inflate(R.layout.license, null)
         builder?.setView(dialogView)
-        fab_open=AnimationUtils.loadAnimation(applicationContext,R.anim.fab_open)
-        fab_close=AnimationUtils.loadAnimation(applicationContext,R.anim.fab_close)
-        header=nav_view2.getHeaderView(0)
-        man=header.findViewById(R.id.man)
+
+        storage = FirebaseStorage.getInstance("gs://fir-setting-4ea55.appspot.com/")
+        storageReference = storage.reference
+        authReference=storageReference.child("profile")
+        myUid = intent.getStringExtra("key")
+        uidReference = authReference.child("$myUid.png")
+
+
+        /*
+        */
+        header = nav_view2.getHeaderView(0)
+        man = header.findViewById(R.id.man)
         man.isChecked = true
-        spinner_parent=header.findViewById(R.id.spinner_parent)
-        spinner_child=header.findViewById(R.id.spinner_child)
-        startChat=header.findViewById(R.id.startChat)
+        spinner_parent = header.findViewById(R.id.spinner_parent)
+        spinner_child = header.findViewById(R.id.spinner_child)
+        startChat = header.findViewById(R.id.startChat)
         initialization()
         startChat.setOnClickListener {
             intents = Intent(applicationContext, UchatActivity::class.java)
             intents.putExtra("wantgender", man.isChecked)
-            intents.putExtra("key", intent.getStringExtra("key"))
+
+            intents.putExtra("key", myUid)
             intents.putExtra("nickname", intent.getStringExtra("nickname"))
-            var gendy:String?=null
-            if(intent.getBooleanExtra("gender", true))gendy="true"
-            else gendy="false"
+            var gendy: String? = ""
+            if (intent.getBooleanExtra("gender", true)) gendy = "true"
+            else gendy = "false"
             intents.putExtra("gender", gendy)
             intents.putExtra("phone", intent.getStringExtra("phone"))
             intents.putExtra("univ", choice_univ)
@@ -107,44 +136,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         fab.tag = "DRAG Button"
 
 
-        fab.setOnClickListener {
-            if (currentFocus != null) {
-                (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
-                    .hideSoftInputFromWindow(currentFocus?.windowToken, 0)
-            }
-            drawer_layout.openDrawer(GravityCompat.START)
-        }
-
-        fab.setOnLongClickListener {
-            if (currentFocus != null) {
-                (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
-                    .hideSoftInputFromWindow(currentFocus?.windowToken, 0)
-            }
-            drawer_layout.openDrawer(GravityCompat.END)
-            true
-        }
-
 
 /*                                                       toolbar = null*/
         val toggle = object : ActionBarDrawerToggle(
             this, drawer_layout, null, R.string.navigation_drawer_open, R.string.navigation_drawer_close
         ) {
 
-
-            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
-                when(slideOffset)
-                {
-                    0f->{
-
-                        fab.startAnimation(fab_open)
-
-                    }
-                    else->{
-                        fab.startAnimation(fab_close)
-                    }
-                }
-                super.onDrawerSlide(drawerView, slideOffset)
-            }
 
             override fun onDrawerStateChanged(newState: Int) {
                 if (newState == DrawerLayout.STATE_SETTLING) {
@@ -164,20 +161,166 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
-        nav_view2.setNavigationItemSelectedListener{
+        nav_view2.setNavigationItemSelectedListener {
 
             true
         }
 
         nav_view.getHeaderView(0).findViewById<TextView>(R.id.myNicknamess).text =
-            "${getIntent().getStringExtra("nickname")}님 환영합니다!"
+            "${intent.getStringExtra("nickname")}님 환영합니다!"
+
+        profile=nav_view.getHeaderView(0).findViewById(R.id.imageViewss)
+
+        profile.setOnClickListener{
+            var tents =Intent(applicationContext,ProfileActivity::class.java)
+            startActivityForResult(tents,135)
+        }
+
+        var fs = FirebaseStorage.getInstance()
+       var imagesRef=fs.reference.child("profile/$myUid.png")
+
+
+        Glide.with(applicationContext)
+                .load(imagesRef)
+                .override(100,100)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .into(profile)
 
         nav_view.setCheckedItem(R.id.nav_gallery)
         nav_view.menu.performIdentifierAction(R.id.nav_gallery, 0)
 
     }
 
+
+    override fun onClick(v: View?) {
+        var id = v?.id
+        when (id) {
+            R.id.fab -> {
+                if (currentFocus != null) {
+                    (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+                        .hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+                }
+                drawer_layout.openDrawer(GravityCompat.START)
+            }
+
+            R.id.fab3 -> { // up
+                when (initFrag) {
+                    0 -> {
+                        var vibe = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                        vibe.vibrate(40)
+                    }
+                    1 -> {
+                        if (frag2 != null) {
+                            showFragment(frag2)
+                        }
+                        if (frag3 != null) {
+                            hideFragment(frag3)
+                        }
+                        if (frag4 != null) {
+                            hideFragment(frag4)
+                        }
+
+                        im = R.id.nav_gallery
+                        nav_view.setCheckedItem(im)
+                        initFrag = 0
+                    }
+                    2 -> {
+
+                        if (frag2 != null) {
+                            hideFragment(frag2)
+                        }
+                        if (frag3 != null) {
+                            showFragment(frag3)
+                        }
+                        if (frag4 != null) {
+                            hideFragment(frag4)
+                        }
+                        im = R.id.nav_slideshow
+                        nav_view.setCheckedItem(im)
+                        initFrag = 1
+                    }
+                }
+            }
+            R.id.fab2 -> {
+                when (initFrag) {
+                    0 -> {
+
+
+                        if (frag2 != null) {
+                            hideFragment(frag2)
+                        }
+                        if (frag3 != null) {
+                            showFragment(frag3)
+                        }
+                        if (frag4 != null) {
+                            hideFragment(frag4)
+                        }
+                        im = R.id.nav_slideshow
+                        nav_view.setCheckedItem(im)
+                        initFrag = 1
+                    }
+                    1 -> {
+
+                        if (frag2 != null) {
+                            hideFragment(frag2)
+                        }
+                        if (frag3 != null) {
+                            hideFragment(frag3)
+                        }
+                        if (frag4 != null) {
+                            showFragment(frag4)
+                        }
+
+                        im = R.id.nav_manage
+                        nav_view.setCheckedItem(im)
+                        initFrag = 2
+                    }
+                    2 -> {
+                        var vibe = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                        vibe.vibrate(40)
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onLongClick(v: View?): Boolean {
+        var id = v?.id
+        when (id) {
+            R.id.fab -> {
+                rotateFab()
+                var vibe = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                vibe.vibrate(40)
+            }
+
+        }
+        return true
+    }
+
+    fun rotateFab() {
+        if (isFabOpen) {
+            fab.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.rotate_backward));
+            fab2.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close));
+            fab3.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close));
+            fab2.setClickable(false);
+            fab3.setClickable(false);
+            isFabOpen = false;
+        } else {
+            fab.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_forward));
+            fab2.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open));
+            fab3.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open));
+            fab2.setClickable(true);
+            fab3.setClickable(true);
+            isFabOpen = true;
+
+        }
+
+    }
+
     private fun initialization() {
+
+
 
         addFragment(frag2)
         addFragment(frag3)
@@ -185,25 +328,29 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         hideFragment(frag3)
         hideFragment(frag4)
         showFragment(frag2)
-
-        spin_univ =
+        fab.setOnLongClickListener(this)
+        fab.setOnClickListener(this)
+        fab2.setOnClickListener(this)
+        fab3.setOnClickListener(this)
+        adapter_univ =
             createFromResource(applicationContext, R.array.spinner_univ, R.layout.spinner_item)
-        spin_univ.setDropDownViewResource(R.layout.spinner_dropdown_item)
-        spinner_parent.adapter = spin_univ
+        adapter_univ.setDropDownViewResource(R.layout.spinner_dropdown_item)
+        spinner_parent.adapter = adapter_univ
         spinner_parent.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                if (spin_univ.getItem(position).toString().equals("가천대학교", ignoreCase = true)) {
+                if (adapter_univ.getItem(position).toString().equals("가천대학교", ignoreCase = true)) {
                     choice_univ = "가천대학교"
-                    spin_dm = createFromResource(
+                    adapter_depart = createFromResource(
                         view!!.context, R.array.spinner_dm
-                        ,R.layout.spinner_item
+                        , R.layout.spinner_item
                     )
-                    spin_dm.setDropDownViewResource(R.layout.spinner_dropdown_item)
-                    spinner_child.adapter = spin_dm
+                    adapter_depart.setDropDownViewResource(R.layout.spinner_dropdown_item)
+                    spinner_child.adapter = adapter_depart
                     spinner_child.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                         override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                            choice_dm = spin_dm.getItem(position).toString()
+                            choice_dm = adapter_depart.getItem(position).toString()
                         }
+
                         override fun onNothingSelected(parent: AdapterView<*>?) {
                         }
                     }
@@ -220,7 +367,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     override fun onBackPressed() {
-        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+        if (drawer_layout.isDrawerOpen(GravityCompat.START) || drawer_layout.isDrawerOpen(GravityCompat.END)) {
             drawer_layout.closeDrawers()
         } else {
             if (System.currentTimeMillis() > backKeyPressedTime + 2000L) {
@@ -234,8 +381,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
     }
-
-
 
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -265,7 +410,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 if (item.itemId != im) {
 
 
-
                     if (frag2 != null) {
                         hideFragment(frag2)
                     }
@@ -281,7 +425,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.nav_manage -> {
                 if (item.itemId != im) {
-
 
 
                     if (frag2 != null) {
@@ -306,7 +449,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     // builder?.show()
                 })
             }
-            R.id.Schedule->{
+            R.id.Schedule -> {
                 drawer_layout.openDrawer(GravityCompat.END)
             }
 
@@ -321,10 +464,28 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (resultCode == Activity.RESULT_OK) {
             setResult(Activity.RESULT_OK)
             finish()
-        }
-        if (resultCode == 99) {
+        } else if (resultCode == 99) {
             setResult(1004)
             finish()
+        }else if(resultCode==75)
+        {
+                var profileUri = data?.getParcelableExtra("profileUri") as Uri
+
+            Glide.with(applicationContext)
+                .load(profileUri)
+                .override(100,100)
+                .into(profile)
+
+uidReference.delete()
+                var bitg = MediaStore.Images.Media.getBitmap(contentResolver,
+                    profileUri
+                )
+
+            val baos = ByteArrayOutputStream()
+            bitg.compress(Bitmap.CompressFormat.PNG,100,baos)
+            var uploadTask = uidReference.putBytes(baos.toByteArray())
+
+
         }
     }
 
