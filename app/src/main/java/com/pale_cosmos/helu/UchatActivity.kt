@@ -1,10 +1,14 @@
 package com.pale_cosmos.helu
 import android.app.Activity
+import android.app.Dialog
+import android.app.ProgressDialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -12,7 +16,9 @@ import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDialog
 import androidx.core.content.ContextCompat
 import com.github.bassaer.chatmessageview.model.ChatUser
 import com.github.bassaer.chatmessageview.model.Message
@@ -37,7 +43,7 @@ class UchatActivity : AppCompatActivity() {
     lateinit var yourkey: String
     lateinit var yournickname: String
     lateinit var yourphone: String
-    lateinit var receiver: Receiver
+    //lateinit var receiver: Receiver
     lateinit var myuniv: String
     lateinit var mydepart: String
     lateinit var me: ChatUser
@@ -80,9 +86,11 @@ class UchatActivity : AppCompatActivity() {
         myuniv = intent.getStringExtra("myuniv")
 
         me = ChatUser(0, nicknames, myIcon)
-
+/*
         receiver = Receiver()
-        receiver.start()
+        receiver.start()*/
+
+
         mChatView.setRightBubbleColor(ContextCompat.getColor(this, R.color.primary));
         mChatView.setLeftBubbleColor(R.color.primary);
         mChatView.setBackgroundColor(ContextCompat.getColor(this, R.color.blueGray500));
@@ -166,103 +174,132 @@ class UchatActivity : AppCompatActivity() {
         }
     }
 
-    inner class Send(msg: String) : Thread() {
-        var message = "MESSAGE:$nicknames:$msg"
-        override fun run() {
-            receiver.write(message)
+
+
+
+    inner class AsyncSocketService:AsyncTask<String,Void,String>()
+    {
+        var progressDialog:ProgressDialog?=null
+
+        override fun onPreExecute() {
+
         }
 
-    }
+        override fun doInBackground(vararg params: String?): String {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
 
-    inner class Receiver : Thread() {
+        override fun onPostExecute(result: String?) {
+            super.onPostExecute(result)
+        }
 
-        override fun run() {
-            socket = Socket("219.248.6.32", 7654)
-            Dos = DataOutputStream(socket.getOutputStream())
-            Dis = DataInputStream(socket.getInputStream())
-            Log.d("anggimotti", "tlqkf")
-            while (switch) {
-                var msg = read()
-                Log.d("anggimotti", msg)
-                var tokens = msg.split(":")
+        fun progressOn(activity:Activity,message:String)
+        {
+            if(activity==null||activity.isFinishing)return
 
-                when (tokens[0]) {
-                    "REQUEST" -> {
-                        when (tokens[1]) {
-                            "INFORMATION" -> write("PROVIDE:INFORMATION:$key,$nicknames,$myuniv,$mydepart,$gender,$phone")
-                            "MATCHINGDATA" -> write("PROVIDE:MATCHINGDATA:$univ,$depart,$wantgenderString") // gender선택만들어야함
-                        }
-                    }
-                    "PROVIDE" -> {
-                        when (tokens[1]) {
-                            "MATCHINGDATASET" -> {
-                                var data = tokens[2].split(",")
-                                yourkey = data[0]
-                                yournickname = data[1]
-                                yourphone = data[2]
-                                write("ACTION:NULL:NULL")
-                                runOnUiThread { mChatView.isEnabled = true }
-                                you = ChatUser(1, yournickname, yourIcon)
+            if(progressDialog==null){
+                progressDialog=AppCompatDialog(activity) as ProgressDialog
+
+
+            }
+
+        }
+        inner class Send(msg: String) : Thread() {
+            var message = "MESSAGE:$nicknames:$msg"
+            override fun run() {
+                receiver.write(message)
+            }
+
+        }
+        inner class Receiver : Thread() {
+
+            override fun run() {
+                socket = Socket("219.248.6.32", 7654)
+                Dos = DataOutputStream(socket.getOutputStream())
+                Dis = DataInputStream(socket.getInputStream())
+                Log.d("anggimotti", "tlqkf")
+                while (switch) {
+                    var msg = read()
+
+                    var tokens = msg.split(":")
+
+                    when (tokens[0]) {
+                        "REQUEST" -> {
+                            when (tokens[1]) {
+                                "INFORMATION" -> write("PROVIDE:INFORMATION:$key,$nicknames,$myuniv,$mydepart,$gender,$phone")
+                                "MATCHINGDATA" -> write("PROVIDE:MATCHINGDATA:$univ,$depart,$wantgenderString") // gender선택만들어야함
                             }
                         }
-                    }
-                    "ACTION" -> {
-                        when (tokens[1]) {
-                            "EXIT" -> {
-                                startActivityForResult(Intent(applicationContext, ConnectingException::class.java), 1)
-                                socket.close()
+                        "PROVIDE" -> {
+                            when (tokens[1]) {
+                                "MATCHINGDATASET" -> {
+                                    var data = tokens[2].split(",")
+                                    yourkey = data[0]
+                                    yournickname = data[1]
+                                    yourphone = data[2]
+                                    write("ACTION:NULL:NULL")
+                                    runOnUiThread { mChatView.isEnabled = true }
+                                    you = ChatUser(1, yournickname, yourIcon)
+                                }
                             }
                         }
-                    }
-                    "MESSAGE" -> {
+                        "ACTION" -> {
+                            when (tokens[1]) {
+                                "EXIT" -> {
+                                    startActivityForResult(Intent(applicationContext, ConnectingException::class.java), 1)
+                                    socket.close()
+                                }
+                            }
+                        }
+                        "MESSAGE" -> {
 
-                        runOnUiThread {
+                            runOnUiThread {
 
-                            var textMessage = tokens[2]
-                            var message = Message.Builder()
-                                .setUser(you)
-                                .setRight(false)
-                                .setText(textMessage)
-                                .hideIcon(false)
-                                .build()
-                            mChatView.receive(message)
+                                var textMessage = tokens[2]
+                                var message = Message.Builder()
+                                    .setUser(you)
+                                    .setRight(false)
+                                    .setText(textMessage)
+                                    .hideIcon(false)
+                                    .build()
+                                mChatView.receive(message)
+
+                            }
 
                         }
-
-                    }
-                    else -> {
+                        else -> {
+                        }
                     }
                 }
             }
-        }
 
-        fun write(msg: String) {
-            try {
-                Dos.writeUTF(msg)
-                Dos.flush()
-            } catch (e: Exception) {
-                switch = false
-                runOnUiThread {
-                    startActivityForResult(Intent(applicationContext, ConnectingException::class.java), 1)
+            fun write(msg: String) {
+                try {
+                    Dos.writeUTF(msg)
+                    Dos.flush()
+                } catch (e: Exception) {
+                    switch = false
+                    runOnUiThread {
+                        startActivityForResult(Intent(applicationContext, ConnectingException::class.java), 1)
+                    }
+                    socket.close()
                 }
-                socket.close()
             }
-        }
 
-        fun read(): String {
-            try {
-                var g = Dis.readUTF()
-                return g
-            } catch (e: Exception) {
-                switch = false
-                runOnUiThread {
-                    startActivityForResult(Intent(applicationContext, ConnectingException::class.java), 1)
+            fun read(): String {
+                try {
+                    var g = Dis.readUTF()
+                    return g
+                } catch (e: Exception) {
+                    switch = false
+                    runOnUiThread {
+                        startActivityForResult(Intent(applicationContext, ConnectingException::class.java), 1)
+                    }
+                    socket.close()
+                    return ""
                 }
-                socket.close()
-                return ""
             }
         }
     }
-
 
 }

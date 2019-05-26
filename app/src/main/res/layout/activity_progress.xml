@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+                name="title"
+                type="String" />
+        <variable
+                name="massage"
+                type="String" />
+        <variable
+                name="okay"
+                type="String" />
+    </data>
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#00ffffff">
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_margin="40dp"
+                android:background="#ffffff"
+                android:elevation="25dp"
+                android:gravity="center"
+                android:orientation="vertical">
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:layout_marginTop="17dp"
+                    android:text="@{title}"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="13dp"
+                    android:text="@{massage}"
+                    android:textSize="16sp" />
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                <RelativeLayout
+                        android:id="@+id/okay_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:focusable="true"
+                       >
+                    <com.wang.avi.AVLoadingIndicatorView  android:layout_width="wrap_content"
+                                                          android:layout_height="wrap_content"
+                                                          android:layout_centerInParent="true"
+                                                          android:layout_marginBottom="16dp"/>
+
+                </RelativeLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+    </RelativeLayout>
+</layout>

@@ -34,10 +34,12 @@ import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import android.widget.ArrayAdapter.*
+import androidx.core.view.isVisible
 import kotlinx.android.synthetic.main.activity_main.*
 import androidx.drawerlayout.widget.DrawerLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import de.hdodenhof.circleimageview.CircleImageView
@@ -61,7 +63,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var intents: Intent
     lateinit var spinner_parent: Spinner
     lateinit var spinner_child: Spinner
-    private lateinit var profile:CircleImageView
+    private lateinit var profile: CircleImageView
     lateinit var storage: FirebaseStorage
     lateinit var storageReference: StorageReference
     lateinit var authReference: StorageReference
@@ -72,7 +74,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     var isFabOpen = false
     var initFrag = 0  // 0-> frag2 ,1->frag3, 2->frag4
     lateinit var header: View
-    lateinit var myUid:String
+    lateinit var myUid: String
+
     var FLAG = 0
 
     companion object {
@@ -98,7 +101,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         storage = FirebaseStorage.getInstance("gs://palecosmos-helu.appspot.com/")
         storageReference = storage.reference
-        authReference=storageReference.child("profile")
+        authReference = storageReference.child("profile")
         myUid = intent.getStringExtra("key")
         uidReference = authReference.child("$myUid.png")
 
@@ -136,7 +139,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         fab.tag = "DRAG Button"
 
 
-
 /*                                                       toolbar = null*/
         val toggle = object : ActionBarDrawerToggle(
             this, drawer_layout, null, R.string.navigation_drawer_open, R.string.navigation_drawer_close
@@ -169,23 +171,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         nav_view.getHeaderView(0).findViewById<TextView>(R.id.myNicknamess).text =
             "${intent.getStringExtra("nickname")}님 환영합니다!"
 
-        profile=nav_view.getHeaderView(0).findViewById(R.id.imageViewss)
+        profile = nav_view.getHeaderView(0).findViewById(R.id.imageViewss)
 
-        profile.setOnClickListener{
-            var tents =Intent(applicationContext,ProfileActivity::class.java)
-            startActivityForResult(tents,135)
+       // fabStart.isVisible=false
+        profile.setOnClickListener {
+            var tents = Intent(applicationContext, ProfileActivity::class.java)
+            startActivityForResult(tents, 135)
         }
 
         var fs = FirebaseStorage.getInstance()
-       var imagesRef=fs.reference.child("profile/$myUid.png")
+        var imagesRef = fs.reference.child("profile/$myUid.png")
 
 
         Glide.with(applicationContext)
-                .load(imagesRef)
-                .override(100,100)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .skipMemoryCache(true)
-                .into(profile)
+            .load(imagesRef)
+            .override(100, 100)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .skipMemoryCache(true)
+            .into(profile)
 
         nav_view.setCheckedItem(R.id.nav_gallery)
         nav_view.menu.performIdentifierAction(R.id.nav_gallery, 0)
@@ -319,7 +322,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun initialization() {
-
 
 
         addFragment(frag2)
@@ -462,31 +464,30 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
-            setResult(Activity.RESULT_OK)
+            startActivity(Intent(this@MainActivity, LoginActivity::class.java))
             finish()
         } else if (resultCode == 99) {
-            setResult(1004)
             finish()
-        }else if(resultCode==75)
-        {
-                var profileUri = data?.getParcelableExtra("profileUri") as Uri
+        } else if (resultCode == 75) {
+            var profileUri = data?.getParcelableExtra("profileUri") as Uri
 
             Glide.with(applicationContext)
                 .load(profileUri)
-                .override(100,100)
+                .override(100, 100)
                 .into(profile)
 
-uidReference.delete()
-                var bitg = MediaStore.Images.Media.getBitmap(contentResolver,
-                    profileUri
-                )
+            uidReference.delete()
+            var bitg = MediaStore.Images.Media.getBitmap(
+                contentResolver,
+                profileUri
+            )
 
             val baos = ByteArrayOutputStream()
-            bitg.compress(Bitmap.CompressFormat.PNG,100,baos)
-            var uploadTask = uidReference.putBytes(baos.toByteArray())
+            bitg.compress(Bitmap.CompressFormat.PNG, 100, baos)
+            uidReference.putBytes(baos.toByteArray())
 
             var myFile = File(profileUri.path)
-            if(myFile.exists())myFile.delete()
+            if (myFile.exists()) myFile.delete()
 
         }
     }

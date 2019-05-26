@@ -32,7 +32,6 @@ class LoginActivity : AppCompatActivity() {
         var userModel: UserInfo? = null
         var database: FirebaseDatabase? = null
         var myRef: DatabaseReference? = null
-        var nicks: String? = null
         var sh_Pref: SharedPreferences? = null
         var toEdit: SharedPreferences.Editor? = null
         var counter = 0
@@ -134,7 +133,6 @@ class LoginActivity : AppCompatActivity() {
             Toast.makeText(applicationContext, "나갈거야?", Toast.LENGTH_SHORT).show()
             return
         } else {
-            setResult(RESULT_OK)
             finish()
         }
     }
@@ -146,10 +144,6 @@ class LoginActivity : AppCompatActivity() {
                     if (task.isSuccessful) {
                         //var user = auth?.currentUser?.displayName
                         var uid = auth?.currentUser!!.uid
-                        var phone: String = ""
-                        var gender: Boolean? = null
-                        var university: String = ""
-                        var department: String = ""
                         var myInfo: UserInfo?
 
 
@@ -171,7 +165,6 @@ class LoginActivity : AppCompatActivity() {
                                 intents.putExtra("id", myInfo?.email)
                                 intents.putExtra("university", myInfo?.university)
                                 intents.putExtra("department", myInfo?.department)
-                                Log.d("INTENTEXTRA",myInfo?.university)
 
                                 if (saveID.isChecked) {
 
@@ -188,7 +181,7 @@ class LoginActivity : AppCompatActivity() {
                                 }
                                 toEdit?.commit()
                                 startActivityForResult(intents, 101)
-
+                                finish()
                                 //Toast.makeText(this@LoginActivity,"nickname = $nicks",Toast.LENGTH_SHORT).show()
                             }
 
@@ -196,7 +189,7 @@ class LoginActivity : AppCompatActivity() {
                                 TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                             }
                         })
-// 수정해야함
+
                     } else {
                         allEnabled()
                         input_password.error = "비밀번호가 올바르지 않습니다."
@@ -206,28 +199,8 @@ class LoginActivity : AppCompatActivity() {
     }
 
 
-    override fun onDestroy() {
-        super.onDestroy()
 
-    }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-
-            allEnabled()
-
-            if (!saveID.isChecked) {
-                input_email.setText("")
-            }
-            if (!loging.isChecked) {
-                input_password.setText("")
-            }
-        } else if (resultCode == 1004) {
-            setResult(Activity.RESULT_OK)
-            finish()
-        }
-    }
 
     private fun makeCustomToast(msg: String, xSet: Int, ySet: Int) {
         var view: View =
@@ -244,26 +217,23 @@ class LoginActivity : AppCompatActivity() {
 
     private fun applySharedPreference() {
 
-        Log.d("tq", "ddd")
         if (sh_Pref != null && sh_Pref!!.contains("Email") &&
             sh_Pref!!.getBoolean("SAVEFLAG", false)
         ) {
             var ML = sh_Pref?.getString("Email", "NULL")
             input_email.setText(ML)
             saveID.isChecked = true
-            Log.d("SAVEFLAG", ML)
+
         }
         if (sh_Pref != null && sh_Pref!!.contains("Email") &&
             sh_Pref!!.getBoolean("AUTOLOGIN", false)
         ) {
-            allNotEnabled()
             var ML = sh_Pref?.getString("Email", "")
             input_email.setText(ML)
             var PW = sh_Pref?.getString("PASSWORD", "")
             input_password.setText(PW)
-            LoginCheck(ML!!, PW!!)
             loging.isChecked = true
-            Log.d("AUTOLOGIN", PW)
+
         }
     }
 

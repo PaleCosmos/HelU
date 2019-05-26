@@ -91,6 +91,36 @@ class LicenseActivity : AppCompatActivity() {
             clipCopy("Chat Message View")
             true
         }
+
+        bt5.setOnClickListener {
+            txtText.text = getString(R.string.TedPermission)
+            licenseText?.text = "Ted Permission"
+        }
+        bt5I.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/ParkSangGwon/TedPermission")))
+
+        }
+        bt5I.setOnLongClickListener {
+            clipData = ClipData.newPlainText("", "https://github.com/ParkSangGwon/TedPermission")
+            clips?.primaryClip = clipData
+            clipCopy("Ted Permission")
+            true
+        }
+
+        bt6.setOnClickListener {
+            txtText.text = getString(R.string.Glide)
+            licenseText?.text = "Glide"
+        }
+        bt6I.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/ParkSangGwon/TedPermission")))
+
+        }
+        bt6I.setOnLongClickListener {
+            clipData = ClipData.newPlainText("", "https://github.com/ParkSangGwon/TedPermission")
+            clips?.primaryClip = clipData
+            clipCopy("Ted Permission")
+            true
+        }
     }
 
 

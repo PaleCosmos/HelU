@@ -6,7 +6,7 @@
         android:theme="@style/AppTheme.Dark.Dialog"
         android:layout_gravity="center"
         android:layout_width="300dp"
-        android:layout_height="wrap_content">
+        android:layout_height="600dp">
 
 
     <!-- 타이틀바 -->
@@ -14,7 +14,7 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
 
-            android:layout_height="wrap_content">
+            android:layout_height="40dp">
         <TextView
                 android:text="라이센스"
                 android:textSize="20sp"
@@ -132,6 +132,33 @@
 
                         android:background="@drawable/custom_button"/>
             </TableRow>
+
+            <TableRow>
+                <Button android:layout_height="wrap_content" android:layout_width="match_parent"
+                        android:text="TedPermission"
+                        android:background="@drawable/custom_button"
+                        android:id="@+id/bt5" android:textColor="@color/primary_darker"
+                />
+                <Button android:layout_height="wrap_content" android:layout_width="50dp"
+                        android:text="방문" android:textColor="@color/primary_darker"
+                        android:id="@+id/bt5I"
+
+                        android:background="@drawable/custom_button"/>
+            </TableRow>
+
+            <TableRow>
+                <Button android:layout_height="wrap_content" android:layout_width="match_parent"
+                        android:text="Glide"
+                        android:background="@drawable/custom_button"
+                        android:id="@+id/bt6" android:textColor="@color/primary_darker"
+                />
+                <Button android:layout_height="wrap_content" android:layout_width="50dp"
+                        android:text="방문" android:textColor="@color/primary_darker"
+                        android:id="@+id/bt6I"
+
+                        android:background="@drawable/custom_button"/>
+            </TableRow>
+
         </TableLayout>
     </ScrollView>
     <!-- 닫기 버튼 -->
