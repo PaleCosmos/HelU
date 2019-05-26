@@ -1,4 +1,5 @@
 package com.pale_cosmos.helu
+
 import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -156,7 +157,6 @@ class LoginActivity : AppCompatActivity() {
                                 myInfo = p0.getValue(UserInfo::class.java)
 
 
-
                                 var intents = Intent(this@LoginActivity, MainActivity::class.java)
                                 intents.putExtra("nickname", myInfo?.nickname)
                                 intents.putExtra("key", uid)
@@ -197,9 +197,6 @@ class LoginActivity : AppCompatActivity() {
                     }
                 })
     }
-
-
-
 
 
     private fun makeCustomToast(msg: String, xSet: Int, ySet: Int) {

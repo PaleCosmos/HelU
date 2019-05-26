@@ -1,4 +1,5 @@
 package com.pale_cosmos.helu
+
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
@@ -133,14 +134,14 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener {
         var image = File.createTempFile(ImageFileName, ".jpg", storageDir)
         return image
     }
-private fun startCroping(fileUri:Uri)
-{
-    CropImage.activity(fileUri)
-        .setActivityMenuIconColor(Color.WHITE)
-        .setGuidelines(CropImageView.Guidelines.ON)
-        .setBorderLineColor(Color.parseColor("#CC1D1D"))
-        .start(this)
-}
+
+    private fun startCroping(fileUri: Uri) {
+        CropImage.activity(fileUri)
+            .setActivityMenuIconColor(Color.WHITE)
+            .setGuidelines(CropImageView.Guidelines.ON)
+            .setBorderLineColor(Color.parseColor("#CC1D1D"))
+            .start(this)
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         var tenty = Intent()
@@ -175,6 +176,7 @@ private fun startCroping(fileUri:Uri)
             }
         }
     }
+
     override fun setRequestedOrientation(requestedOrientation: Int) {
         if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
             super.setRequestedOrientation(requestedOrientation)

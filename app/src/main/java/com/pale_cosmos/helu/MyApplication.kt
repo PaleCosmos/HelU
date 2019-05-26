@@ -1,10 +1,24 @@
 package com.pale_cosmos.helu
+
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.Context
 import android.os.Build
 
-class MyApplication:Application() {
+
+class MyApplication : Application() {
+    init {
+        instance = this
+    }
+
+    companion object {
+        private var instance: MyApplication? = null
+        fun context(): Context {
+            return instance!!.applicationContext
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
         /**
@@ -19,4 +33,10 @@ class MyApplication:Application() {
             notificationManager.createNotificationChannel(channel)
         }
     }
+
+
 }
+
+
+
+

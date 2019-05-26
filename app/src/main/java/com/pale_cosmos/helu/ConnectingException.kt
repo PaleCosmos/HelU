@@ -7,7 +7,7 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_exception.*
 
-class ConnectingException:AppCompatActivity() {
+class ConnectingException : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,6 +19,7 @@ class ConnectingException:AppCompatActivity() {
             finish()
         }
     }
+
     override fun setRequestedOrientation(requestedOrientation: Int) {
         if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
             super.setRequestedOrientation(requestedOrientation)

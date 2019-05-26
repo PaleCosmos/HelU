@@ -1,4 +1,5 @@
 package com.pale_cosmos.helu
+
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -132,6 +133,7 @@ class LicenseActivity : AppCompatActivity() {
         finish()
         return
     }
+
     override fun setRequestedOrientation(requestedOrientation: Int) {
         if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
             super.setRequestedOrientation(requestedOrientation)

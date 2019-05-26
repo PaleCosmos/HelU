@@ -10,11 +10,11 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 
 
-class Fragment2: Fragment() {
+class Fragment2 : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment2, container, false) as ViewGroup
         var bt = view.findViewById<Button>(R.id.stdstd)
-        bt.setOnClickListener{
+        bt.setOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("way_w3w://start/529670")))
 
         }

@@ -1,4 +1,5 @@
 package com.pale_cosmos.helu
+
 import android.content.Context
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Registry
@@ -9,8 +10,8 @@ import com.google.firebase.storage.StorageReference
 import java.io.InputStream
 
 @GlideModule
-class MyGlideModule:AppGlideModule() {
+class MyGlideModule : AppGlideModule() {
     override fun registerComponents(context: Context, glide: Glide, registry: Registry) {
-        registry.append(StorageReference::class.java, InputStream::class.java,FirebaseImageLoader.Factory())
+        registry.append(StorageReference::class.java, InputStream::class.java, FirebaseImageLoader.Factory())
     }
 }

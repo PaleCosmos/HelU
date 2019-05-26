@@ -8,8 +8,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 
 
-
-class AlarmBroadcastReceiver:BroadcastReceiver() {
+class AlarmBroadcastReceiver : BroadcastReceiver() {
     private val NOTICATION_ID = 222
 
     override fun onReceive(context: Context?, intent: Intent?) {

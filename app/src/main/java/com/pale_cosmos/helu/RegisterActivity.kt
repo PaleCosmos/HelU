@@ -1,4 +1,5 @@
 package com.pale_cosmos.helu
+
 import android.os.Bundle
 import android.os.Handler
 import androidx.appcompat.app.AppCompatActivity
@@ -155,12 +156,12 @@ class RegisterActivity : AppCompatActivity() {
                             databaseReference?.child("users")?.child(user!!.uid)
                                 ?.setValue(userModel)
                             // JPG 파일인지 확인 필요
-                            authReference=storageReference.child("profile")
+                            authReference = storageReference.child("profile")
                             uidReference = authReference.child("${task.result?.user?.uid}.png")
 
-                            val bitmap = BitmapFactory.decodeResource(resources,R.drawable.profile)
+                            val bitmap = BitmapFactory.decodeResource(resources, R.drawable.profile)
                             val baos = ByteArrayOutputStream()
-                            bitmap.compress(Bitmap.CompressFormat.PNG,100,baos)
+                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)
                             var uploadTask = uidReference.putBytes(baos.toByteArray())
                             finish()
                         } else {

@@ -38,6 +38,7 @@ class LogoutActivity : AppCompatActivity() {
         finish()
         return
     }
+
     override fun setRequestedOrientation(requestedOrientation: Int) {
         if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
             super.setRequestedOrientation(requestedOrientation)

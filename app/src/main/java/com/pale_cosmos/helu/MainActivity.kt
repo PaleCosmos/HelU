@@ -173,7 +173,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         profile = nav_view.getHeaderView(0).findViewById(R.id.imageViewss)
 
-       // fabStart.isVisible=false
+        // fabStart.isVisible=false
         profile.setOnClickListener {
             var tents = Intent(applicationContext, ProfileActivity::class.java)
             startActivityForResult(tents, 135)
