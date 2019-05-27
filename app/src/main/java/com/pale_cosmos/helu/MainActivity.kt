@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var storageReference: StorageReference
     lateinit var authReference: StorageReference
     lateinit var uidReference: StorageReference
-
+    lateinit var myInfos: UserInfo
     var choice_univ: String? = null
     var choice_dm: String? = null
     var isFabOpen = false
@@ -102,12 +102,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         storage = FirebaseStorage.getInstance("gs://palecosmos-helu.appspot.com/")
         storageReference = storage.reference
         authReference = storageReference.child("profile")
-        myUid = intent.getStringExtra("key")
+
+        myUid = intent.getStringExtra("key") // myUID
+
         uidReference = authReference.child("$myUid.png")
 
+        myInfos = intent.getSerializableExtra("USERINFO") as UserInfo
 
-        /*
-        */
+
+
         header = nav_view2.getHeaderView(0)
         man = header.findViewById(R.id.man)
         man.isChecked = true
@@ -120,18 +123,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             intents.putExtra("wantgender", man.isChecked)
 
             intents.putExtra("key", myUid)
-            intents.putExtra("nickname", intent.getStringExtra("nickname"))
+
+
+            /*
+            intents.putExtra("nickname", myInfos.nickname)
             var gendy: String? = ""
-            if (intent.getBooleanExtra("gender", true)) gendy = "true"
+            if (myInfos.gender!!) gendy = "true"
             else gendy = "false"
             intents.putExtra("gender", gendy)
-            intents.putExtra("phone", intent.getStringExtra("phone"))
+            intents.putExtra("phone",myInfos.phone)
+            intents.putExtra("myuniv", myInfos.university)
+            intents.putExtra("mydepart", myInfos.department)
+*/
+            intents.putExtra("USERINFO",myInfos)
             intents.putExtra("univ", choice_univ)
             intents.putExtra("depart", choice_dm)
 
-            intents.putExtra("myuniv", intent.getStringExtra("university"))
-
-            intents.putExtra("mydepart", intent.getStringExtra("department"))
             startActivityForResult(intents, 1)
             drawer_layout.closeDrawer(GravityCompat.END)
         }
@@ -183,11 +190,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         var imagesRef = fs.reference.child("profile/$myUid.png")
 
 
-        Glide.with(applicationContext)
+        GlideApp.with(applicationContext)
             .load(imagesRef)
             .override(100, 100)
             .diskCacheStrategy(DiskCacheStrategy.NONE)
             .skipMemoryCache(true)
+            .placeholder(R.drawable.profile)
+            .error(R.drawable.profile)
             .into(profile)
 
         nav_view.setCheckedItem(R.id.nav_gallery)
@@ -471,9 +480,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         } else if (resultCode == 75) {
             var profileUri = data?.getParcelableExtra("profileUri") as Uri
 
-            Glide.with(applicationContext)
+            GlideApp.with(applicationContext)
                 .load(profileUri)
+
                 .override(100, 100)
+                .placeholder(R.drawable.profile)
+                .error(R.drawable.profile)
                 .into(profile)
 
             uidReference.delete()

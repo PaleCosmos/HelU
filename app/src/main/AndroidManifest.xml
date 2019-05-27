@@ -28,7 +28,7 @@
 
             <meta-data
                     android:name="android.support.FILE_PROVIDER_PATHS"
-                    android:resource="@xml/provider_path" />
+                    android:resource="@xml/provider_path"/>
         </provider>
 
 
@@ -44,7 +44,9 @@
 
         <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
                   android:theme="@style/myTheme"/>
-
+        <activity android:name=".SocketReceiveDialog"
+                  android:theme="@style/AppTheme.Dark.Dialog"
+        />
         <activity android:name=".LogoutActivity"
 
                   android:theme="@style/AppTheme.Dark.Dialog"/>

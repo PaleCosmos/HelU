@@ -1,10 +1,13 @@
 package com.pale_cosmos.helu
 import com.google.firebase.database.Exclude
 import com.google.firebase.database.IgnoreExtraProperties
+import java.io.Serializable
 import kotlin.collections.HashMap
 
 @IgnoreExtraProperties
-class UserInfo(){
+class UserInfo:Serializable{
+
+
     var email: String? = ""
     var nickname: String? = ""
     var gender:Boolean?=null
