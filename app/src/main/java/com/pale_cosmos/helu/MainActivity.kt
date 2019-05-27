@@ -501,12 +501,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             if (myFile.exists()) myFile.delete()
 
         } else if (resultCode == 7979) {
-            var friendKey = data?.getSerializableExtra("friend") as UserInfo
+            var friendKey = data?.getSerializableExtra("friend") as UchatInfo
 
             //친구추가창
         }else if(resultCode==7978)
         {
-            var friendKey = data?.getSerializableExtra("friend") as UserInfo
+            var friendKey = data?.getSerializableExtra("friend") as UchatInfo
 
             //친구추가창
         }

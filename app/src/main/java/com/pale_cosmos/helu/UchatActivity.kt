@@ -114,7 +114,7 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
                 if (myquitcheck) {
                     var res = Intent(this@UchatActivity, BackKeyPress::class.java)
                     res.putExtra("code", 2)
-                    startActivityForResult(res, 1)
+                    startActivityForResult(res,1)
                     deleteMyLog()
                 }
             }
@@ -186,7 +186,12 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
         mChatView.setAutoHidingKeyboard(true)
         mChatView.setOnClickSendButtonListener(this)
         mChatView.isEnabled = false
+        mChatView.setOnClickOptionButtonListener(object:View.OnClickListener{
+            override fun onClick(v: View?) {
 
+            }
+        })
+mChatView.setOptionButtonColor(R.color.primary_darker)
     }
 
     fun updateStatusBarColor(color: String) {
@@ -237,11 +242,10 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
 
         when (resultCode) {
             88 -> {
-
-                var res = Intent()
-                res.putExtra("friend", yourInfo)
-                setResult(7978, res)
-                myquitcheck = false
+                var resf = Intent()
+                resf.putExtra("friend", yourInfo)
+                Log.d("errorchecking",yourInfo?.nickname)
+                setResult(7978, resf)
                 finish()
             }
             32 -> {
@@ -250,8 +254,6 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
             }
             8080 -> {
                 yourInfo = data?.getSerializableExtra("yourInfo") as UchatInfo?
-                Log.d("onActivityResult", yourInfo?.nickname!!)
-
                 yourIcon = data?.getParcelableExtra("icon")!!
                 you = ChatUser(1, yourInfo?.nickname!!, yourIcon)
                 addChildListener(myDataRef)
@@ -281,7 +283,7 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        deleteMyLog()
+       deleteMyLog()
         myquitcheck = false
     }
 
