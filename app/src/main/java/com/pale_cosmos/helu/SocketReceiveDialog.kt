@@ -7,15 +7,20 @@ import android.graphics.Color
 import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.MotionEvent
 import android.view.Window
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDialog
 import androidx.transition.Transition
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.SimpleTarget
+import com.github.bassaer.chatmessageview.model.ChatUser
 
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.activity_socket_receive.*
 import kotlinx.android.synthetic.main.activity_u_chat.*
 import java.io.DataInputStream
@@ -24,14 +29,13 @@ import java.net.InetSocketAddress
 import java.net.Socket
 
 
-
-
-
 class SocketReceiveDialog : AppCompatActivity() {
     lateinit var socket: Socket
     val socketAddress = InetSocketAddress("219.248.6.32", 7654)
     lateinit var Dos: DataOutputStream
     lateinit var Dis: DataInputStream
+    lateinit var storage: FirebaseStorage
+    lateinit var stoRef: StorageReference
 
     lateinit var key: String
     lateinit var nicknames: String
@@ -47,6 +51,7 @@ class SocketReceiveDialog : AppCompatActivity() {
     lateinit var yourkey: String
     lateinit var yourphone: String
     lateinit var yourInfo: UchatInfo
+    var icon: Bitmap? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -54,7 +59,7 @@ class SocketReceiveDialog : AppCompatActivity() {
 
         requestWindowFeature(Window.FEATURE_NO_TITLE)
 
-        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         setContentView(R.layout.activity_socket_receive)
 
         loader.setBackgroundColor(Color.TRANSPARENT)
@@ -63,6 +68,7 @@ class SocketReceiveDialog : AppCompatActivity() {
     }
 
     private fun setValue() {
+        storage = FirebaseStorage.getInstance("gs://palecosmos-helu.appspot.com/")
         myInfo = intent.getSerializableExtra("USERINFO") as UserInfo
         key = intent.getStringExtra("key")
         nicknames = myInfo.nickname!!
@@ -77,10 +83,14 @@ class SocketReceiveDialog : AppCompatActivity() {
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        if (!socket.isConnected) socket.close()
+    }
+
     override fun onTouchEvent(event: MotionEvent?): Boolean {
 
-        if(event?.action==MotionEvent.ACTION_OUTSIDE)
-        {
+        if (event?.action == MotionEvent.ACTION_OUTSIDE) {
 
         }
 
@@ -99,7 +109,7 @@ class SocketReceiveDialog : AppCompatActivity() {
                 socket = Socket() // lateinit
 
                 socket.soTimeout = 300000
-                socket.connect(socketAddress, 3000)
+                socket.connect(socketAddress, 4000)
                 Dos = DataOutputStream(socket.getOutputStream())
                 Dis = DataInputStream(socket.getInputStream())
             } catch (e: Exception) {
@@ -107,14 +117,14 @@ class SocketReceiveDialog : AppCompatActivity() {
             }
 
             if (read().split(":")[1].equals("INFORMATION", ignoreCase = true)) {
-                write("PROVIDE:INFORMATION:$key,$nicknames,$myuniv,$mydepart,$gender,$phone\"")
+                write("PROVIDE:INFORMATION:$key,$nicknames,$myuniv,$mydepart,$gender,$phone")
             } else return "failed"
-
             if (read().split(":")[1].equals("MATCHINGDATA", ignoreCase = true)) {
                 write("PROVIDE:MATCHINGDATA:$univ,$depart,$wantgenderString")
             } else return "failed"
 
             var matchingDataSet = read()
+            Log.d("matchingDataSet", matchingDataSet)
             var dataSetSplited = matchingDataSet.split(":")
             if (dataSetSplited[1] == "MATCHINGDATASET") {
                 var data = dataSetSplited[2].split(",") // key,nickname,phone
@@ -122,24 +132,48 @@ class SocketReceiveDialog : AppCompatActivity() {
                 yournickname = data[1]
                 yourphone = data[2]
                 resulting = "success" // 매칭성공
+                Log.d("matchingDataSet", resulting)
             } else return "failed"
 
             return resulting
         }
 
+
         override fun onPostExecute(result: String?) {
 
-            if(!socket.isClosed)socket.close()
+            if (!socket.isClosed) socket.close()
+            Log.d("matchingDataSet", result)
             when (result) {
                 "success" -> {
-                    yourInfo= UchatInfo()
-                    yourInfo.setInfos(yourkey,yournickname,yourphone,univ,depart,wantgenderString)
+                    yourInfo = UchatInfo()
+                    yourInfo.setInfos(yourkey, yournickname, yourphone, univ, depart, wantgenderString)
+                    stoRef = storage.reference.child("profile").child("$yourkey.png")
 
-                    var intd = Intent()
-                    intd.putExtra("yourInfo",yourInfo)
+                    Log.d("matchingDataSet", yourInfo.key)
 
-                    setResult(8080,intd)
-                    finish()
+
+                    GlideApp.with(applicationContext).asBitmap().load(stoRef)
+                        .override(100,100)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .skipMemoryCache(true)
+                        .into(object : SimpleTarget<Bitmap>() {
+                            override fun onResourceReady(
+                                resource: Bitmap,
+                                transition: com.bumptech.glide.request.transition.Transition<in Bitmap>?
+                            ) {
+
+                                Log.d("matchingDataSet", "profile/$yourkey.png")
+                                icon = resource
+                                var intd = Intent()
+                                intd.putExtra("yourInfo", yourInfo)
+                                intd.putExtra("icon", icon)
+                                setResult(8080, intd)
+                                finish()
+                            }
+                        })
+
+
+
                 }
 
                 "failed" -> {
@@ -168,7 +202,7 @@ class SocketReceiveDialog : AppCompatActivity() {
                 msg = Dis.readUTF()
             } catch (e: Exception) {
                 msg = "null:A:A"
-                socket?.close()
+                socket.close()
             }
             return msg
         }

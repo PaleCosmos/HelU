@@ -482,7 +482,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             GlideApp.with(applicationContext)
                 .load(profileUri)
-
                 .override(100, 100)
                 .placeholder(R.drawable.profile)
                 .error(R.drawable.profile)

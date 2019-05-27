@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
@@ -26,10 +27,10 @@ import kotlinx.android.synthetic.main.activity_u_chat.*
 
 class UchatActivity : AppCompatActivity(), View.OnClickListener {
     lateinit var database: FirebaseDatabase
-    lateinit var storage: FirebaseStorage
+
     var dataRef: DatabaseReference?=null
     lateinit var myDataRef: DatabaseReference
-    lateinit var stoRef: StorageReference
+
     lateinit var nicknames: String
     lateinit var key: String
     lateinit var univ: String
@@ -55,7 +56,6 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(R.layout.activity_u_chat)
         initializationChatView()
         initialization()
-
     }
 
     private fun initialization() {
@@ -69,7 +69,6 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
         intents.putExtra("wantgender", wantgenderString)
         startActivityForResult(intents, 1)
         database = FirebaseDatabase.getInstance()
-        storage = FirebaseStorage.getInstance()
 
 
     }
@@ -86,10 +85,11 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
             "false"
         }
         myInfo = intent.getSerializableExtra("USERINFO") as UserInfo?
+
         key = intent.getStringExtra("key")
         database = FirebaseDatabase.getInstance()
-        myDataRef = database.reference.child("chats").child("$key").child("Uchat")
-        addChildListener(myDataRef)
+        myDataRef = database.reference.child("chats").child(key).child("Uchat")
+
         univ = intent.getStringExtra("univ")
         depart = intent.getStringExtra("depart")
         me = ChatUser(0, myInfo?.nickname!!, myIcon)
@@ -136,10 +136,7 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
                 TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
         })
-
-
     }
-
 
     private fun initializationChatView() {
 
@@ -210,17 +207,11 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
             32->finish()
             8080->{
                 yourInfo = data?.getSerializableExtra("yourInfo") as UchatInfo?
+                Log.d("onActivityResult",yourInfo?.nickname!!)
 
-                stoRef = storage.reference.child("profile/${yourInfo?.key}.png")
-                GlideApp.with(applicationContext).asBitmap().load(stoRef)
-                    .into(object : SimpleTarget<Bitmap>() {
-                        override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                            yourIcon = resource
-                            you = ChatUser(1, yourInfo?.nickname!!, yourIcon)
-                        }
-                    })
-//여기부터추가해야함
-
+                yourIcon =data?.getParcelableExtra("icon")!!
+                you= ChatUser(1, yourInfo?.nickname!!, yourIcon)
+                addChildListener(myDataRef)
                 dataRef = database.reference.child("chats").child("${yourInfo?.key}").child("Uchat")
 
             }
