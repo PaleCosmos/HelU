@@ -106,11 +106,9 @@ class SplashActivity : AppCompatActivity() {
                             myInfo = p0.getValue(UserInfo::class.java)
 
                             var intents = Intent(this@SplashActivity, MainActivity::class.java)
-                            intents.putExtra("nickname", myInfo?.nickname)
+
                             intents.putExtra("key", uid)
-                            intents.putExtra("gender", myInfo?.gender)
-                            intents.putExtra("phone", myInfo?.phone)
-                            intents.putExtra("id", myInfo?.email)
+                            intents.putExtra("USERINFO",myInfo)
                             intents.putExtra("university", myInfo?.university)
                             intents.putExtra("department", myInfo?.department)
 

@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var storageReference: StorageReference
     lateinit var authReference: StorageReference
     lateinit var uidReference: StorageReference
-    lateinit var myInfos: UserInfo
+    var myInfos: UserInfo?=null
     var choice_univ: String? = null
     var choice_dm: String? = null
     var isFabOpen = false
@@ -107,7 +107,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         uidReference = authReference.child("$myUid.png")
 
-        myInfos = intent.getSerializableExtra("USERINFO") as UserInfo
+        myInfos = intent.getSerializableExtra("USERINFO") as UserInfo?
 
 
 
@@ -176,7 +176,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         nav_view.getHeaderView(0).findViewById<TextView>(R.id.myNicknamess).text =
-            "${intent.getStringExtra("nickname")}님 환영합니다!"
+            "${(intent.getSerializableExtra("USERINFO") as UserInfo).nickname} 님 환영합니다!"
 
         profile = nav_view.getHeaderView(0).findViewById(R.id.imageViewss)
 

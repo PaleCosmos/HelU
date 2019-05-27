@@ -3,21 +3,28 @@ package com.pale_cosmos.helu
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.Window
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDialog
 import androidx.transition.Transition
 import com.bumptech.glide.request.target.SimpleTarget
 
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.android.synthetic.main.activity_socket_receive.*
 import kotlinx.android.synthetic.main.activity_u_chat.*
 import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.net.InetSocketAddress
 import java.net.Socket
+
+
+
 
 
 class SocketReceiveDialog : AppCompatActivity() {
@@ -44,8 +51,13 @@ class SocketReceiveDialog : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
+
         requestWindowFeature(Window.FEATURE_NO_TITLE)
+
+        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN)
         setContentView(R.layout.activity_socket_receive)
+
+        loader.setBackgroundColor(Color.TRANSPARENT)
         setValue()
         AsyncSocketService().execute("")
     }
@@ -65,6 +77,15 @@ class SocketReceiveDialog : AppCompatActivity() {
 
     }
 
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+
+        if(event?.action==MotionEvent.ACTION_OUTSIDE)
+        {
+
+        }
+
+        return false
+    }
 
     inner class AsyncSocketService : AsyncTask<String?, Void, String?>() {
 

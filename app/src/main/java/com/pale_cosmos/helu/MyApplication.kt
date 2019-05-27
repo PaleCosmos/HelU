@@ -17,10 +17,12 @@ class MyApplication : Application() {
         fun context(): Context {
             return instance!!.applicationContext
         }
+
     }
 
     override fun onCreate() {
         super.onCreate()
+
         /**
          * 노티피케이션 채널 생성하기 안드로이드 버전 오레오 이상부터 필요
          */

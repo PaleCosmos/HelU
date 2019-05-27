@@ -19,27 +19,27 @@ import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.github.bassaer.chatmessageview.model.ChatUser
 import com.github.bassaer.chatmessageview.model.Message
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.activity_u_chat.*
 
 class UchatActivity : AppCompatActivity(), View.OnClickListener {
-    lateinit var database:FirebaseDatabase
-    lateinit var storage:FirebaseStorage
-    lateinit var dataRef:DatabaseReference
-    lateinit var stoRef:StorageReference
+    lateinit var database: FirebaseDatabase
+    lateinit var storage: FirebaseStorage
+    var dataRef: DatabaseReference?=null
+    lateinit var myDataRef: DatabaseReference
+    lateinit var stoRef: StorageReference
     lateinit var nicknames: String
     lateinit var key: String
     lateinit var univ: String
     lateinit var depart: String
     lateinit var me: ChatUser
     lateinit var you: ChatUser
-    lateinit var myInfo: UserInfo
+    var myInfo: UserInfo?=null
     lateinit var wantgenderString: String
     lateinit var intents: Intent
-    lateinit var yourInfo: UchatInfo
+    var yourInfo: UchatInfo?=null
     var wantgender = true
     var myId: Int = 0
     lateinit var myIcon: Bitmap
@@ -68,7 +68,7 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
         intents.putExtra("depart", depart)
         intents.putExtra("wantgender", wantgenderString)
         startActivityForResult(intents, 1)
-        database= FirebaseDatabase.getInstance()
+        database = FirebaseDatabase.getInstance()
         storage = FirebaseStorage.getInstance()
 
 
@@ -85,12 +85,61 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
         } else {
             "false"
         }
-        myInfo = intent.getSerializableExtra("USERINFO") as UserInfo
+        myInfo = intent.getSerializableExtra("USERINFO") as UserInfo?
         key = intent.getStringExtra("key")
+        database = FirebaseDatabase.getInstance()
+        myDataRef = database.reference.child("chats").child("$key").child("Uchat")
+        addChildListener(myDataRef)
         univ = intent.getStringExtra("univ")
         depart = intent.getStringExtra("depart")
-        me = ChatUser(0, nicknames, myIcon)
+        me = ChatUser(0, myInfo?.nickname!!, myIcon)
     }
+
+    private fun addChildListener(ref: DatabaseReference) {
+        ref.addChildEventListener(object : ChildEventListener {
+            override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun onCancelled(p0: DatabaseError) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+                val data = p0.getValue(ChatValue::class.java)
+
+                when (data?.type) {
+                    "message" -> {
+                        var message = Message.Builder()
+                            .setUser(you)
+                            .setRight(false)
+                            .setText(data.message!!)
+                            .hideIcon(false)
+                            .build()
+                        Handler().post {
+                            mChatView.receive(message)
+                        }
+                    }
+                    "photo" -> {
+
+                    }
+                }
+
+
+            }
+
+            override fun onChildRemoved(p0: DataSnapshot) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+        })
+
+
+    }
+
 
     private fun initializationChatView() {
 
@@ -135,9 +184,14 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
                 .hideIcon(true)
                 .build()
 
-
-           // Send(text).start()
-
+            if(dataRef!=null) {
+                val msg = ChatValue()
+                msg.type="message"
+                msg.key=key
+                msg.message=text
+                msg.photo=null
+                dataRef?.push()?.setValue(msg)
+            }
             mChatView.inputText = ""
             Handler().post {
                 mChatView.receive(message)
@@ -149,33 +203,31 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == 88) {  //Back Key insertion
 
+        when(resultCode)
+        {
+            88-> finish()
+            32->finish()
+            8080->{
+                yourInfo = data?.getSerializableExtra("yourInfo") as UchatInfo?
 
-            finish()
-
-        }
-        if (resultCode == 32) {
-
-
-            finish()
-
-        }
-        if (resultCode == 8808) {
-           yourInfo = data?.getSerializableExtra("yourInfo") as UchatInfo
-
-            stoRef = storage.reference.child("profile/${yourInfo.key}.png")
-            GlideApp.with(applicationContext).asBitmap().load(stoRef)
-                .into(object: SimpleTarget<Bitmap>() {
-                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                       yourIcon=resource
-                        you=ChatUser(1,yourInfo.nickname!!,yourIcon)
-                    }
-                })
+                stoRef = storage.reference.child("profile/${yourInfo?.key}.png")
+                GlideApp.with(applicationContext).asBitmap().load(stoRef)
+                    .into(object : SimpleTarget<Bitmap>() {
+                        override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                            yourIcon = resource
+                            you = ChatUser(1, yourInfo?.nickname!!, yourIcon)
+                        }
+                    })
 //여기부터추가해야함
 
+                dataRef = database.reference.child("chats").child("${yourInfo?.key}").child("Uchat")
 
+            }
+            8081->finish()
+            8082->finish()
         }
+
     }
 
     override fun onBackPressed() {
