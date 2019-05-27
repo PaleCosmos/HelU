@@ -1,6 +1,7 @@
 package com.pale_cosmos.helu
 
 
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
@@ -9,6 +10,7 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.os.Vibrator
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
@@ -28,25 +30,25 @@ import kotlinx.android.synthetic.main.activity_u_chat.*
 class UchatActivity : AppCompatActivity(), View.OnClickListener {
     lateinit var database: FirebaseDatabase
 
-    var dataRef: DatabaseReference?=null
+    var dataRef: DatabaseReference? = null
     lateinit var myDataRef: DatabaseReference
-
+    var myquitcheck = true
     lateinit var nicknames: String
     lateinit var key: String
     lateinit var univ: String
     lateinit var depart: String
     lateinit var me: ChatUser
     lateinit var you: ChatUser
-    var myInfo: UserInfo?=null
+    var myInfo: UserInfo? = null
     lateinit var wantgenderString: String
     lateinit var intents: Intent
-    var yourInfo: UchatInfo?=null
+    var yourInfo: UchatInfo? = null
     var wantgender = true
     var myId: Int = 0
     lateinit var myIcon: Bitmap
     var yourId = 1
     lateinit var yourIcon: Bitmap
-
+    var areyou = true
     var backKeyPressedTime: Long = 0L
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,14 +97,40 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
         me = ChatUser(0, myInfo?.nickname!!, myIcon)
     }
 
-    private fun addChildListener(ref: DatabaseReference) {
+    private fun deleteChildListener(ref: DatabaseReference) {
         ref.addChildEventListener(object : ChildEventListener {
             override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
 
             override fun onCancelled(p0: DatabaseError) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+
+
+            }
+
+            override fun onChildRemoved(p0: DataSnapshot) {
+                if (myquitcheck) {
+                    var res = Intent(this@UchatActivity, BackKeyPress::class.java)
+                    res.putExtra("code", 2)
+                    startActivityForResult(res, 1)
+                    deleteMyLog()
+                }
+            }
+
+            override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+
+            }
+        })
+    }
+
+    private fun addChildListener(ref: DatabaseReference) {
+        ref.addChildEventListener(object : ChildEventListener {
+            override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+            }
+
+            override fun onCancelled(p0: DatabaseError) {
             }
 
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
@@ -110,6 +138,8 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
 
                 when (data?.type) {
                     "message" -> {
+                        if (areyou) (getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(40)
+                        areyou = false
                         var message = Message.Builder()
                             .setUser(you)
                             .setRight(false)
@@ -124,16 +154,14 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
 
                     }
                 }
-
-
             }
 
             override fun onChildRemoved(p0: DataSnapshot) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
             }
 
             override fun onChildChanged(p0: DataSnapshot, p1: String?) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
             }
         })
     }
@@ -174,6 +202,7 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
         var text = mChatView.inputText
 
         if (!text.isBlank()) {
+            areyou = true
             var message = Message.Builder()
                 .setUser(me)
                 .setRight(true)
@@ -181,12 +210,12 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
                 .hideIcon(true)
                 .build()
 
-            if(dataRef!=null) {
+            if (dataRef != null) {
                 val msg = ChatValue()
-                msg.type="message"
-                msg.key=key
-                msg.message=text
-                msg.photo=null
+                msg.type = "message"
+                msg.key = key
+                msg.message = text
+                msg.photo = null
                 dataRef?.push()?.setValue(msg)
             }
             mChatView.inputText = ""
@@ -198,27 +227,62 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
 
     }
 
+    private fun deleteMyLog() {
+        myDataRef.removeValue()
+
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        when(resultCode)
-        {
-            88-> finish()
-            32->finish()
-            8080->{
-                yourInfo = data?.getSerializableExtra("yourInfo") as UchatInfo?
-                Log.d("onActivityResult",yourInfo?.nickname!!)
+        when (resultCode) {
+            88 -> {
 
-                yourIcon =data?.getParcelableExtra("icon")!!
-                you= ChatUser(1, yourInfo?.nickname!!, yourIcon)
+                var res = Intent()
+                res.putExtra("friend", yourInfo)
+                setResult(7978, res)
+                myquitcheck = false
+                finish()
+            }
+            32 -> {
+                finish()
+                myquitcheck = false
+            }
+            8080 -> {
+                yourInfo = data?.getSerializableExtra("yourInfo") as UchatInfo?
+                Log.d("onActivityResult", yourInfo?.nickname!!)
+
+                yourIcon = data?.getParcelableExtra("icon")!!
+                you = ChatUser(1, yourInfo?.nickname!!, yourIcon)
                 addChildListener(myDataRef)
                 dataRef = database.reference.child("chats").child("${yourInfo?.key}").child("Uchat")
-
+                deleteChildListener(dataRef!!)
             }
-            8081->finish()
-            8082->finish()
+            8081 -> {
+                startActivityForResult(Intent(this@UchatActivity, ConnectingException::class.java), 1)
+            }
+            8082 -> {
+                startActivityForResult(Intent(this@UchatActivity, ConnectingException::class.java), 1)
+            }
+            10043 -> { // 친구추가
+                var res = Intent()
+                res.putExtra("friend", yourInfo)
+                setResult(7979, res)
+                myquitcheck = false
+                finish()
+            }
+            10044 -> {
+                myquitcheck = false
+                finish()
+            }
         }
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        deleteMyLog()
+        myquitcheck = false
     }
 
     override fun onBackPressed() {

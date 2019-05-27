@@ -6,15 +6,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
 
-android:background="#58ffffff"
+android:background="#00ffffff"
         android:layout_centerInParent="true">
     <com.wang.avi.AVLoadingIndicatorView
             android:id="@+id/loader"
+            android:background="#00ffffff"
             app:indicatorName="LineSpinFadeLoaderIndicator"
             android:layout_centerInParent="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/AVLoadingIndicatorView"
-
+            android:layout_marginBottom="40dp"
     />
 </RelativeLayout>

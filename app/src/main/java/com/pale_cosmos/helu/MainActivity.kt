@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var storageReference: StorageReference
     lateinit var authReference: StorageReference
     lateinit var uidReference: StorageReference
-    var myInfos: UserInfo?=null
+    var myInfos: UserInfo? = null
     var choice_univ: String? = null
     var choice_dm: String? = null
     var isFabOpen = false
@@ -135,7 +135,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             intents.putExtra("myuniv", myInfos.university)
             intents.putExtra("mydepart", myInfos.department)
 */
-            intents.putExtra("USERINFO",myInfos)
+            intents.putExtra("USERINFO", myInfos)
             intents.putExtra("univ", choice_univ)
             intents.putExtra("depart", choice_dm)
 
@@ -500,6 +500,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             var myFile = File(profileUri.path)
             if (myFile.exists()) myFile.delete()
 
+        } else if (resultCode == 7979) {
+            var friendKey = data?.getSerializableExtra("friend") as UserInfo
+
+            //친구추가창
+        }else if(resultCode==7978)
+        {
+            var friendKey = data?.getSerializableExtra("friend") as UserInfo
+
+            //친구추가창
         }
     }
 

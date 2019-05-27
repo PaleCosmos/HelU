@@ -1,5 +1,6 @@
 package com.pale_cosmos.helu
 
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
@@ -7,6 +8,7 @@ import android.graphics.Color
 import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
+import android.os.Vibrator
 import android.util.Log
 import android.view.MotionEvent
 import android.view.Window
@@ -23,6 +25,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.activity_socket_receive.*
 import kotlinx.android.synthetic.main.activity_u_chat.*
+import kotlinx.android.synthetic.main.toastborder.view.*
 import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.net.InetSocketAddress
@@ -63,6 +66,7 @@ class SocketReceiveDialog : AppCompatActivity() {
         setContentView(R.layout.activity_socket_receive)
 
         loader.setBackgroundColor(Color.TRANSPARENT)
+
         setValue()
         AsyncSocketService().execute("")
     }
@@ -168,6 +172,7 @@ class SocketReceiveDialog : AppCompatActivity() {
                                 intd.putExtra("yourInfo", yourInfo)
                                 intd.putExtra("icon", icon)
                                 setResult(8080, intd)
+                                (getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(400)
                                 finish()
                             }
                         })
@@ -208,6 +213,10 @@ class SocketReceiveDialog : AppCompatActivity() {
         }
 
 
+    }
+
+    override fun onBackPressed() {
+        return
     }
 
     override fun setRequestedOrientation(requestedOrientation: Int) {

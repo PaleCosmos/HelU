@@ -29,14 +29,23 @@ class BackKeyPress : AppCompatActivity() {
             ccc1.text = "네"
             ccc2.text = "아니요"
             CODE = 1
+        }else if (intent.getIntExtra("code", -1) == 2) {
+            qkqh.text = "상대방이 나갔습니다!"
+            ccc1.text = "친구추가"
+            ccc2.text = "나가기"
+            CODE = 2
         }
         ccc1.setOnClickListener {
 
             if (CODE == 0) setResult(88)
             if (CODE == 1) setResult(99)
+            if(CODE==2)setResult(10043)
             finish()
         }
-        ccc2.setOnClickListener { finish() }
+        ccc2.setOnClickListener {
+        if(CODE==2)setResult(10044)
+            finish()
+        }
     }
 
     override fun setRequestedOrientation(requestedOrientation: Int) {
