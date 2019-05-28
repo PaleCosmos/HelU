@@ -19,13 +19,13 @@ android {
     buildTypes {
         debug {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
         }
 
         release {
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     dataBinding {
@@ -65,11 +65,14 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.0.0'
     implementation 'com.soundcloud.android:android-crop:1.0.1@aar'
     api 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
-    implementation 'com.firebaseui:firebase-ui-storage:4.3.1'
+    implementation 'com.firebaseui:firebase-ui-storage:5.0.0'
+    implementation 'com.firebaseui:firebase-ui-database:5.0.0'
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     kapt 'com.github.bumptech.glide:compiler:4.9.0'
     kapt "android.arch.lifecycle:compiler:1.1.1"
     implementation 'com.google.firebase:firebase-firestore:19.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
 }
 
 GoogleServicesPlugin.config.disableVersionCheck = true

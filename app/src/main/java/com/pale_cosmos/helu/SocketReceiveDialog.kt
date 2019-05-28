@@ -142,9 +142,7 @@ class SocketReceiveDialog : AppCompatActivity() {
             return resulting
         }
 
-
         override fun onPostExecute(result: String?) {
-
             if (!socket.isClosed) socket.close()
             Log.d("matchingDataSet", result)
             when (result) {
@@ -176,9 +174,6 @@ class SocketReceiveDialog : AppCompatActivity() {
                                 finish()
                             }
                         })
-
-
-
                 }
 
                 "failed" -> {

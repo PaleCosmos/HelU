@@ -19,16 +19,15 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.database.*
 import android.view.WindowManager
 import android.os.Build
+import com.pale_cosmos.helu.util.myUtil
 import kotlinx.android.synthetic.main.activity_login.*
 import java.util.regex.Pattern
 
 
 class LoginActivity : AppCompatActivity() {
 
-    companion object {
+
         var mHandler: Handler? = null
-        @JvmStatic
-        var AC: Context? = null
         var auth: FirebaseAuth? = null
         var userModel: UserInfo? = null
         var database: FirebaseDatabase? = null
@@ -36,7 +35,7 @@ class LoginActivity : AppCompatActivity() {
         var sh_Pref: SharedPreferences? = null
         var toEdit: SharedPreferences.Editor? = null
         var counter = 0
-    }
+
 
     var backKeyPressedTime: Long = 0L
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,11 +44,11 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_login)
-        updateStatusBarColor("#E43F3F")
+        myUtil.updateStatusBarColor(window,"#E43F3F")
         sh_Pref = getSharedPreferences("Login credentials", Context.MODE_PRIVATE)
         toEdit = sh_Pref?.edit()
         supportActionBar?.hide()
-        AC = applicationContext
+
         ester?.setOnClickListener {
             if (counter < 5) ;
             else {
@@ -110,23 +109,9 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
-    private fun allNotEnabled() {
-        btn_login.isEnabled = false
-        input_email.isEnabled = false
-        input_password.isEnabled = false
-        link_signup.isEnabled = false
-        saveID.isEnabled = false
-        loging.isEnabled = false
-    }
+    private fun allNotEnabled()=myUtil.logInDisable(btn_login,input_email,input_password,link_signup,saveID,loging)
 
-    private fun allEnabled() {
-        btn_login.isEnabled = true
-        input_email.isEnabled = true
-        input_password.isEnabled = true
-        link_signup.isEnabled = true
-        saveID.isEnabled = true
-        loging.isEnabled = true
-    }
+    private fun allEnabled() =myUtil.logInEnable(btn_login,input_email,input_password,link_signup,saveID,loging)
 
     override fun onBackPressed() {
         if (System.currentTimeMillis() > backKeyPressedTime + 2000L) {
@@ -157,23 +142,15 @@ class LoginActivity : AppCompatActivity() {
                                 myInfo = p0.getValue(UserInfo::class.java)
 
                                 var intents = Intent(this@LoginActivity, MainActivity::class.java)
-                                /*
-                                 intents.putExtra("nickname", myInfo?.nickname)
 
-                                 intents.putExtra("gender", myInfo?.gender)
-                                 intents.putExtra("phone", myInfo?.phone)
-                                 intents.putExtra("id", myInfo?.email)
-                                 intents.putExtra("university", myInfo?.university)
-                                 intents.putExtra("department", myInfo?.department)
-                                 */
-                                intents.putExtra("USERINFO", myInfo)
+                                intents.putExtra(myUtil.myUserInfo, myInfo)
                                 intents.putExtra("key", uid)
                                 if (saveID.isChecked) {
 
-                                    toEdit?.putBoolean("SAVEFLAG", true)
+                                    toEdit?.putBoolean(myUtil.savLog, true)
                                     toEdit?.putString("Email", id)
                                 } else {
-                                    toEdit?.putBoolean("SAVEFLAG", false)
+                                    toEdit?.putBoolean(myUtil.savLog, false)
                                 }
                                 if (loging.isChecked) {
                                     toEdit?.putBoolean("AUTOLOGIN", true)
@@ -184,12 +161,11 @@ class LoginActivity : AppCompatActivity() {
                                 toEdit?.commit()
                                 startActivityForResult(intents, 101)
                                 finish()
-                                //Toast.makeText(this@LoginActivity,"nickname = $nicks",Toast.LENGTH_SHORT).show()
+
                             }
 
                             override fun onCancelled(p0: DatabaseError) {
-                                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                            }
+                                 }
                         })
 
                     } else {
@@ -217,7 +193,7 @@ class LoginActivity : AppCompatActivity() {
     private fun applySharedPreference() {
 
         if (sh_Pref != null && sh_Pref!!.contains("Email") &&
-            sh_Pref!!.getBoolean("SAVEFLAG", false)
+            sh_Pref!!.getBoolean(myUtil.savLog, false)
         ) {
             var ML = sh_Pref?.getString("Email", "NULL")
             input_email.setText(ML)
@@ -236,11 +212,4 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateStatusBarColor(color: String) {// Color must be in hexadecimal fromat
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val window = window
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.statusBarColor = Color.parseColor(color)
-        }
-    }
 }

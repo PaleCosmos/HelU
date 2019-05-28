@@ -14,6 +14,7 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.pale_cosmos.helu.util.myUtil
 
 class SplashActivity : AppCompatActivity() {
 
@@ -26,17 +27,16 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
-        updateStatusBarColor("#E43F3F")
+        myUtil.updateStatusBarColor(window, "#E43F3F")
         setContentView(R.layout.splash)
 
-        sh_Pref = getSharedPreferences("Login credentials", Context.MODE_PRIVATE)
+        sh_Pref = getSharedPreferences(myUtil.logIn_cred, Context.MODE_PRIVATE)
         toEdit = sh_Pref?.edit()
 
         auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance()
         ContentReceive().execute("")
     }
-
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -48,14 +48,6 @@ class SplashActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateStatusBarColor(color: String) {// Color must be in hexadecimal fromat
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val window = window
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.statusBarColor = Color.parseColor(color)
-        }
-    }
-
 
     inner class ContentReceive : AsyncTask<String, Void, String>() {
 
@@ -64,8 +56,8 @@ class SplashActivity : AppCompatActivity() {
             var resulting = "waiting"
 
             if (sh_Pref != null && sh_Pref!!.contains("Email") &&
-                sh_Pref!!.getBoolean("SAVEFLAG", false) &&
-                sh_Pref!!.getBoolean("AUTOLOGIN", false) &&
+                sh_Pref!!.getBoolean(myUtil.savLog, false) &&
+                sh_Pref!!.getBoolean(myUtil.autoLog, false) &&
                 sh_Pref!!.contains("PASSWORD")
             ) {
 
@@ -108,7 +100,7 @@ class SplashActivity : AppCompatActivity() {
                             var intents = Intent(this@SplashActivity, MainActivity::class.java)
 
                             intents.putExtra("key", uid)
-                            intents.putExtra("USERINFO",myInfo)
+                            intents.putExtra(myUtil.myUserInfo, myInfo)
                             intents.putExtra("university", myInfo?.university)
                             intents.putExtra("department", myInfo?.department)
 

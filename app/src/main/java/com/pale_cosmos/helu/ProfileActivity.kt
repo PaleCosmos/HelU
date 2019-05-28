@@ -37,6 +37,7 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener {
     private var isCamera = false
     lateinit var photoUri: Uri
     lateinit var imageCaptureUrl: Uri
+    var integerByResult = -1  // 1이면 프사변경 2면 사진 전송
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +45,7 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener {
 
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_profile)
-
+        integerByResult = intent.getIntExtra("by",-1)
         Cameras.setOnClickListener(this)
         Albums.setOnClickListener(this)
     }
@@ -166,13 +167,15 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
             CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE -> {
-                var result = CropImage.getActivityResult(data)
-                var resultUri = result.uri
 
-                tenty.putExtra("profileUri", resultUri)
+                    var result = CropImage.getActivityResult(data)
+                    var resultUri = result.uri
 
-                setResult(75, tenty)
-                finish()
+                    tenty.putExtra("profileUri", resultUri)
+
+                    setResult(75, tenty)
+                    finish()
+
             }
         }
     }

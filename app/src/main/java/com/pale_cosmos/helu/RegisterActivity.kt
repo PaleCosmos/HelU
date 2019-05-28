@@ -23,6 +23,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.pale_cosmos.helu.util.myUtil
 import kotlinx.android.synthetic.main.activity_register.*
 import java.io.ByteArrayOutputStream
 import java.util.regex.Pattern
@@ -92,24 +93,7 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
-    private fun errorDeleter() {
-        email.error = null
-        password1.error = null
-        password2.error = null
-        nickname.error = null
-        phone.error = null
-    }
-
-    private fun errorMaker(num: Int, msg: String) {
-        errorDeleter()
-        when (num) {
-            0 -> email.error = msg
-            1 -> password1.error = msg
-            2 -> password2.error = msg
-            3 -> nickname.error = msg
-            4 -> phone.error = msg
-        }
-    }
+    private fun errorMaker(num: Int, msg: String)  = myUtil.errorMakerInRegister(email,password1,password2,nickname,phone,num,msg)
 
     private fun validChecker() {
         val idInBox = email.text.toString().trim()
@@ -120,11 +104,6 @@ class RegisterActivity : AppCompatActivity() {
         var phones = phone.text.toString().trim()
         allNotEnabled()
 
-        // 0 -> Email
-        // 1 -> passWord1
-        // 2 -> passWord2
-        // 3 -> nickname
-        // 4 ->Phone
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(idInBox).matches()) {
             errorMaker(0, "이메일 형식이 아닙니다.")
             allEnabled()
@@ -177,53 +156,19 @@ class RegisterActivity : AppCompatActivity() {
                     allEnabled()
                 }
         }
-
     }
-
     override fun onDestroy() {
         super.onDestroy()
 
         Log.d("hala", "Register terminated")
     }
 
-    private fun allNotEnabled() {
-        password1.isEnabled = false
-        password2?.isEnabled = false
-        nickname.isEnabled = false
-        email.isEnabled = false
-        email_Register_button2.isEnabled = false
-        link_return.isEnabled = false
-        genderChecker.isEnabled = false
-        spinner_depart.isEnabled = false
-        spinner_univ.isEnabled = false
-        phone.isEnabled = false
-    }
+    private fun allNotEnabled() =
+        myUtil.registerDisable(password1,password2,nickname,email,email_Register_button2,link_return,genderChecker,spinner_depart,spinner_univ,phone)
 
-    private fun allEnabled() {
-        password1.isEnabled = true
-        password2?.isEnabled = true
-        nickname.isEnabled = true
-        email.isEnabled = true
-        email_Register_button2.isEnabled = true
-        link_return.isEnabled = true
-        genderChecker.isEnabled = true
-        spinner_depart.isEnabled = true
-        spinner_univ.isEnabled = true
-        phone.isEnabled = true
-    }
 
-    private fun makeCustomToast(msg: String) {
-        var view: View =
-            layoutInflater.inflate(R.layout.toastborder, findViewById<ViewGroup>(R.id.toast_layout_root))
-        var text: TextView = view.findViewById(R.id.text)
-        text.setTextColor(Color.WHITE)
-        text.text = msg
-        var toast = Toast(applicationContext)
-        toast.setGravity(Gravity.CENTER, 0, 500)
-        toast.duration = Toast.LENGTH_SHORT
-        toast.view = view
-        toast.show()
-    }
+    private fun allEnabled() =
+        myUtil.registerEnable(password1,password2,nickname,email,email_Register_button2,link_return,genderChecker,spinner_depart,spinner_univ,phone)
 
 
 }

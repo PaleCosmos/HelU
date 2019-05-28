@@ -1,29 +1,24 @@
 package com.pale_cosmos.helu
 
-import android.graphics.Bitmap
+
 import com.google.firebase.database.Exclude
 import com.google.firebase.database.IgnoreExtraProperties
-import java.io.Serializable
 
 @IgnoreExtraProperties
-class ChatValue :Serializable{
-    var type:String?=""
-    var key:String?=""
-    var message:String? =""
-    var photo: String=""
-
-
+data class Friends(val nickname:String,val key:String, val phone:String,val photo:String?
+,val university:String,val department:String) {
 
     @Exclude
     fun toMap():Map<String,Any?>
     {
 
         var result = HashMap<String,Any?>()
-        result.put("type",type)
+        result.put("nickname",nickname)
         result.put("key",key)
-        result.put("message",message)
+        result.put("phone",phone)
         result.put("photo",photo)
+        result.put("university",university)
+        result.put("department",department)
         return result
     }
-
 }

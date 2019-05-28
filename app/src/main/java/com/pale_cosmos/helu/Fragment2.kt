@@ -6,18 +6,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 
 class Fragment2 : Fragment() {
+    lateinit var recyclerView:RecyclerView
+var myList = arrayListOf<Friends>()
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment2, container, false) as ViewGroup
-        var bt = view.findViewById<Button>(R.id.stdstd)
-        bt.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("way_w3w://start/529670")))
-
-        }
+        recyclerView=view.findViewById(R.id.mRecyclerView)
+        recyclerView.adapter=MainAdapter()
+        recyclerView.layoutManager=LinearLayoutManager(view.context)
         return view
     }
 }

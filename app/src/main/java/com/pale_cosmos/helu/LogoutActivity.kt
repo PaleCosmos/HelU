@@ -31,7 +31,11 @@ class LogoutActivity : AppCompatActivity() {
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
 
-        return super.onTouchEvent(event)
+        if (event?.action == MotionEvent.ACTION_OUTSIDE) {
+
+        }
+
+        return false
     }
 
     override fun onBackPressed() {

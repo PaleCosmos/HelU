@@ -14,14 +14,13 @@ import android.view.Window.FEATURE_NO_TITLE
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.widget.Toast
+import com.pale_cosmos.helu.util.myUtil
 import kotlinx.android.synthetic.main.license.*
 
 
 class LicenseActivity : AppCompatActivity() {
 
 
-    private var clips: ClipboardManager? = null
-    private var clipData: ClipData? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -31,103 +30,22 @@ class LicenseActivity : AppCompatActivity() {
         setContentView(R.layout.license)
         window.setFeatureDrawableResource(FEATURE_NO_TITLE, android.R.drawable.ic_dialog_alert)
 
-        clips = applicationContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        myUtil.buttonSetter(applicationContext,bt1,bt1I,txtText,licenseText,getString(R.string.AVLoadingIndicatorView),"AVLoadingIndicatiorView",
+            "https://github.com/81813780/AVLoadingIndicatorView")
+        myUtil.buttonSetter(applicationContext,bt2,bt2I,txtText,licenseText,getString(R.string.AndroidWeekView),"Android Week View",
+            "https://github.com/alamkanak/Android-Week-View")
+        myUtil.buttonSetter(applicationContext,bt3,bt3I,txtText,licenseText,getString(R.string.ChatMessageView),"Chat Message View",
+            "https://github.com/bassaer/ChatMessageView")
+        myUtil.buttonSetter(applicationContext,bt4,bt4I,txtText,licenseText,getString(R.string.AndroidImageCropper),"Android Image Cropper",
+            "https://github.com/ArthurHub/Android-Image-Cropper")
+        myUtil.buttonSetter(applicationContext,bt5,bt5I,txtText,licenseText,getString(R.string.TedPermission),"Ted Permission",
+            "https://github.com/ParkSangGwon/TedPermission")
+        myUtil.buttonSetter(applicationContext,bt6,bt6I,txtText,licenseText,getString(R.string.Glide),"Glide",
+            "https://github.com/ParkSangGwon/TedPermission")
 
-        bt1.setOnClickListener {
-            txtText.text = getString(R.string.AVLoadingIndicatorView)
-            licenseText.text = "AVLoadingIndicatorView"
-        }
-
-        bt1I.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/81813780/AVLoadingIndicatorView")))
-        }
-        bt1I.setOnLongClickListener {
-            clipData = ClipData.newPlainText("", "https://github.com/81813780/AVLoadingIndicatorView")
-            clips?.primaryClip = clipData
-            clipCopy("AVLoadingIndicatorView")
-            true
-        }
-
-        bt2.setOnClickListener {
-            txtText.text = getString(R.string.AndroidWeekView)
-            licenseText?.text = "Android Week View"
-        }
-
-        bt2I.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/alamkanak/Android-Week-View")))
-        }
-        bt2I.setOnLongClickListener {
-            clipData = ClipData.newPlainText("", "https://github.com/alamkanak/Android-Week-View")
-            clips?.primaryClip = clipData
-            clipCopy("Android Week View")
-            true
-        }
-
-        bt3.setOnClickListener {
-            txtText.text = getString(R.string.ChatMessageView)
-            licenseText?.text = "Chat Message View"
-        }
-        bt3I.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/bassaer/ChatMessageView")))
-
-        }
-        bt3I.setOnLongClickListener {
-            clipData = ClipData.newPlainText("", "https://github.com/bassaer/ChatMessageView")
-            clips?.primaryClip = clipData
-            clipCopy("Chat Message View")
-            true
-        }
-
-        bt4.setOnClickListener {
-            txtText.text = getString(R.string.AndroidImageCropper)
-            licenseText?.text = "Android Image Cropper"
-        }
-        bt4I.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/ArthurHub/Android-Image-Cropper")))
-
-        }
-        bt4I.setOnLongClickListener {
-            clipData = ClipData.newPlainText("", "https://github.com/ArthurHub/Android-Image-Cropper")
-            clips?.primaryClip = clipData
-            clipCopy("Chat Message View")
-            true
-        }
-
-        bt5.setOnClickListener {
-            txtText.text = getString(R.string.TedPermission)
-            licenseText?.text = "Ted Permission"
-        }
-        bt5I.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/ParkSangGwon/TedPermission")))
-
-        }
-        bt5I.setOnLongClickListener {
-            clipData = ClipData.newPlainText("", "https://github.com/ParkSangGwon/TedPermission")
-            clips?.primaryClip = clipData
-            clipCopy("Ted Permission")
-            true
-        }
-
-        bt6.setOnClickListener {
-            txtText.text = getString(R.string.Glide)
-            licenseText?.text = "Glide"
-        }
-        bt6I.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/ParkSangGwon/TedPermission")))
-
-        }
-        bt6I.setOnLongClickListener {
-            clipData = ClipData.newPlainText("", "https://github.com/ParkSangGwon/TedPermission")
-            clips?.primaryClip = clipData
-            clipCopy("Ted Permission")
-            true
-        }
     }
 
 
-    private fun clipCopy(name: String?) {
-        Toast.makeText(applicationContext, "클립보드에 복사했어! [$name]", Toast.LENGTH_SHORT).show()
-    }
 
     override fun onBackPressed() {
         finish()

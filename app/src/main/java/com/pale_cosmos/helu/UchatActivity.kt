@@ -7,10 +7,13 @@ import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Vibrator
+import android.provider.MediaStore
+import android.util.Base64
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
@@ -25,7 +28,10 @@ import com.github.bassaer.chatmessageview.model.Message
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.pale_cosmos.helu.util.myUtil
 import kotlinx.android.synthetic.main.activity_u_chat.*
+import java.io.ByteArrayOutputStream
+import java.io.File
 
 class UchatActivity : AppCompatActivity(), View.OnClickListener {
     lateinit var database: FirebaseDatabase
@@ -53,7 +59,7 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-
+        areyou = true
         updateStatusBarColor("#E43F3F")
         setContentView(R.layout.activity_u_chat)
         initializationChatView()
@@ -114,7 +120,7 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
                 if (myquitcheck) {
                     var res = Intent(this@UchatActivity, BackKeyPress::class.java)
                     res.putExtra("code", 2)
-                    startActivityForResult(res,1)
+                    startActivityForResult(res, 1)
                     deleteMyLog()
                 }
             }
@@ -151,7 +157,20 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
                         }
                     }
                     "photo" -> {
+                        if (areyou) (getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(40)
+                        areyou = false
 
+                        var message = Message.Builder()
+                            .setUser(you)
+                            .setRight(false)
+                            .setType(Message.Type.PICTURE)
+                            .setPicture(myUtil.stringToBitmap(data?.photo))
+                            .setText("")
+                            .hideIcon(false)
+                            .build()
+                        Handler().post {
+                            mChatView.receive(message)
+                        }
                     }
                 }
             }
@@ -165,6 +184,8 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
             }
         })
     }
+
+
 
     private fun initializationChatView() {
 
@@ -186,14 +207,14 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
         mChatView.setAutoHidingKeyboard(true)
         mChatView.setOnClickSendButtonListener(this)
         mChatView.isEnabled = false
-        mChatView.setOnClickOptionButtonListener(object:View.OnClickListener{
+        mChatView.setOnClickOptionButtonListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
-
-               // startActivityForResult(Intent())
-                //TODO(액티비티 추가해야함)
+                var tents = Intent(this@UchatActivity, ProfileActivity::class.java)
+                tents.putExtra("by", 2)
+                startActivityForResult(tents, 37)
             }
         })
-mChatView.setOptionButtonColor(R.color.primary_darker)
+        mChatView.setOptionButtonColor(R.color.primary_darker)
     }
 
     fun updateStatusBarColor(color: String) {
@@ -222,7 +243,7 @@ mChatView.setOptionButtonColor(R.color.primary_darker)
                 msg.type = "message"
                 msg.key = key
                 msg.message = text
-                msg.photo = null
+                msg.photo = ""
                 dataRef?.push()?.setValue(msg)
             }
             mChatView.inputText = ""
@@ -232,6 +253,31 @@ mChatView.setOptionButtonColor(R.color.primary_darker)
         }
 
 
+    }
+
+    private fun sendImage(bitmap: Bitmap) {
+        areyou = true
+        var message = Message.Builder()
+            .setUser(me)
+            .setRight(true)
+            .setType(Message.Type.PICTURE)
+            .setPicture(bitmap)
+            .setText("")
+            .hideIcon(true)
+            .build()
+
+        if (dataRef != null) {
+            val msg = ChatValue()
+            msg.type = "photo"
+            msg.key = key
+            msg.message = ""
+            msg.photo = myUtil.bitmapToString(bitmap)
+            dataRef?.push()?.setValue(msg)
+        }
+        mChatView.inputText = ""
+        Handler().post {
+            mChatView.receive(message)
+        }
     }
 
     private fun deleteMyLog() {
@@ -246,7 +292,7 @@ mChatView.setOptionButtonColor(R.color.primary_darker)
             88 -> {
                 var resf = Intent()
                 resf.putExtra("friend", yourInfo)
-                Log.d("errorchecking",yourInfo?.nickname)
+                Log.d("errorchecking", yourInfo?.nickname)
                 setResult(7978, resf)
                 finish()
             }
@@ -279,13 +325,27 @@ mChatView.setOptionButtonColor(R.color.primary_darker)
                 myquitcheck = false
                 finish()
             }
+            75 -> {
+                var profileUri = data?.getParcelableExtra("profileUri") as Uri
+
+
+                var bitg = MediaStore.Images.Media.getBitmap(
+                    contentResolver,
+                    profileUri
+                )
+                sendImage(bitg)
+
+                var myFile = File(profileUri.path)
+                if (myFile.exists()) myFile.delete()
+
+            }
         }
 
     }
 
     override fun onDestroy() {
         super.onDestroy()
-       deleteMyLog()
+        deleteMyLog()
         myquitcheck = false
     }
 

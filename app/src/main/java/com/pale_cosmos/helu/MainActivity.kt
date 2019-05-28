@@ -40,8 +40,10 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.pale_cosmos.helu.util.myUtil
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.app_bar_main.*
 import java.io.ByteArrayOutputStream
@@ -55,7 +57,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     var builder: AlertDialog.Builder? = null
     var dialogView: View? = null
     var backKeyPressedTime: Long = 0L
-    var myClass: UserInfo? = null
     lateinit var man: RadioButton
     lateinit var startChat: Button
     lateinit var adapter_univ: ArrayAdapter<CharSequence>
@@ -68,6 +69,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var storageReference: StorageReference
     lateinit var authReference: StorageReference
     lateinit var uidReference: StorageReference
+    lateinit var database: FirebaseDatabase
+    lateinit var databaseReference: DatabaseReference
     var myInfos: UserInfo? = null
     var choice_univ: String? = null
     var choice_dm: String? = null
@@ -76,41 +79,50 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var header: View
     lateinit var myUid: String
 
-    var FLAG = 0
-
     companion object {
         @JvmStatic
-        var frag2: androidx.fragment.app.Fragment? = Fragment2()
+        var frag2: androidx.fragment.app.Fragment = Fragment2()
         @JvmStatic
-        var frag3: androidx.fragment.app.Fragment? = Fragment3()
+        var frag3: androidx.fragment.app.Fragment = Fragment3()
         @JvmStatic
-        var frag4: androidx.fragment.app.Fragment? = Fragment4()
+        var frag4: androidx.fragment.app.Fragment = Fragment4()
     }
 
-    // var mWeekView: WeekView?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        updateStatusBarColor("#CC1D1D")
+        myUtil.updateStatusBarColor(window, "#CC1D1D")
         setContentView(R.layout.activity_main)
         this.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-        //setSupportActionBar(toolbar)
+
         builder = AlertDialog.Builder(this)
         dialogView = layoutInflater.inflate(R.layout.license, null)
         builder?.setView(dialogView)
-
-        storage = FirebaseStorage.getInstance("gs://palecosmos-helu.appspot.com/")
+        database = FirebaseDatabase.getInstance()
+        storage = FirebaseStorage.getInstance(myUtil.storageAddress)
         storageReference = storage.reference
         authReference = storageReference.child("profile")
 
         myUid = intent.getStringExtra("key") // myUID
+        databaseReference = database.reference.child("$myUid").child("friends")
+        databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(p0: DataSnapshot) {
+                if (p0.exists()) {
+                    // var friendList = p0.getValue(FriendsFile::class.java)
 
+
+                } else {
+
+
+                }
+
+            }
+
+            override fun onCancelled(p0: DatabaseError) {
+            }
+        })
         uidReference = authReference.child("$myUid.png")
-
-        myInfos = intent.getSerializableExtra("USERINFO") as UserInfo?
-
-
-
+        myInfos = intent.getSerializableExtra(myUtil.myUserInfo) as UserInfo?
         header = nav_view2.getHeaderView(0)
         man = header.findViewById(R.id.man)
         man.isChecked = true
@@ -124,32 +136,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             intents.putExtra("key", myUid)
 
-
-            /*
-            intents.putExtra("nickname", myInfos.nickname)
-            var gendy: String? = ""
-            if (myInfos.gender!!) gendy = "true"
-            else gendy = "false"
-            intents.putExtra("gender", gendy)
-            intents.putExtra("phone",myInfos.phone)
-            intents.putExtra("myuniv", myInfos.university)
-            intents.putExtra("mydepart", myInfos.department)
-*/
-            intents.putExtra("USERINFO", myInfos)
+            intents.putExtra(myUtil.myUserInfo, myInfos)
             intents.putExtra("univ", choice_univ)
             intents.putExtra("depart", choice_dm)
 
             startActivityForResult(intents, 1)
             drawer_layout.closeDrawer(GravityCompat.END)
         }
-
         fab.tag = "DRAG Button"
-
-
-/*                                                       toolbar = null*/
         val toggle = object : ActionBarDrawerToggle(
-            this, drawer_layout, null, R.string.navigation_drawer_open, R.string.navigation_drawer_close
-        ) {
+            this, drawer_layout, null, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
 
 
             override fun onDrawerStateChanged(newState: Int) {
@@ -163,18 +159,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
 
-
-
         drawer_layout.addDrawerListener(toggle)
 
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
         nav_view2.setNavigationItemSelectedListener {
-
             true
         }
-
         nav_view.getHeaderView(0).findViewById<TextView>(R.id.myNicknamess).text =
             "${(intent.getSerializableExtra("USERINFO") as UserInfo).nickname} 님 환영합니다!"
 
@@ -183,6 +175,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // fabStart.isVisible=false
         profile.setOnClickListener {
             var tents = Intent(applicationContext, ProfileActivity::class.java)
+            tents.putExtra("by", 1)
             startActivityForResult(tents, 135)
         }
 
@@ -219,36 +212,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.fab3 -> { // up
                 when (initFrag) {
                     0 -> {
-                        var vibe = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-                        vibe.vibrate(40)
+                        myUtil.viberate(applicationContext, 40)
                     }
                     1 -> {
-                        if (frag2 != null) {
-                            showFragment(frag2)
-                        }
-                        if (frag3 != null) {
-                            hideFragment(frag3)
-                        }
-                        if (frag4 != null) {
-                            hideFragment(frag4)
-                        }
-
-                        im = R.id.nav_gallery
+                        im = myUtil.rotateFragment(R.id.nav_gallery, supportFragmentManager, frag2, frag3, frag4)
                         nav_view.setCheckedItem(im)
                         initFrag = 0
                     }
                     2 -> {
-
-                        if (frag2 != null) {
-                            hideFragment(frag2)
-                        }
-                        if (frag3 != null) {
-                            showFragment(frag3)
-                        }
-                        if (frag4 != null) {
-                            hideFragment(frag4)
-                        }
-                        im = R.id.nav_slideshow
+                        im = myUtil.rotateFragment(R.id.nav_slideshow, supportFragmentManager, frag3, frag2, frag4)
                         nav_view.setCheckedItem(im)
                         initFrag = 1
                     }
@@ -257,40 +229,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.fab2 -> {
                 when (initFrag) {
                     0 -> {
-
-
-                        if (frag2 != null) {
-                            hideFragment(frag2)
-                        }
-                        if (frag3 != null) {
-                            showFragment(frag3)
-                        }
-                        if (frag4 != null) {
-                            hideFragment(frag4)
-                        }
-                        im = R.id.nav_slideshow
+                        im = myUtil.rotateFragment(R.id.nav_slideshow, supportFragmentManager, frag3, frag2, frag4)
                         nav_view.setCheckedItem(im)
                         initFrag = 1
                     }
                     1 -> {
-
-                        if (frag2 != null) {
-                            hideFragment(frag2)
-                        }
-                        if (frag3 != null) {
-                            hideFragment(frag3)
-                        }
-                        if (frag4 != null) {
-                            showFragment(frag4)
-                        }
-
-                        im = R.id.nav_manage
+                        im = myUtil.rotateFragment(R.id.nav_manage, supportFragmentManager, frag4, frag2, frag3)
                         nav_view.setCheckedItem(im)
                         initFrag = 2
                     }
                     2 -> {
-                        var vibe = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-                        vibe.vibrate(40)
+                        myUtil.viberate(applicationContext, 40)
                     }
                 }
             }
@@ -302,47 +251,36 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         when (id) {
             R.id.fab -> {
                 rotateFab()
-                var vibe = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-                vibe.vibrate(40)
+                myUtil.viberate(applicationContext, 100)
             }
 
         }
         return true
     }
 
-    fun rotateFab() {
-        if (isFabOpen) {
-            fab.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.rotate_backward));
-            fab2.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close));
-            fab3.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close));
-            fab2.setClickable(false);
-            fab3.setClickable(false);
-            isFabOpen = false;
-        } else {
-            fab.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_forward));
-            fab2.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open));
-            fab3.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open));
-            fab2.setClickable(true);
-            fab3.setClickable(true);
-            isFabOpen = true;
-
+    private fun rotateFab() {
+        when (isFabOpen) {
+            true -> {
+                myUtil.rotateTrue(applicationContext, fab, fab2, fab3, R.anim.rotate_backward, R.anim.fab_close)
+                isFabOpen = false
+            }
+            false -> {
+                myUtil.rotateFalse(applicationContext, fab, fab2, fab3, R.anim.rotate_backward, R.anim.fab_close)
+                isFabOpen = true
+            }
         }
-
     }
 
-    private fun initialization() {
-
-
-        addFragment(frag2)
-        addFragment(frag3)
-        addFragment(frag4)
-        hideFragment(frag3)
-        hideFragment(frag4)
-        showFragment(frag2)
+    private fun addListener() {
         fab.setOnLongClickListener(this)
         fab.setOnClickListener(this)
         fab2.setOnClickListener(this)
         fab3.setOnClickListener(this)
+    }
+
+    private fun initialization() {
+        myUtil.initFragment(R.id.fragmentS, supportFragmentManager, frag2, frag3, frag4)
+        addListener()
         adapter_univ =
             createFromResource(applicationContext, R.array.spinner_univ, R.layout.spinner_item)
         adapter_univ.setDropDownViewResource(R.layout.spinner_dropdown_item)
@@ -395,61 +333,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        // Handle navigation view item clicks here.
-
-
         when (item.itemId) {
 
             R.id.nav_gallery -> {
-                if (item.itemId != im) {
-
-                    if (frag2 != null) {
-                        showFragment(frag2)
-                    }
-                    if (frag3 != null) {
-                        hideFragment(frag3)
-                    }
-                    if (frag4 != null) {
-                        hideFragment(frag4)
-                    }
-
-                    im = item.itemId
-                }
-
+                if (item.itemId != im) im =
+                    myUtil.rotateFragment(R.id.nav_gallery, supportFragmentManager, frag2, frag3, frag4)
             }
             R.id.nav_slideshow -> {
-                if (item.itemId != im) {
-
-
-                    if (frag2 != null) {
-                        hideFragment(frag2)
-                    }
-                    if (frag3 != null) {
-                        showFragment(frag3)
-                    }
-                    if (frag4 != null) {
-                        hideFragment(frag4)
-                    }
-                    im = item.itemId
-                }
+                if (item.itemId != im) im =
+                    myUtil.rotateFragment(R.id.nav_slideshow, supportFragmentManager, frag3, frag2, frag4)
 
             }
             R.id.nav_manage -> {
-                if (item.itemId != im) {
+                if (item.itemId != im) im =
+                    myUtil.rotateFragment(R.id.nav_manage, supportFragmentManager, frag4, frag2, frag3)
 
-
-                    if (frag2 != null) {
-                        hideFragment(frag2)
-                    }
-                    if (frag3 != null) {
-                        hideFragment(frag3)
-                    }
-                    if (frag4 != null) {
-                        showFragment(frag4)
-                    }
-
-                    im = item.itemId
-                }
             }
             R.id.nav_share -> {
                 startActivityForResult(Intent(applicationContext, LogoutActivity::class.java), 1)
@@ -504,32 +402,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             var friendKey = data?.getSerializableExtra("friend") as UchatInfo
 
             //친구추가창
-        }else if(resultCode==7978)
-        {
+        } else if (resultCode == 7978) {
             var friendKey = data?.getSerializableExtra("friend") as UchatInfo
 
             //친구추가창
         }
     }
 
-
-    fun addFragment(fragment: androidx.fragment.app.Fragment?) {
-        supportFragmentManager.beginTransaction().add(R.id.fragmentS, fragment!!).commit()
-    }
-
-    fun hideFragment(fragment: androidx.fragment.app.Fragment?) {
-        supportFragmentManager.beginTransaction().hide(fragment!!).commit()
-    }
-
-    fun showFragment(fragment: androidx.fragment.app.Fragment?) {
-        supportFragmentManager.beginTransaction().show(fragment!!).commit()
-    }
-
-    fun updateStatusBarColor(color: String) {// Color must be in hexadecimal fromat
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val window = window
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.statusBarColor = Color.parseColor(color)
-        }
-    }
 }
