@@ -13,36 +13,16 @@ import kotlinx.android.synthetic.main.main_rv_item.view.*
 class MainAdapter : RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
 
     var items: MutableList<Friends> = mutableListOf(
-        Friends("박상현", "r", "010-7677-7296", null, "가천대학교", "소프트웨어학과"),
-        Friends("박상현", "r", "010-7677-7296", null, "가천대학교", "소프트웨어학과"),
-        Friends("박상현", "r", "010-7677-7296", null, "가천대학교", "소프트웨어학과"),
-        Friends("박상현", "r", "010-7677-7296", null, "가천대학교", "소프트웨어학과"),
-        Friends("박상현", "r", "010-7677-7296", null, "가천대학교", "소프트웨어학과"),
-        Friends("박상현", "r", "010-7677-7296", null, "가천대학교", "소프트웨어학과"),
-        Friends("박상현", "r", "010-7677-7296", null, "가천대학교", "소프트웨어학과"),
-        Friends("박상현","r","010-7677-7296",null,"가천대학교","소프트웨어학과"),
-        Friends("박상현","r","010-7677-7296",null,"가천대학교","소프트웨어학과"),
-        Friends("박상현","r","010-7677-7296",null,"가천대학교","소프트웨어학과"),
-        Friends("박상현","r","010-7677-7296",null,"가천대학교","소프트웨어학과"),
-        Friends("박상현","r","010-7677-7296",null,"가천대학교","소프트웨어학과"),
-        Friends("박상현","r","010-7677-7296",null,"가천대학교","소프트웨어학과"),
-        Friends("박상현","r","010-7677-7296",null,"가천대학교","소프트웨어학과"),
-        Friends("박상현","r","010-7677-7296",null,"가천대학교","소프트웨어학과"),
-        Friends("박상현","r","010-7677-7296",null,"가천대학교","소프트웨어학과"),
-        Friends("박상현","r","010-7677-7296",null,"가천대학교","소프트웨어학과"),
-        Friends("박상현","r","010-7677-7296",null,"가천대학교","소프트웨어학과"),
-        Friends("박상현","r","010-7677-7296",null,"가천대학교","소프트웨어학과"),
-        Friends("박상현","r","010-7677-7296",null,"가천대학교","소프트웨어학과")
-    )
+        Friends("박상현", "r", "010-7677-7296", null, "가천대학교", "소프트웨어학과"))
 
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int) = MainViewHolder(parent)
 
 
     override fun getItemCount(): Int = items.size
 
-    override fun onBindViewHolder(holer: MainViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         items[position].let { item ->
-            with(holer) {
+            with(holder) {
                 if (item.photo != null) friendPhoto.setImageBitmap(myUtil.stringToBitmap(item.photo))
                 friendName.text = item.nickname
                 friendUniv.text = item.university
