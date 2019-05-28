@@ -4,6 +4,7 @@
               android:layout_height="match_parent"
               android:background="@color/white"
               tools:context=".Fragment4"
+              android:id="@+id/fragment4"
 >
     <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:text="FRAG3"/>

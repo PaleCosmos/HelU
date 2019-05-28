@@ -21,7 +21,12 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatSpinner
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.target.SimpleTarget
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.storage.StorageReference
+import com.pale_cosmos.helu.GlideApp
 import java.io.ByteArrayOutputStream
 
 class myUtil {
@@ -259,30 +264,56 @@ class myUtil {
                 4 -> phone.error = msg
             }
         }
+
         @JvmStatic
-        fun registerEnable(a:EditText,b:EditText,c:EditText,d:EditText,e:AppCompatButton,f:TextView,g:RadioGroup,h:AppCompatSpinner,i:AppCompatSpinner,j:EditText) {
-            a.isEnabled=true
-            b.isEnabled=true
-            c.isEnabled=true
-            d.isEnabled=true
-            e.isEnabled=true
-            f.isEnabled=true
-            g.isEnabled=true
-            h.isEnabled=true
-            i.isEnabled=true
+        fun registerEnable(
+            a: EditText,
+            b: EditText,
+            c: EditText,
+            d: EditText,
+            e: AppCompatButton,
+            f: TextView,
+            g: RadioGroup,
+            h: AppCompatSpinner,
+            i: AppCompatSpinner,
+            j: EditText
+        ) {
+            a.isEnabled = true
+            b.isEnabled = true
+            c.isEnabled = true
+            d.isEnabled = true
+            e.isEnabled = true
+            f.isEnabled = true
+            g.isEnabled = true
+            h.isEnabled = true
+            i.isEnabled = true
         }
+
         @JvmStatic
-        fun registerDisable(a:EditText,b:EditText,c:EditText,d:EditText,e:AppCompatButton,f:TextView,g:RadioGroup,h:AppCompatSpinner,i:AppCompatSpinner,j:EditText) {
-            a.isEnabled=false
-            b.isEnabled=false
-            c.isEnabled=false
-            d.isEnabled=false
-            e.isEnabled=false
-            f.isEnabled=false
-            g.isEnabled=false
-            h.isEnabled=false
-            i.isEnabled=false
+        fun registerDisable(
+            a: EditText,
+            b: EditText,
+            c: EditText,
+            d: EditText,
+            e: AppCompatButton,
+            f: TextView,
+            g: RadioGroup,
+            h: AppCompatSpinner,
+            i: AppCompatSpinner,
+            j: EditText
+        ) {
+            a.isEnabled = false
+            b.isEnabled = false
+            c.isEnabled = false
+            d.isEnabled = false
+            e.isEnabled = false
+            f.isEnabled = false
+            g.isEnabled = false
+            h.isEnabled = false
+            i.isEnabled = false
 
         }
+
+
     }
 }

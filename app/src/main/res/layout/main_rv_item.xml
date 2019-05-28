@@ -8,6 +8,7 @@
                                              android:layout_marginTop="2dp"
                                              android:layout_marginBottom="2dp"
                                              android:layout_marginStart="4dp"
+
                                              android:layout_marginEnd="4dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -28,12 +29,14 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:textSize="20sp"
+            android:textColor="@color/white"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/friendPhotoImg"
             app:layout_constraintTop_toTopOf="@+id/friendPhotoImg"
             tools:text="이름"/>
 
     <TextView
+            android:textColor="@color/white"
             android:id="@+id/universityTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -43,6 +46,7 @@
             tools:text="학교" />
 
     <TextView
+            android:textColor="@color/white"
             android:id="@+id/departmentTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -20,6 +20,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Vibrator
 import android.provider.MediaStore
+import android.util.Log
 
 import com.google.android.material.navigation.NavigationView
 import androidx.core.view.GravityCompat
@@ -37,8 +38,10 @@ import android.widget.ArrayAdapter.*
 import androidx.core.view.isVisible
 import kotlinx.android.synthetic.main.activity_main.*
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.FragmentManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.target.SimpleTarget
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
@@ -46,6 +49,7 @@ import com.google.firebase.storage.StorageReference
 import com.pale_cosmos.helu.util.myUtil
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.fragment2.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 
@@ -123,6 +127,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         })
         uidReference = authReference.child("$myUid.png")
         myInfos = intent.getSerializableExtra(myUtil.myUserInfo) as UserInfo?
+
         header = nav_view2.getHeaderView(0)
         man = header.findViewById(R.id.man)
         man.isChecked = true
@@ -145,7 +150,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
         fab.tag = "DRAG Button"
         val toggle = object : ActionBarDrawerToggle(
-            this, drawer_layout, null, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            this, drawer_layout, null, R.string.navigation_drawer_open, R.string.navigation_drawer_close
+        ) {
 
 
             override fun onDrawerStateChanged(newState: Int) {
@@ -183,15 +189,38 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         var imagesRef = fs.reference.child("profile/$myUid.png")
 
 
-        GlideApp.with(applicationContext)
-            .load(imagesRef)
+//        GlideApp.with(applicationContext)
+//            .load(imagesRef)
+//            .override(100, 100)
+//            .diskCacheStrategy(DiskCacheStrategy.NONE)
+//            .skipMemoryCache(true)
+//            .placeholder(R.drawable.profile)
+//            .error(R.drawable.profile)
+//            .into(profile)
+
+
+
+
+        GlideApp.with(applicationContext).asBitmap().load(imagesRef)
             .override(100, 100)
             .diskCacheStrategy(DiskCacheStrategy.NONE)
             .skipMemoryCache(true)
             .placeholder(R.drawable.profile)
             .error(R.drawable.profile)
-            .into(profile)
+            .into(object : SimpleTarget<Bitmap>() {
+                override fun onResourceReady(
+                    resource: Bitmap,
+                    transition: com.bumptech.glide.request.transition.Transition<in Bitmap>?
+                ) {
+                    profile.setImageBitmap(resource)
+                    frag2.view?.findViewById<CircleImageView>(R.id.friendPhotoImg)?.setImageBitmap(resource)
+frag2.view?.findViewById<TextView>(R.id.nameTv)?.text=myInfos?.nickname
+                    frag2.view?.findViewById<TextView>(R.id.universityTv)?.text=myInfos?.university
 
+                    frag2.view?.findViewById<TextView>(R.id.departmentTv)?.text=myInfos?.department
+
+                }
+            })
         nav_view.setCheckedItem(R.id.nav_gallery)
         nav_view.menu.performIdentifierAction(R.id.nav_gallery, 0)
 
@@ -265,7 +294,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 isFabOpen = false
             }
             false -> {
-                myUtil.rotateFalse(applicationContext, fab, fab2, fab3, R.anim.rotate_backward, R.anim.fab_close)
+                myUtil.rotateFalse(applicationContext, fab, fab2, fab3, R.anim.rotate_forward, R.anim.fab_open)
                 isFabOpen = true
             }
         }
@@ -281,6 +310,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun initialization() {
         myUtil.initFragment(R.id.fragmentS, supportFragmentManager, frag2, frag3, frag4)
         addListener()
+
         adapter_univ =
             createFromResource(applicationContext, R.array.spinner_univ, R.layout.spinner_item)
         adapter_univ.setDropDownViewResource(R.layout.spinner_dropdown_item)
@@ -310,8 +340,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             }
         }
-
-
+//        var tf = supportFragmentManager.findFragmentById(R.id.fragmentS) as Fragment2?
+//        tf?.setTextChange(
+//            myInfos?.nickname ,myInfos?.university,myInfos?.department
+//        )
+//        Log.d("fragment",myInfos?.nickname)
+//        supportFragmentManager.beginTransaction().commit()
+//
+//        frag2.view?.findViewById<TextView>(R.id.nameTv)?.text = myInfos?.nickname
     }
 
 
