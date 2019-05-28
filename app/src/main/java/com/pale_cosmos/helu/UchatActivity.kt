@@ -189,6 +189,8 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
         mChatView.setOnClickOptionButtonListener(object:View.OnClickListener{
             override fun onClick(v: View?) {
 
+               // startActivityForResult(Intent())
+                //TODO(액티비티 추가해야함)
             }
         })
 mChatView.setOptionButtonColor(R.color.primary_darker)
