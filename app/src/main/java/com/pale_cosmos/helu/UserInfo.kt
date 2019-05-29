@@ -15,6 +15,7 @@ class UserInfo:Serializable{
     var phone:String?=""
     var university:String?=""
     var department:String?=""
+    var photo:String?=""
 
     @Exclude
     fun toMap():Map<String,Any?>
@@ -28,6 +29,7 @@ class UserInfo:Serializable{
         result.put("phone",phone)
         result.put("university",university)
         result.put("department",department)
+        result.put("photo",photo)
         return result
     }
 }

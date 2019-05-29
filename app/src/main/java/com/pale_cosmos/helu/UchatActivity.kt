@@ -336,6 +336,7 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
                     contentResolver,
                     profileUri
                 )
+
                 sendImage(bitg)
 
                 var myFile = File(profileUri.path)

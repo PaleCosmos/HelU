@@ -10,6 +10,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Vibrator
+import android.telephony.PhoneNumberUtils
 import android.util.Base64
 import android.view.Window
 import android.view.WindowManager
@@ -290,6 +291,7 @@ class myUtil {
             g.isEnabled = true
             h.isEnabled = true
             i.isEnabled = true
+            j.isEnabled = true
         }
 
         @JvmStatic
@@ -314,9 +316,22 @@ class myUtil {
             g.isEnabled = false
             h.isEnabled = false
             i.isEnabled = false
-
+            j.isEnabled = false
         }
 
+        @JvmStatic
+        fun phoneValid(phone: String): Boolean {
+            var n = phone.length == 11
+            var flag = android.util.Patterns.PHONE.matcher(phone).matches()
+            return n && flag
+        }
+
+        @JvmStatic
+        fun phoneToString(phone:String?):String?{
+
+            return PhoneNumberUtils.formatNumber(phone, "KR")
+
+        }
 
     }
 }

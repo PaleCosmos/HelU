@@ -68,7 +68,17 @@
                 app:layout_constraintStart_toEndOf="@+id/universityTv"
                 app:layout_constraintTop_toTopOf="@+id/universityTv"
                 tools:text="학과" />
-
+        <TextView
+                android:textColor="@color/primary_dark"
+                android:id="@+id/phoneTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="144dp"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/universityTv"
+                app:layout_constraintStart_toEndOf="@+id/universityTv"
+                app:layout_constraintTop_toTopOf="@+id/universityTv"
+                tools:text="폰" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

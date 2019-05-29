@@ -20,9 +20,11 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.SimpleTarget
 import com.github.bassaer.chatmessageview.model.ChatUser
+import com.google.firebase.database.*
 
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.pale_cosmos.helu.util.myUtil
 import kotlinx.android.synthetic.main.activity_socket_receive.*
 import kotlinx.android.synthetic.main.activity_u_chat.*
 import kotlinx.android.synthetic.main.toastborder.view.*
@@ -37,9 +39,10 @@ class SocketReceiveDialog : AppCompatActivity() {
     val socketAddress = InetSocketAddress("219.248.6.32", 7654)
     lateinit var Dos: DataOutputStream
     lateinit var Dis: DataInputStream
-    lateinit var storage: FirebaseStorage
-    lateinit var stoRef: StorageReference
-
+    //    lateinit var storage: FirebaseStorage
+//    lateinit var stoRef: StorageReference
+    lateinit var database: FirebaseDatabase
+    lateinit var databaseReference: DatabaseReference
     lateinit var key: String
     lateinit var nicknames: String
     lateinit var myuniv: String
@@ -72,7 +75,9 @@ class SocketReceiveDialog : AppCompatActivity() {
     }
 
     private fun setValue() {
-        storage = FirebaseStorage.getInstance("gs://palecosmos-helu.appspot.com/")
+//        storage = FirebaseStorage.getInstance("gs://palecosmos-helu.appspot.com/")
+        database = FirebaseDatabase.getInstance()
+
         myInfo = intent.getSerializableExtra("USERINFO") as UserInfo
         key = intent.getStringExtra("key")
         nicknames = myInfo.nickname!!
@@ -149,31 +154,42 @@ class SocketReceiveDialog : AppCompatActivity() {
                 "success" -> {
                     yourInfo = UchatInfo()
                     yourInfo.setInfos(yourkey, yournickname, yourphone, univ, depart, wantgenderString)
-                    stoRef = storage.reference.child("profile").child("$yourkey.png")
+//                    stoRef = storage.reference.child("profile").child("$yourkey.png")
 
                     Log.d("matchingDataSet", yourInfo.key)
 
-
-                    GlideApp.with(applicationContext).asBitmap().load(stoRef)
-                        .override(100,100)
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .skipMemoryCache(true)
-                        .into(object : SimpleTarget<Bitmap>() {
-                            override fun onResourceReady(
-                                resource: Bitmap,
-                                transition: com.bumptech.glide.request.transition.Transition<in Bitmap>?
-                            ) {
-
-                                Log.d("matchingDataSet", "profile/$yourkey.png")
-                                icon = resource
-                                var intd = Intent()
+                    databaseReference = database.reference.child("users").child(yourkey).child("photo")
+                    databaseReference.addListenerForSingleValueEvent(object:ValueEventListener{
+                        override fun onDataChange(p0: DataSnapshot) {
+                         icon =myUtil.stringToBitmap(p0.getValue(String::class.java)!!)
+                            var intd = Intent()
                                 intd.putExtra("yourInfo", yourInfo)
                                 intd.putExtra("icon", icon)
                                 setResult(8080, intd)
                                 (getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(400)
                                 finish()
-                            }
-                        })
+                        }
+                        override fun onCancelled(p0: DatabaseError) {
+
+                        }
+                    })
+
+
+//                    GlideApp.with(applicationContext).asBitmap().load(stoRef)
+//                        .override(100,100)
+//                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+//                        .skipMemoryCache(true)
+//                        .into(object : SimpleTarget<Bitmap>() {
+//                            override fun onResourceReady(
+//                                resource: Bitmap,
+//                                transition: com.bumptech.glide.request.transition.Transition<in Bitmap>?
+//                            ) {
+//
+//                                Log.d("matchingDataSet", "profile/$yourkey.png")
+//                                icon = resource
+//
+//                            }
+//                        })
                 }
 
                 "failed" -> {

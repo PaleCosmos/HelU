@@ -61,8 +61,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     var builder: AlertDialog.Builder? = null
     var dialogView: View? = null
     var backKeyPressedTime: Long = 0L
-    lateinit var imageLog:Bitmap
-    lateinit var chatlog:UchatInfo
+    lateinit var imageLog: Bitmap
+    lateinit var chatlog: UchatInfo
     lateinit var man: RadioButton
     lateinit var startChat: Button
     lateinit var adapter_univ: ArrayAdapter<CharSequence>
@@ -71,10 +71,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var spinner_parent: Spinner
     lateinit var spinner_child: Spinner
     private lateinit var profile: CircleImageView
-    lateinit var storage: FirebaseStorage
-    lateinit var storageReference: StorageReference
-    lateinit var authReference: StorageReference
-    lateinit var uidReference: StorageReference
+    //    lateinit var storage: FirebaseStorage
+//    lateinit var storageReference: StorageReference
+//    lateinit var authReference: StorageReference
+//    lateinit var uidReference: StorageReference
     lateinit var database: FirebaseDatabase
     lateinit var databaseReference: DatabaseReference
     var myInfos: UserInfo? = null
@@ -86,14 +86,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var header: View
     lateinit var myUid: String
 
-    companion object {
-        @JvmStatic
-        var frag2: androidx.fragment.app.Fragment = Fragment2()
-        @JvmStatic
-        var frag3: androidx.fragment.app.Fragment = Fragment3()
-        @JvmStatic
-        var frag4: androidx.fragment.app.Fragment = Fragment4()
-    }
+
+    var frag2: androidx.fragment.app.Fragment = Fragment2()
+
+    var frag3: androidx.fragment.app.Fragment = Fragment3()
+
+    var frag4: androidx.fragment.app.Fragment = Fragment4()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,14 +105,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         dialogView = layoutInflater.inflate(R.layout.license, null)
         builder?.setView(dialogView)
         database = FirebaseDatabase.getInstance()
-        storage = FirebaseStorage.getInstance(myUtil.storageAddress)
-        storageReference = storage.reference
-        authReference = storageReference.child("profile")
+//        storage = FirebaseStorage.getInstance(myUtil.storageAddress)
+//        storageReference = storage.reference
+//        authReference = storageReference.child("profile")
 
         myUid = intent.getStringExtra("key") // myUID
         databaseReference = database.reference.child("users").child("$myUid").child("friends")
 
-        uidReference = authReference.child("$myUid.png")
+//        uidReference = authReference.child("$myUid.png")
         myInfos = intent.getSerializableExtra(myUtil.myUserInfo) as UserInfo?
 
         header = nav_view2.getHeaderView(0)
@@ -178,21 +177,36 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         var imagesRef = fs.reference.child("profile/$myUid.png")
 
 
-        GlideApp.with(applicationContext).asBitmap().load(imagesRef)
-            .override(100, 100)
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .skipMemoryCache(true)
-            .placeholder(R.drawable.profile)
-            .error(R.drawable.profile)
-            .into(object : SimpleTarget<Bitmap>() {
-                override fun onResourceReady(
-                    resource: Bitmap,
-                    transition: com.bumptech.glide.request.transition.Transition<in Bitmap>?
-                ) {
-                    profile.setImageBitmap(resource)
-                    frag2.view?.findViewById<CircleImageView>(R.id.friendPhotoImg)?.setImageBitmap(resource)
+//        GlideApp.with(applicationContext).asBitmap().load(imagesRef)
+//            .override(100, 100)
+//            .diskCacheStrategy(DiskCacheStrategy.NONE)
+//            .skipMemoryCache(true)
+//            .placeholder(R.drawable.profile)
+//            .error(R.drawable.profile)
+//            .into(object : SimpleTarget<Bitmap>() {
+//                override fun onResourceReady(
+//                    resource: Bitmap,
+//                    transition: com.bumptech.glide.request.transition.Transition<in Bitmap>?
+//                ) {
+//                    profile.setImageBitmap(resource)
+//
+//                }
+//            })
+
+        database.reference.child("users").child("$myUid").child("photo")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(p0: DataSnapshot) {
+                    profile.setImageBitmap(myUtil.stringToBitmap(p0.getValue(String::class.java)!!))
+                    frag2.view?.findViewById<CircleImageView>(R.id.friendPhotoImg)?.setImageBitmap(myUtil.stringToBitmap(p0.getValue(String::class.java)!!))
+                }
+
+                override fun onCancelled(p0: DatabaseError) {
                 }
             })
+
+
+
+
         nav_view.setCheckedItem(R.id.nav_gallery)
         nav_view.menu.performIdentifierAction(R.id.nav_gallery, 0)
 
@@ -280,16 +294,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun initialization() {
+
+
         var bd = Bundle()
         bd.putSerializable("myInfo", myInfos)
+        bd.putString("key", myUid)
+
         frag2.arguments = bd
+        myUtil.initFragment(R.id.fragmentS, supportFragmentManager, frag2, frag3, frag4)
+        addListener()
+
+
         //databaseReference.add
         //db읽어오기
 
-
-        myUtil.initFragment(R.id.fragmentS, supportFragmentManager, frag2, frag3, frag4)
-
-        addListener()
 
         adapter_univ =
             createFromResource(applicationContext, R.array.spinner_univ, R.layout.spinner_item)
@@ -400,23 +418,25 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 .error(R.drawable.profile)
                 .into(frag2.view?.findViewById(R.id.friendPhotoImg)!!)
 
-            uidReference.delete()
+//            uidReference.delete()
             var bitg = MediaStore.Images.Media.getBitmap(
                 contentResolver,
                 profileUri
             )
 
-            val baos = ByteArrayOutputStream()
-            bitg.compress(Bitmap.CompressFormat.PNG, 100, baos)
-            uidReference.putBytes(baos.toByteArray())
+//            val baos = ByteArrayOutputStream()
+//            bitg.compress(Bitmap.CompressFormat.PNG, 100, baos)
+//            uidReference.putBytes(baos.toByteArray())
+            database.reference.child("users").child("$myUid").child("photo").setValue(myUtil.bitmapToString(bitg))
 
             var myFile = File(profileUri.path)
             if (myFile.exists()) myFile.delete()
 
-        } else if (resultCode == 7979)  {
+        } else if (resultCode == 7979) {
             var friendy = data?.getSerializableExtra("friend") as UchatInfo
             var bit = data.getParcelableExtra<Bitmap>("icon")
-            var myfriend = Friends(
+            var myfriend = Friends()
+            myfriend.setValue(
                 friendy.nickname!!,
                 friendy.key!!,
                 friendy.phone!!,
@@ -424,17 +444,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 friendy.university!!,
                 friendy.department!!
             )
-
             //어댑터에추가
+            Fragment2.myList.add(myfriend)
+            Fragment2.myAdapter.notifyDataSetChanged()
 
             databaseReference.child(myfriend.key).removeValue()
             databaseReference.child(myfriend.key).setValue(myfriend)
             //친구추가창
-        }else if(resultCode==7070)
-        {
+        } else if (resultCode == 7070) {
             var friendy = chatlog
             var bit = imageLog
-            var myfriend = Friends(
+            var myfriend = Friends()
+            myfriend.setValue(
                 friendy.nickname!!,
                 friendy.key!!,
                 friendy.phone!!,
@@ -442,16 +463,35 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 friendy.university!!,
                 friendy.department!!
             )
+            databaseReference.child(myfriend.key).addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(p0: DataSnapshot) {
+                    var x = p0.getValue(Friends::class.java)
+                    when (x?.key == myfriend.key) {
+                        true -> {
+                            Toast.makeText(this@MainActivity, "우린 이미 친구에요!", Toast.LENGTH_SHORT).show()
+                        }
+                        false -> {
+                            Fragment2.myList.add(myfriend)
+                            Fragment2.myAdapter.notifyDataSetChanged()
+                            databaseReference.child(myfriend.key).setValue(myfriend)
+                        }
 
-            //어댑터에추가
+                    }
 
-            databaseReference.child(myfriend.key).removeValue()
-            databaseReference.child(myfriend.key).setValue(myfriend)
-        }
-        else if (resultCode == 7978) {
+                }
+
+                override fun onCancelled(p0: DatabaseError) {
+
+                }
+            })
+
+
+            //databaseReference.child(myfriend.key).removeValue()
+
+        } else if (resultCode == 7978) {
             var intents = Intent(this@MainActivity, BackKeyPress::class.java)
-           chatlog = data?.getSerializableExtra("friend") as UchatInfo
-            imageLog=data?.getParcelableExtra("icon")
+            chatlog = data?.getSerializableExtra("friend") as UchatInfo
+            imageLog = data?.getParcelableExtra("icon")
             intents.putExtra("code", 3)
             startActivityForResult(intents, 1)
         }

@@ -38,10 +38,10 @@ class RegisterActivity : AppCompatActivity() {
     var choice_depart: String? = null
     lateinit var spinCheck_univ: ArrayAdapter<CharSequence>
     lateinit var spinCheck_depart: ArrayAdapter<CharSequence>
-    lateinit var storage: FirebaseStorage
-    lateinit var storageReference: StorageReference
-    lateinit var authReference: StorageReference
-    lateinit var uidReference: StorageReference
+//    lateinit var storage: FirebaseStorage
+//    lateinit var storageReference: StorageReference
+//    lateinit var authReference: StorageReference
+//    lateinit var uidReference: StorageReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,8 +55,8 @@ class RegisterActivity : AppCompatActivity() {
         link_return.setOnClickListener {
             finish()
         }
-        storage = FirebaseStorage.getInstance("gs://palecosmos-helu.appspot.com/")
-        storageReference = storage.reference
+//        storage = FirebaseStorage.getInstance("gs://palecosmos-helu.appspot.com/")
+//        storageReference = storage.reference
 
         email_Register_button2.setOnClickListener {
             validChecker()
@@ -116,7 +116,7 @@ class RegisterActivity : AppCompatActivity() {
         } else if (nickInBox.length < 2 || nickInBox.length > 8) {
             errorMaker(3, "닉네임은 2자 이상 8자 이하로 구성되어야 합니다.")
             allEnabled()
-        } else if (!android.util.Patterns.PHONE.matcher(phones).matches()) {
+        } else if (!myUtil.phoneValid(phones)) {
             errorMaker(4, "번호의 형식이 올바르지않습니다.")
             allEnabled()
         } else {
@@ -132,16 +132,24 @@ class RegisterActivity : AppCompatActivity() {
                             userModel.university = choice_univ
                             userModel.department = choice_depart
                             userModel.phone = phones
+                            userModel.photo = myUtil.bitmapToString(BitmapFactory.decodeResource(resources, R.drawable.profile))
+
                             databaseReference?.child("users")?.child(user!!.uid)
                                 ?.setValue(userModel)
                             // JPG 파일인지 확인 필요
-                            authReference = storageReference.child("profile")
-                            uidReference = authReference.child("${task.result?.user?.uid}.png")
+//                            authReference = storageReference.child("profile")
+//                            uidReference = authReference.child("${task.result?.user?.uid}.png")
 
-                            val bitmap = BitmapFactory.decodeResource(resources, R.drawable.profile)
-                            val baos = ByteArrayOutputStream()
-                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)
-                            var uploadTask = uidReference.putBytes(baos.toByteArray())
+//                            val bitmap = BitmapFactory.decodeResource(resources, R.drawable.profile)
+//                            val baos = ByteArrayOutputStream()
+//                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)
+//                            var uploadTask = uidReference.putBytes(baos.toByteArray())
+
+                            var mm = Friends()
+                            mm.setValue("박상현","p26hrHybdpZIv3glbpCWu8jHkYo1","01076777296","0","가천대학교",
+                                "소프트웨어학과")
+                            databaseReference?.child("users")?.child(user!!.uid)?.child("friends")
+                                ?.child("p26hrHybdpZIv3glbpCWu8jHkYo1")?.setValue(mm)
                             finish()
                         } else {
                             Toast.makeText(this@RegisterActivity, "등록 에러", Toast.LENGTH_SHORT).show()

@@ -6,16 +6,29 @@ import com.google.firebase.database.IgnoreExtraProperties
 
 @IgnoreExtraProperties
 class Friends(
-    nickname: String, key: String, phone: String, photo: String?
-    , university: String, department: String
 ) {
 
-    val nickname = nickname
-    val key = key
-    val phone = phone
-    val photo = photo
-    val university = university
-    val department = department
+
+    var nickname: String = ""
+    var key: String = ""
+    var phone: String = ""
+    var photo: String = ""
+    var university: String = ""
+    var department: String = ""
+
+    fun setValue(
+        nickname: String, key: String, phone: String, photo: String?
+        , university: String, department: String
+    ) {
+        this.nickname = nickname
+        this.key = key
+        this.phone = phone
+        if(photo!=null)
+        this.photo = photo
+        this.university = university
+        this.department = department
+    }
+
     @Exclude
     fun toMap(): Map<String, Any?> {
 

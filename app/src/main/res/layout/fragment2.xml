@@ -27,7 +27,6 @@ android:background="@color/primary_dark"
             android:layout_below="@id/appCompatTextView"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-
             android:layout_marginTop="10dp"
             android:layout_marginBottom="2dp"
             android:layout_marginStart="4dp"
@@ -80,6 +79,19 @@ android:background="@color/primary_dark"
                 app:layout_constraintStart_toEndOf="@+id/universityTv"
                 app:layout_constraintTop_toTopOf="@+id/universityTv"
                 tools:text="학과"/>
+
+        <TextView
+                android:textColor="@color/white"
+                android:id="@+id/phoneTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="144dp"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/universityTv"
+                app:layout_constraintStart_toEndOf="@+id/universityTv"
+                app:layout_constraintTop_toTopOf="@+id/universityTv"
+                tools:text="폰" />
+
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
