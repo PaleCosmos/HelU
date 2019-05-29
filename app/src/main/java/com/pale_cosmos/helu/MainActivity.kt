@@ -79,6 +79,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     var choice_univ: String? = null
     var choice_dm: String? = null
     var isFabOpen = false
+    var myFreind = mutableListOf<Friends>()
     var initFrag = 0  // 0-> frag2 ,1->frag3, 2->frag4
     lateinit var header: View
     lateinit var myUid: String
@@ -135,6 +136,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         spinner_child = header.findViewById(R.id.spinner_child)
         startChat = header.findViewById(R.id.startChat)
         initialization()
+
         startChat.setOnClickListener {
             intents = Intent(applicationContext, UchatActivity::class.java)
             intents.putExtra("wantgender", man.isChecked)
@@ -199,8 +201,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //            .into(profile)
 
 
-
-
         GlideApp.with(applicationContext).asBitmap().load(imagesRef)
             .override(100, 100)
             .diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -214,10 +214,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 ) {
                     profile.setImageBitmap(resource)
                     frag2.view?.findViewById<CircleImageView>(R.id.friendPhotoImg)?.setImageBitmap(resource)
-frag2.view?.findViewById<TextView>(R.id.nameTv)?.text=myInfos?.nickname
-                    frag2.view?.findViewById<TextView>(R.id.universityTv)?.text=myInfos?.university
-
-                    frag2.view?.findViewById<TextView>(R.id.departmentTv)?.text=myInfos?.department
+//                    frag2.view?.findViewById<TextView>(R.id.nameTv)?.text = myInfos?.nickname
+//                    frag2.view?.findViewById<TextView>(R.id.universityTv)?.text = myInfos?.university
+//                    frag2.view?.findViewById<TextView>(R.id.departmentTv)?.text = myInfos?.department
 
                 }
             })
@@ -309,9 +308,12 @@ frag2.view?.findViewById<TextView>(R.id.nameTv)?.text=myInfos?.nickname
 
     private fun initialization() {
         myUtil.initFragment(R.id.fragmentS, supportFragmentManager, frag2, frag3, frag4)
-        addListener()
 
-        adapter_univ =
+        addListener()
+        var bd =Bundle()
+        bd.putSerializable("myInfo",myInfos)
+        frag2.arguments=bd
+            adapter_univ =
             createFromResource(applicationContext, R.array.spinner_univ, R.layout.spinner_item)
         adapter_univ.setDropDownViewResource(R.layout.spinner_dropdown_item)
         spinner_parent.adapter = adapter_univ
@@ -421,6 +423,13 @@ frag2.view?.findViewById<TextView>(R.id.nameTv)?.text=myInfos?.nickname
                 .error(R.drawable.profile)
                 .into(profile)
 
+            GlideApp.with(applicationContext)
+                .load(profileUri)
+                .override(100, 100)
+                .placeholder(R.drawable.profile)
+                .error(R.drawable.profile)
+                .into(frag2.view?.findViewById(R.id.friendPhotoImg)!!)
+
             uidReference.delete()
             var bitg = MediaStore.Images.Media.getBitmap(
                 contentResolver,
@@ -434,14 +443,22 @@ frag2.view?.findViewById<TextView>(R.id.nameTv)?.text=myInfos?.nickname
             var myFile = File(profileUri.path)
             if (myFile.exists()) myFile.delete()
 
-        } else if (resultCode == 7979) {
-            var friendKey = data?.getSerializableExtra("friend") as UchatInfo
+        } else if (resultCode == 7979||resultCode==7070) {
+            var friendy = data?.getSerializableExtra("friend") as UchatInfo
+            var bit = data?.getParcelableExtra<Bitmap>("icon")
+            var myfirend = Friends(friendy.nickname!!,friendy.key!!,friendy.phone!!,myUtil.bitmapToString(bit),friendy.university!!,friendy.department!!)
+
+            //어댑터에추가
+
+            databaseReference.push().setValue(myfirend)
+
 
             //친구추가창
-        } else if (resultCode == 7978) {
-            var friendKey = data?.getSerializableExtra("friend") as UchatInfo
-
-            //친구추가창
+        }else if(resultCode==7978)
+        {
+            var intents = Intent(this@MainActivity,BackKeyPress::class.java)
+            intents.putExtra("code",3)
+            startActivityForResult(intent,1)
         }
     }
 

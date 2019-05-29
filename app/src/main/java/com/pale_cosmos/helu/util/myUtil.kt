@@ -109,12 +109,21 @@ class myUtil {
                     bt2.text = "나가기"
                     CODE = 2
                 }
+                3->{
+
+                    tv1.text = "상대방과 친구추가 할까요?"
+                    bt1.text = "친구추가"
+                    bt2.text = "아니요"
+                    CODE = 3
+
+                }
             }
             bt1.setOnClickListener {
                 when (CODE) {
                     0 -> result = 88
                     1 -> result = 99
                     2 -> result = 10043
+                    3-> result = 7070
                 }
                 activity.setResult(result)
                 activity.finish()

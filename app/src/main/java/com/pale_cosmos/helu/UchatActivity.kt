@@ -292,6 +292,7 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
             88 -> {
                 var resf = Intent()
                 resf.putExtra("friend", yourInfo)
+                resf.putExtra("icon",yourIcon)
                 Log.d("errorchecking", yourInfo?.nickname)
                 setResult(7978, resf)
                 finish()
@@ -317,6 +318,7 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
             10043 -> { // 친구추가
                 var res = Intent()
                 res.putExtra("friend", yourInfo)
+                res.putExtra("icon",yourIcon)
                 setResult(7979, res)
                 myquitcheck = false
                 finish()
