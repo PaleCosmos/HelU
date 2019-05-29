@@ -11,7 +11,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Vibrator
 import android.util.Base64
-import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
@@ -19,14 +18,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatSpinner
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.target.SimpleTarget
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.storage.StorageReference
-import com.pale_cosmos.helu.GlideApp
 import java.io.ByteArrayOutputStream
 
 class myUtil {
@@ -109,7 +101,7 @@ class myUtil {
                     bt2.text = "나가기"
                     CODE = 2
                 }
-                3->{
+                3 -> {
 
                     tv1.text = "상대방과 친구추가 할까요?"
                     bt1.text = "친구추가"
@@ -123,7 +115,9 @@ class myUtil {
                     0 -> result = 88
                     1 -> result = 99
                     2 -> result = 10043
-                    3-> {result = 7070}
+                    3 -> {
+                        result = 7070
+                    }
                 }
                 activity.setResult(result)
                 activity.finish()
