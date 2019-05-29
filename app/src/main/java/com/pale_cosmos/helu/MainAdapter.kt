@@ -27,7 +27,6 @@ class MainAdapter : RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
                 friendName.text = item.nickname
                 friendUniv.text = item.university
                 friendDepart.text = item.department
-
             }
         }
     }

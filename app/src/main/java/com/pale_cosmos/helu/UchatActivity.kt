@@ -290,12 +290,13 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
 
         when (resultCode) {
             88 -> {
-                var resf = Intent()
-                resf.putExtra("friend", yourInfo)
-                resf.putExtra("icon",yourIcon)
-                Log.d("errorchecking", yourInfo?.nickname)
-                setResult(7978, resf)
+
+                var res = Intent()
+                res.putExtra("friend", yourInfo)
+                res.putExtra("icon",yourIcon)
+                setResult(7978, res)
                 finish()
+
             }
             32 -> {
                 finish()

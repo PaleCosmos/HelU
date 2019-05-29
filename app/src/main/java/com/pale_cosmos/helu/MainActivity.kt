@@ -61,6 +61,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     var builder: AlertDialog.Builder? = null
     var dialogView: View? = null
     var backKeyPressedTime: Long = 0L
+    lateinit var imageLog:Bitmap
+    lateinit var chatlog:UchatInfo
     lateinit var man: RadioButton
     lateinit var startChat: Button
     lateinit var adapter_univ: ArrayAdapter<CharSequence>
@@ -109,23 +111,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         authReference = storageReference.child("profile")
 
         myUid = intent.getStringExtra("key") // myUID
-        databaseReference = database.reference.child("$myUid").child("friends")
-        databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(p0: DataSnapshot) {
-                if (p0.exists()) {
-                    // var friendList = p0.getValue(FriendsFile::class.java)
+        databaseReference = database.reference.child("users").child("$myUid").child("friends")
 
-
-                } else {
-
-
-                }
-
-            }
-
-            override fun onCancelled(p0: DatabaseError) {
-            }
-        })
         uidReference = authReference.child("$myUid.png")
         myInfos = intent.getSerializableExtra(myUtil.myUserInfo) as UserInfo?
 
@@ -191,16 +178,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         var imagesRef = fs.reference.child("profile/$myUid.png")
 
 
-//        GlideApp.with(applicationContext)
-//            .load(imagesRef)
-//            .override(100, 100)
-//            .diskCacheStrategy(DiskCacheStrategy.NONE)
-//            .skipMemoryCache(true)
-//            .placeholder(R.drawable.profile)
-//            .error(R.drawable.profile)
-//            .into(profile)
-
-
         GlideApp.with(applicationContext).asBitmap().load(imagesRef)
             .override(100, 100)
             .diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -214,10 +191,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 ) {
                     profile.setImageBitmap(resource)
                     frag2.view?.findViewById<CircleImageView>(R.id.friendPhotoImg)?.setImageBitmap(resource)
-//                    frag2.view?.findViewById<TextView>(R.id.nameTv)?.text = myInfos?.nickname
-//                    frag2.view?.findViewById<TextView>(R.id.universityTv)?.text = myInfos?.university
-//                    frag2.view?.findViewById<TextView>(R.id.departmentTv)?.text = myInfos?.department
-
                 }
             })
         nav_view.setCheckedItem(R.id.nav_gallery)
@@ -307,13 +280,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun initialization() {
+        var bd = Bundle()
+        bd.putSerializable("myInfo", myInfos)
+        frag2.arguments = bd
+        //databaseReference.add
+        //db읽어오기
+
+
         myUtil.initFragment(R.id.fragmentS, supportFragmentManager, frag2, frag3, frag4)
 
         addListener()
-        var bd =Bundle()
-        bd.putSerializable("myInfo",myInfos)
-        frag2.arguments=bd
-            adapter_univ =
+
+        adapter_univ =
             createFromResource(applicationContext, R.array.spinner_univ, R.layout.spinner_item)
         adapter_univ.setDropDownViewResource(R.layout.spinner_dropdown_item)
         spinner_parent.adapter = adapter_univ
@@ -342,14 +320,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             }
         }
-//        var tf = supportFragmentManager.findFragmentById(R.id.fragmentS) as Fragment2?
-//        tf?.setTextChange(
-//            myInfos?.nickname ,myInfos?.university,myInfos?.department
-//        )
-//        Log.d("fragment",myInfos?.nickname)
-//        supportFragmentManager.beginTransaction().commit()
-//
-//        frag2.view?.findViewById<TextView>(R.id.nameTv)?.text = myInfos?.nickname
     }
 
 
@@ -443,23 +413,47 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             var myFile = File(profileUri.path)
             if (myFile.exists()) myFile.delete()
 
-        } else if (resultCode == 7979||resultCode==7070) {
+        } else if (resultCode == 7979)  {
             var friendy = data?.getSerializableExtra("friend") as UchatInfo
-            var bit = data?.getParcelableExtra<Bitmap>("icon")
-            var myfirend = Friends(friendy.nickname!!,friendy.key!!,friendy.phone!!,myUtil.bitmapToString(bit),friendy.university!!,friendy.department!!)
+            var bit = data.getParcelableExtra<Bitmap>("icon")
+            var myfriend = Friends(
+                friendy.nickname!!,
+                friendy.key!!,
+                friendy.phone!!,
+                myUtil.bitmapToString(bit!!),
+                friendy.university!!,
+                friendy.department!!
+            )
 
             //어댑터에추가
 
-            databaseReference.push().setValue(myfirend)
-
-
+            databaseReference.child(myfriend.key).removeValue()
+            databaseReference.child(myfriend.key).setValue(myfriend)
             //친구추가창
-        }else if(resultCode==7978)
+        }else if(resultCode==7070)
         {
-            var intents = Intent(this@MainActivity,BackKeyPress::class.java)
-            intents.putExtra("code",3)
-            startActivityForResult(intent,1)
+            var friendy = chatlog
+            var bit = imageLog
+            var myfriend = Friends(
+                friendy.nickname!!,
+                friendy.key!!,
+                friendy.phone!!,
+                myUtil.bitmapToString(bit!!),
+                friendy.university!!,
+                friendy.department!!
+            )
+
+            //어댑터에추가
+
+            databaseReference.child(myfriend.key).removeValue()
+            databaseReference.child(myfriend.key).setValue(myfriend)
+        }
+        else if (resultCode == 7978) {
+            var intents = Intent(this@MainActivity, BackKeyPress::class.java)
+           chatlog = data?.getSerializableExtra("friend") as UchatInfo
+            imageLog=data?.getParcelableExtra("icon")
+            intents.putExtra("code", 3)
+            startActivityForResult(intents, 1)
         }
     }
-
 }

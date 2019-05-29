@@ -123,7 +123,7 @@ class myUtil {
                     0 -> result = 88
                     1 -> result = 99
                     2 -> result = 10043
-                    3-> result = 7070
+                    3-> {result = 7070}
                 }
                 activity.setResult(result)
                 activity.finish()
