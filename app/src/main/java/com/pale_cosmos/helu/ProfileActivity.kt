@@ -45,7 +45,7 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener {
 
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_profile)
-        integerByResult = intent.getIntExtra("by",-1)
+        integerByResult = intent.getIntExtra("by", -1)
         Cameras.setOnClickListener(this)
         Albums.setOnClickListener(this)
     }
@@ -147,7 +147,7 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         var tenty = Intent()
         if (resultCode != RESULT_OK) {
-            return
+            finish()
         }
         when (requestCode) {
             PICK_FROM_ALBUM -> {
@@ -168,13 +168,13 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener {
             }
             CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE -> {
 
-                    var result = CropImage.getActivityResult(data)
-                    var resultUri = result.uri
+                var result = CropImage.getActivityResult(data)
+                var resultUri = result.uri
 
-                    tenty.putExtra("profileUri", resultUri)
+                tenty.putExtra("profileUri", resultUri)
 
-                    setResult(75, tenty)
-                    finish()
+                setResult(75, tenty)
+                finish()
 
             }
         }

@@ -71,17 +71,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var spinner_parent: Spinner
     lateinit var spinner_child: Spinner
     private lateinit var profile: CircleImageView
-    //    lateinit var storage: FirebaseStorage
-//    lateinit var storageReference: StorageReference
-//    lateinit var authReference: StorageReference
-//    lateinit var uidReference: StorageReference
     lateinit var database: FirebaseDatabase
     lateinit var databaseReference: DatabaseReference
     var myInfos: UserInfo? = null
     var choice_univ: String? = null
     var choice_dm: String? = null
     var isFabOpen = false
-    var myFreind = mutableListOf<Friends>()
     var initFrag = 0  // 0-> frag2 ,1->frag3, 2->frag4
     lateinit var header: View
     lateinit var myUid: String
@@ -299,6 +294,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         fab3.setOnClickListener(this)
     }
 
+    override fun onDestroy() {
+
+        Fragment2.myList =  arrayListOf<Friends>()
+        super.onDestroy()
+    }
     private fun initialization() {
 
 
@@ -311,7 +311,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         frag2.arguments = bd
         myUtil.initFragment(R.id.fragmentS, supportFragmentManager, frag2, frag3, frag4)
         addListener()
-
 
 
         //databaseReference.add
@@ -433,10 +432,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 profileUri
             )
 
-//            val baos = ByteArrayOutputStream()
-//            bitg.compress(Bitmap.CompressFormat.PNG, 100, baos)
-//            uidReference.putBytes(baos.toByteArray())
-            database.reference.child("users").child("$myUid").child("photo").setValue(myUtil.bitmapToString(bitg))
+            val baos = ByteArrayOutputStream()
+            bitg.compress(Bitmap.CompressFormat.PNG, 100, baos)
+            FirebaseStorage.getInstance().reference.child("profile").child("$myUid.png").putBytes(baos.toByteArray())
+            database.reference.child("users").child(myUid).child("photo").setValue(myUtil.bitmapToString(bitg))
 
             var myFile = File(profileUri.path)
             if (myFile.exists()) myFile.delete()
@@ -447,12 +446,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             var bit = myUtil.popDataHolder(holderId) as Bitmap
             var myfriend = Friends()
             myfriend.setValue(
-                friendy.nickname!!,
-                friendy.key!!,
-                friendy.phone!!,
-                myUtil.bitmapToString(bit),
-                friendy.university!!,
-                friendy.department!!
+                    friendy.nickname!!,
+            friendy.key!!,
+            friendy.phone!!,
+            myUtil.bitmapToString(bit),
+            friendy.university!!,
+            friendy.department!!
             )
             //어댑터에추가
             Fragment2.myList.add(myfriend)
@@ -508,6 +507,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             intents.putExtra("code", 3)
             startActivityForResult(intents, 1)
+        }else if(resultCode==201735)
+        {
+            Toast.makeText(applicationContext,"채팅이시작되면돼",Toast.LENGTH_SHORT).show()
         }
     }
 }

@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
           package="com.pale_cosmos.helu">
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.DIAL_PHONE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
     <uses-permission android:name="android.permission.READ_PROFILE"/>
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
@@ -47,8 +50,11 @@
                   android:theme="@style/myTheme"/>
 
         <activity android:name=".SocketReceiveDialog"
-                  android:theme="@style/Theme.AppCompat.Dialog"
+                  android:theme="@style/AppTheme.Dark.Dialog"
         />
+        <activity android:name=".FriendViewActivity"
+                  android:theme="@style/AppTheme.Dark.Dialog"/>
+
 
 <activity android:name=".FriendAddDialog"
 android:theme="@style/Theme.AppCompat.Dialog"/>

@@ -1,10 +1,12 @@
 package com.pale_cosmos.helu
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
@@ -28,12 +30,16 @@ class Fragment2 : Fragment() {
     lateinit var ref: DatabaseReference
 
     companion object {
+        //@SuppressLint("StaticFieldLeak")
         @JvmStatic
         lateinit var myAdapter: MainAdapter
 
         @JvmStatic
         var myList = arrayListOf<Friends>()
     }
+
+
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment2, container, false) as ViewGroup
@@ -52,7 +58,7 @@ class Fragment2 : Fragment() {
                     var v = x.getValue(Friends::class.java)
                     myList.add(v!!)
                 }
-                myAdapter = MainAdapter(myList)
+                myAdapter = MainAdapter(myList,activity!!)
                 recyclerView.adapter = myAdapter
                 recyclerView.layoutManager = LinearLayoutManager(view.context)
                 phone.text = myUtil.phoneToString(info.phone!!)
@@ -60,6 +66,7 @@ class Fragment2 : Fragment() {
                 university.text = info.university
                 department.text = info.department
                 myAdapter.notifyDataSetChanged()
+
             }
 
             override fun onCancelled(p0: DatabaseError) {

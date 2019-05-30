@@ -1,5 +1,8 @@
 package com.pale_cosmos.helu
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -15,11 +18,13 @@ import com.google.firebase.database.ValueEventListener
 import com.pale_cosmos.helu.util.myUtil
 import kotlinx.android.synthetic.main.main_rv_item.view.*
 
-class MainAdapter(items:ArrayList<Friends>) : RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
+class MainAdapter(items:ArrayList<Friends>, activity: Activity) : RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
 
     var items = ArrayList<Friends>()
+    lateinit var activity:Activity
 init{
     this.items=items
+    this.activity=activity
 }
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int) = MainViewHolder(parent)
 
@@ -39,7 +44,15 @@ init{
                         friendUniv.text = item.university
                         friendDepart.text = item.department
                         friendPhone.text = myUtil.phoneToString(item.phone)
+                        myView.setOnClickListener {
+                            var k = Intent(activity.applicationContext,FriendViewActivity::class.java)
+                            k.putExtra("nickname",item.nickname)
+                            k.putExtra("key",item.key)
+                            k.putExtra("phone",item.phone)
+                            activity.startActivityForResult(k,1)
 
+
+                        }
                     }
                 })
 
@@ -50,10 +63,11 @@ init{
     inner class MainViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
         LayoutInflater.from(parent.context).inflate(R.layout.main_rv_item, parent, false)
     ) {
-        val friendPhoto = itemView.friendPhotoImg
-        val friendName = itemView.nameTv
-        val friendUniv = itemView.universityTv
-        val friendDepart = itemView.departmentTv
-        val friendPhone = itemView.phoneTv
+        val friendPhoto = itemView.friendPhotoImg!!
+        val friendName = itemView.nameTv!!
+        val friendUniv = itemView.universityTv!!
+        val friendDepart = itemView.departmentTv!!
+        val friendPhone = itemView.phoneTv!!
+        var myView = itemView
     }
 }

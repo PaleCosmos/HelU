@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.Window
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDialog
 import androidx.transition.Transition
@@ -57,6 +58,7 @@ class SocketReceiveDialog : AppCompatActivity() {
     lateinit var yourkey: String
     lateinit var yourphone: String
     lateinit var yourInfo: UchatInfo
+    var backKeyPressedTime: Long = 0L
     var icon: Bitmap? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,6 +104,7 @@ class SocketReceiveDialog : AppCompatActivity() {
         super.onDestroy()
         if (!socket.isConnected) socket.close()
     }
+
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
 
@@ -238,7 +241,14 @@ class SocketReceiveDialog : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        return
+        if (System.currentTimeMillis() > backKeyPressedTime + 2000L) {
+            backKeyPressedTime = System.currentTimeMillis()
+            Toast.makeText(applicationContext, "종료할까요?", Toast.LENGTH_SHORT).show()
+            return
+        } else {
+            setResult(337)
+            finish()
+        }
     }
 
     override fun setRequestedOrientation(requestedOrientation: Int) {

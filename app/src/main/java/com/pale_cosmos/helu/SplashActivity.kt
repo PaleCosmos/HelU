@@ -6,10 +6,12 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.graphics.Color
+import android.net.ConnectivityManager
 import android.os.*
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.view.WindowManager
+import android.widget.Toast
 import com.google.android.gms.common.data.DataHolder
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.AuthResult
@@ -28,8 +30,17 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
+
         myUtil.updateStatusBarColor(window, "#E43F3F")
         setContentView(R.layout.splash)
+
+        when(myUtil.get_Internet(applicationContext))
+        {
+            0->{Toast.makeText(applicationContext,"인터넷 연걸이 불안정합니다.",Toast.LENGTH_SHORT).show()
+            finish()}
+       1->{Toast.makeText(applicationContext,"WIFI로 접속합니다.",Toast.LENGTH_SHORT).show()}
+            2->{Toast.makeText(applicationContext,"LTE로 접속합니다..",Toast.LENGTH_SHORT).show()}
+        }
 
         sh_Pref = getSharedPreferences(myUtil.logIn_cred, Context.MODE_PRIVATE)
         toEdit = sh_Pref?.edit()
@@ -48,6 +59,8 @@ class SplashActivity : AppCompatActivity() {
 
         }
     }
+
+
 
 
     inner class ContentReceive : AsyncTask<String, Void, String>() {
@@ -128,6 +141,7 @@ class SplashActivity : AppCompatActivity() {
             }
         }
     }
+
 
     inner class DelayedSplash : Thread() {
         override fun run() {

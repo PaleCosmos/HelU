@@ -344,6 +344,7 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
                 myquitcheck = false
                 finish()
             }
+            337->finish()
             75 -> {
                 var profileUri = data?.getParcelableExtra("profileUri") as Uri
 

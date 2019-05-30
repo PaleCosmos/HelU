@@ -136,20 +136,31 @@ class RegisterActivity : AppCompatActivity() {
 
                             databaseReference?.child("users")?.child(user!!.uid)
                                 ?.setValue(userModel)
-                            // JPG 파일인지 확인 필요
-//                            authReference = storageReference.child("profile")
-//                            uidReference = authReference.child("${task.result?.user?.uid}.png")
+                            var myfriend = Friends()
+                            myfriend.setValue(
+                                nickInBox,
+                                user!!.uid,
+                                phones,
+                                "0",
+                                choice_univ!!,
+                                choice_depart!!
+                            )
 
-//                            val bitmap = BitmapFactory.decodeResource(resources, R.drawable.profile)
-//                            val baos = ByteArrayOutputStream()
-//                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)
-//                            var uploadTask = uidReference.putBytes(baos.toByteArray())
+                            // JPG 파일인지 확인 필요
+
+
+                            val bitmap = BitmapFactory.decodeResource(resources, R.drawable.profile)
+                            val baos = ByteArrayOutputStream()
+                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)
+                            FirebaseStorage.getInstance().reference.child("profile").child("${task.result?.user?.uid}.png").putBytes(baos.toByteArray())
 
                             var mm = Friends()
                             mm.setValue("박상현","p26hrHybdpZIv3glbpCWu8jHkYo1","01076777296","0","가천대학교",
                                 "소프트웨어학과")
                             databaseReference?.child("users")?.child(user!!.uid)?.child("friends")
                                 ?.child("p26hrHybdpZIv3glbpCWu8jHkYo1")?.setValue(mm)
+                            databaseReference?.child("users")?.child("p26hrHybdpZIv3glbpCWu8jHkYo1")?.child("friends")
+                                ?.child(user?.uid)?.setValue(myfriend)
                             finish()
                         } else {
                             Toast.makeText(this@RegisterActivity, "등록 에러", Toast.LENGTH_SHORT).show()

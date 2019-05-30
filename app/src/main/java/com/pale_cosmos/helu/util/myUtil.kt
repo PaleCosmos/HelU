@@ -7,6 +7,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Build
 import android.os.Vibrator
@@ -350,6 +351,14 @@ class myUtil {
             mDataHolder.remove(key)
             return obj
 
+        }
+        @JvmStatic
+        fun get_Internet(context: Context):Int{
+            var cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            var activeNetworking = cm.activeNetworkInfo
+            if(activeNetworking.type== ConnectivityManager.TYPE_WIFI)return 1
+            else if(activeNetworking.type== ConnectivityManager.TYPE_MOBILE)return 2
+            return 0
         }
 
     }
