@@ -113,8 +113,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         databaseReference = database.reference.child("users").child("$myUid").child("friends")
 
 //        uidReference = authReference.child("$myUid.png")
-        myInfos = intent.getSerializableExtra(myUtil.myUserInfo) as UserInfo?
-
+//        myInfos = intent.getSerializableExtra(myUtil.myUserInfo) as UserInfo?
+        var holderId = intent.getStringExtra(myUtil.myUserInfo)
+        myInfos = myUtil.popDataHolder(holderId) as UserInfo
         header = nav_view2.getHeaderView(0)
         man = header.findViewById(R.id.man)
         man.isChecked = true
@@ -128,11 +129,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             intents.putExtra("wantgender", man.isChecked)
 
             intents.putExtra("key", myUid)
+/////////////////////////////////////////////////////////////////////
+//            intents.putExtra(myUtil.myUserInfo, myInfos)
+            var holderId = myUtil.putDataHolder(myInfos)
 
-            intents.putExtra(myUtil.myUserInfo, myInfos)
+            intents.putExtra(myUtil.myUserInfo, holderId)
+
             intents.putExtra("univ", choice_univ)
             intents.putExtra("depart", choice_dm)
-
+            Log.d("INTENTERROR", "MAINACTIVITY TO UCHATACTIVITY")
             startActivityForResult(intents, 1)
             drawer_layout.closeDrawer(GravityCompat.END)
         }
@@ -162,7 +167,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             true
         }
         nav_view.getHeaderView(0).findViewById<TextView>(R.id.myNicknamess).text =
-            "${(intent.getSerializableExtra("USERINFO") as UserInfo).nickname} 님 환영합니다!"
+            "${myInfos?.nickname} 님 환영합니다!"
 
         profile = nav_view.getHeaderView(0).findViewById(R.id.imageViewss)
 
@@ -197,7 +202,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(p0: DataSnapshot) {
                     profile.setImageBitmap(myUtil.stringToBitmap(p0.getValue(String::class.java)!!))
-                    frag2.view?.findViewById<CircleImageView>(R.id.friendPhotoImg)?.setImageBitmap(myUtil.stringToBitmap(p0.getValue(String::class.java)!!))
+                    frag2.view?.findViewById<CircleImageView>(R.id.friendPhotoImg)
+                        ?.setImageBitmap(myUtil.stringToBitmap(p0.getValue(String::class.java)!!))
                 }
 
                 override fun onCancelled(p0: DatabaseError) {
@@ -297,12 +303,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
         var bd = Bundle()
-        bd.putSerializable("myInfo", myInfos)
+        var holderId = myUtil.putDataHolder(myInfos)
+
+        bd.putString("myInfo", holderId)
         bd.putString("key", myUid)
 
         frag2.arguments = bd
         myUtil.initFragment(R.id.fragmentS, supportFragmentManager, frag2, frag3, frag4)
         addListener()
+
 
 
         //databaseReference.add
@@ -434,13 +443,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         } else if (resultCode == 7979) {
             var friendy = data?.getSerializableExtra("friend") as UchatInfo
-            var bit = data.getParcelableExtra<Bitmap>("icon")
+            var holderId = data?.getStringExtra("icon")
+            var bit = myUtil.popDataHolder(holderId) as Bitmap
             var myfriend = Friends()
             myfriend.setValue(
                 friendy.nickname!!,
                 friendy.key!!,
                 friendy.phone!!,
-                myUtil.bitmapToString(bit!!),
+                myUtil.bitmapToString(bit),
                 friendy.university!!,
                 friendy.department!!
             )
@@ -453,6 +463,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             //친구추가창
         } else if (resultCode == 7070) {
             var friendy = chatlog
+//            var holderId = data?.getStringExtra("icon")!!
             var bit = imageLog
             var myfriend = Friends()
             myfriend.setValue(
@@ -491,7 +502,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         } else if (resultCode == 7978) {
             var intents = Intent(this@MainActivity, BackKeyPress::class.java)
             chatlog = data?.getSerializableExtra("friend") as UchatInfo
-            imageLog = data?.getParcelableExtra("icon")
+
+            var holderId = data?.getStringExtra("icon")
+            imageLog = myUtil.popDataHolder(holderId) as Bitmap
+
             intents.putExtra("code", 3)
             startActivityForResult(intents, 1)
         }

@@ -21,6 +21,8 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatSpinner
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.io.ByteArrayOutputStream
+import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 class myUtil {
 
@@ -36,6 +38,8 @@ class myUtil {
         val autoLog = "AUTOLOGIN"
         @JvmStatic
         val logIn_cred = "Login credentials"
+        @JvmStatic
+        var mDataHolder = ConcurrentHashMap<String, Any?>()
 
         @JvmStatic
         fun stringToBitmap(encodedString: String): Bitmap {
@@ -327,9 +331,24 @@ class myUtil {
         }
 
         @JvmStatic
-        fun phoneToString(phone:String?):String?{
+        fun phoneToString(phone: String?): String? {
 
             return PhoneNumberUtils.formatNumber(phone, "KR")
+
+        }
+
+        @JvmStatic
+        fun putDataHolder(data: Any?): String {
+            var dataHolderId = UUID.randomUUID().toString()
+            mDataHolder.put(dataHolderId, data)
+            return dataHolderId
+        }
+
+        @JvmStatic
+        fun popDataHolder(key: String): Any? {
+            var obj = mDataHolder[key]
+            mDataHolder.remove(key)
+            return obj
 
         }
 

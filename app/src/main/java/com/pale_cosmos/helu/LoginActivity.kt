@@ -143,7 +143,11 @@ class LoginActivity : AppCompatActivity() {
 
                                 var intents = Intent(this@LoginActivity, MainActivity::class.java)
 
-                                intents.putExtra(myUtil.myUserInfo, myInfo)
+//                                intents.putExtra(myUtil.myUserInfo, myInfo)
+                                var holderId = myUtil.putDataHolder(myInfo)
+
+                                intents.putExtra(myUtil.myUserInfo, holderId)
+
                                 intents.putExtra("key", uid)
                                 if (saveID.isChecked) {
 

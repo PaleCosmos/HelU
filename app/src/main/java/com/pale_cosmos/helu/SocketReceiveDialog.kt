@@ -78,7 +78,13 @@ class SocketReceiveDialog : AppCompatActivity() {
 //        storage = FirebaseStorage.getInstance("gs://palecosmos-helu.appspot.com/")
         database = FirebaseDatabase.getInstance()
 
-        myInfo = intent.getSerializableExtra("USERINFO") as UserInfo
+//        myInfo = intent.getSerializableExtra("USERINFO") as UserInfo
+        var holderId = intent.getStringExtra("USERINFO")
+        myInfo = myUtil.popDataHolder(holderId) as UserInfo
+
+
+        Log.d("INTENTERROR","SOCKETRECEIVEDIALOG FROM UCHATACTIVITY")
+
         key = intent.getStringExtra("key")
         nicknames = myInfo.nickname!!
         myuniv = myInfo.university!!
@@ -89,7 +95,7 @@ class SocketReceiveDialog : AppCompatActivity() {
         univ = intent.getStringExtra("univ")
         depart = intent.getStringExtra("depart")
         wantgenderString = intent.getStringExtra("wantgender")
-
+        Log.d("INTENTERROR","SOCKETRECEIVEDIALOG FROM UCHATACTIVITY2")
     }
 
     override fun onDestroy() {
@@ -116,14 +122,15 @@ class SocketReceiveDialog : AppCompatActivity() {
             var resulting = "failed"
             try {
                 socket = Socket() // lateinit
-
                 socket.soTimeout = 300000
                 socket.connect(socketAddress, 4000)
+                Log.d("INTENTERROR","SOCKETRECEIVEDIALOG FROM UCHATACTIVITY3")
                 Dos = DataOutputStream(socket.getOutputStream())
                 Dis = DataInputStream(socket.getInputStream())
             } catch (e: Exception) {
                 return "failedBeforeSocketOpen"
             }
+            Log.d("INTENTERROR","SOCKETRECEIVEDIALOG FROM UCHATACTIVITY4")
 
             if (read().split(":")[1].equals("INFORMATION", ignoreCase = true)) {
                 write("PROVIDE:INFORMATION:$key,$nicknames,$myuniv,$mydepart,$gender,$phone")
@@ -131,8 +138,9 @@ class SocketReceiveDialog : AppCompatActivity() {
             if (read().split(":")[1].equals("MATCHINGDATA", ignoreCase = true)) {
                 write("PROVIDE:MATCHINGDATA:$univ,$depart,$wantgenderString")
             } else return "failed"
-
+            Log.d("INTENTERROR","SOCKETRECEIVEDIALOG FROM UCHATACTIVITY5")
             var matchingDataSet = read()
+            Log.d("INTENTERROR","SOCKETRECEIVEDIALOG FROM UCHATACTIVITY6")
             Log.d("matchingDataSet", matchingDataSet)
             var dataSetSplited = matchingDataSet.split(":")
             if (dataSetSplited[1] == "MATCHINGDATASET") {
@@ -162,9 +170,12 @@ class SocketReceiveDialog : AppCompatActivity() {
                     databaseReference.addListenerForSingleValueEvent(object:ValueEventListener{
                         override fun onDataChange(p0: DataSnapshot) {
                          icon =myUtil.stringToBitmap(p0.getValue(String::class.java)!!)
+                            Log.d("bitmap", "map")
                             var intd = Intent()
                                 intd.putExtra("yourInfo", yourInfo)
-                                intd.putExtra("icon", icon)
+//                                intd.putExtra("icon", icon)
+                            var holderId = myUtil.putDataHolder(icon)
+                            intd.putExtra("icon",holderId)
                                 setResult(8080, intd)
                                 (getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(400)
                                 finish()

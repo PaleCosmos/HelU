@@ -70,11 +70,18 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
 
         setValue()
         intents = Intent(this@UchatActivity, SocketReceiveDialog::class.java)
-        intents.putExtra("USERINFO", myInfo)
+//        intents.putExtra("USERINFO", myInfo)
+        var holderId = myUtil.putDataHolder(myInfo)
+
+        intents.putExtra("USERINFO", holderId)
+
         intents.putExtra("key", key)
         intents.putExtra("univ", univ)
         intents.putExtra("depart", depart)
         intents.putExtra("wantgender", wantgenderString)
+
+
+        Log.d("INTENTERROR","UCHATACTIVITY TO SOCKETRECEIVEDIALOG")
         startActivityForResult(intents, 1)
         database = FirebaseDatabase.getInstance()
 
@@ -92,7 +99,10 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
         } else {
             "false"
         }
-        myInfo = intent.getSerializableExtra("USERINFO") as UserInfo?
+//        myInfo = intent.getSerializableExtra("USERINFO") as UserInfo?
+        Log.d("INTENTERROR","UCHATACTIVITY FROM MAINACTIVITY")
+        var holderId = intent.getStringExtra(myUtil.myUserInfo)
+        myInfo = myUtil.popDataHolder(holderId) as UserInfo
 
         key = intent.getStringExtra("key")
         database = FirebaseDatabase.getInstance()
@@ -184,7 +194,6 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
             }
         })
     }
-
 
 
     private fun initializationChatView() {
@@ -292,8 +301,12 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
             88 -> {
 
                 var res = Intent()
+                var holderId = myUtil.putDataHolder(yourIcon)
+
+
+//                res.putExtra("friend", yourInfo)
                 res.putExtra("friend", yourInfo)
-                res.putExtra("icon",yourIcon)
+                res.putExtra("icon", holderId)
                 setResult(7978, res)
                 finish()
 
@@ -304,7 +317,10 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
             }
             8080 -> {
                 yourInfo = data?.getSerializableExtra("yourInfo") as UchatInfo?
-                yourIcon = data?.getParcelableExtra("icon")!!
+                var holderId = data?.getStringExtra("icon")!!
+
+                yourIcon = myUtil.popDataHolder(holderId) as Bitmap
+
                 you = ChatUser(1, yourInfo?.nickname!!, yourIcon)
                 addChildListener(myDataRef)
                 dataRef = database.reference.child("chats").child("${yourInfo?.key}").child("Uchat")
@@ -319,7 +335,7 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
             10043 -> { // 친구추가
                 var res = Intent()
                 res.putExtra("friend", yourInfo)
-                res.putExtra("icon",yourIcon)
+                res.putExtra("icon", yourIcon)
                 setResult(7979, res)
                 myquitcheck = false
                 finish()

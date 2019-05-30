@@ -38,7 +38,8 @@ class Fragment2 : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment2, container, false) as ViewGroup
         recyclerView = view.findViewById(R.id.mRecyclerView)
-        var info = arguments?.getSerializable("myInfo") as UserInfo
+        var holderId = arguments?.getString("myInfo")
+        var info = myUtil.popDataHolder(holderId!!) as UserInfo
         database = FirebaseDatabase.getInstance()
         named = view.findViewById(R.id.nameTv)
         university = view.findViewById(R.id.universityTv)

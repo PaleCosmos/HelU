@@ -10,6 +10,7 @@ import android.os.*
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.view.WindowManager
+import com.google.android.gms.common.data.DataHolder
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
@@ -100,7 +101,10 @@ class SplashActivity : AppCompatActivity() {
                             var intents = Intent(this@SplashActivity, MainActivity::class.java)
 
                             intents.putExtra("key", uid)
-                            intents.putExtra(myUtil.myUserInfo, myInfo)
+                            var holderId = myUtil.putDataHolder(myInfo)
+
+                            intents.putExtra(myUtil.myUserInfo, holderId)
+
                             intents.putExtra("university", myInfo?.university)
                             intents.putExtra("department", myInfo?.department)
 
