@@ -32,7 +32,7 @@ class TalkActivity : AppCompatActivity(), View.OnClickListener {
     lateinit var yourIcon: Bitmap
     lateinit var dbr: DatabaseReference
     lateinit var str: StorageReference
-
+    lateinit var myProfile: Bitmap
     lateinit var myDB: DatabaseReference
     lateinit var yourDB: DatabaseReference
     lateinit var uid: String
@@ -52,6 +52,7 @@ class TalkActivity : AppCompatActivity(), View.OnClickListener {
             myFriend.nickname,
             myUtil.stringToBitmap(myUtil.popDataHolder(intent.getStringExtra("image")) as String)
         )
+        myProfile = (myUtil.popDataHolder(intent.getStringExtra("profile"))as Bitmap)
         me = ChatUser(0, myNick, BitmapFactory.decodeResource(resources, R.drawable.face_2))
         myDB = FirebaseDatabase.getInstance().reference.child("users").child(uid)
             .child("talk").child(myFriend.key)
@@ -85,11 +86,13 @@ class TalkActivity : AppCompatActivity(), View.OnClickListener {
                     if (areyou) (getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(40)
                     areyou = false
                 }
+                var setting = ChatUser(1, data?.nickname!!, myUtil.stringToBitmap(data?.profile))
                 when (data?.type) {
+
                     "message" -> {
 
                         var message = Message.Builder()
-                            .setUser(user)
+                            .setUser(setting)
                             .setRight(flag)
                             .setText(data.message!!)
                             .hideIcon(flag)
@@ -100,7 +103,7 @@ class TalkActivity : AppCompatActivity(), View.OnClickListener {
                     }
                     "photo" -> {
                         var message = Message.Builder()
-                            .setUser(user)
+                            .setUser(setting)
                             .setRight(flag)
                             .setType(Message.Type.PICTURE)
                             .setPicture(myUtil.stringToBitmap(data?.photo))
@@ -183,6 +186,7 @@ class TalkActivity : AppCompatActivity(), View.OnClickListener {
         msg.message = ""
         msg.nickname = myFriend.nickname
         msg.photo = myUtil.bitmapToString(map)
+        msg.profile = myUtil.bitmapToString(myProfile)
         myDB.push().setValue(msg)
         yourDB.push().setValue(msg)
     }
@@ -199,6 +203,7 @@ class TalkActivity : AppCompatActivity(), View.OnClickListener {
             msg.key = uid
             msg.nickname = myFriend.nickname
             msg.message = text
+            msg.profile = myUtil.bitmapToString(myProfile)
             msg.photo = ""
             myDB.push().setValue(msg)
             yourDB.push().setValue(msg)
@@ -220,7 +225,7 @@ class TalkActivity : AppCompatActivity(), View.OnClickListener {
                     profileUri
                 )
 
-                sendImage(bitg)
+                sendImage(bitg)//
 
                 var myFile = File(profileUri.path)
                 if (myFile.exists()) myFile.delete()

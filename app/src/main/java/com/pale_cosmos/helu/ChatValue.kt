@@ -7,11 +7,12 @@ import java.io.Serializable
 
 @IgnoreExtraProperties
 class ChatValue :Serializable{
-    var nickname:String??=""
+    var nickname:String?=""
     var type:String?=""
     var key:String?=""
     var message:String? =""
     var photo: String=""
+    var profile:String=""
 
 
 
@@ -25,6 +26,7 @@ class ChatValue :Serializable{
         result.put("key",key)
         result.put("message",message)
         result.put("photo",photo)
+        result.put("profile",profile)
         return result
     }
 

@@ -65,6 +65,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var imageLog: Bitmap
     lateinit var chatlog: UchatInfo
     lateinit var man: RadioButton
+    lateinit var myProfile:Bitmap
     lateinit var startChat: Button
     lateinit var adapter_univ: ArrayAdapter<CharSequence>
     lateinit var adapter_depart: ArrayAdapter<CharSequence>
@@ -186,7 +187,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
 
                 override fun onDataChange(p0: DataSnapshot) {
-                    profile.setImageBitmap(myUtil.stringToBitmap(p0.getValue(String::class.java)!!))
+                    myProfile=myUtil.stringToBitmap(p0.getValue(String::class.java)!!)
+                    profile.setImageBitmap(myProfile)
                     frag2.view?.findViewById<CircleImageView>(R.id.friendPhotoImg)
                         ?.setImageBitmap(myUtil.stringToBitmap(p0.getValue(String::class.java)!!))
                 }
@@ -211,9 +213,28 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onChildMoved(p0: DataSnapshot, p1: String?) {
     }
 
+    fun toast(msg:String,nick:String,bit:Bitmap)
+    {
+        var layout = layoutInflater.inflate(R.layout.toastborder,findViewById<ViewGroup>(R.id.toast_layout))
+        var messageView = layout.findViewById<TextView>(R.id.toast_message)
+        var profileView = layout.findViewById<CircleImageView>(R.id.toast_image)
+        var nameView=layout.findViewById<TextView>(R.id.toast_name)
+        var msg_clip = ""
+        if(msg.length>20)msg_clip=msg.substring(0,20) +"..."
+        else msg_clip=msg
+        var toast = Toast(applicationContext)
+        nameView.text=nick
+        profileView.setImageBitmap(bit)
+        messageView.text=msg_clip
+
+        toast.setGravity(Gravity.CENTER,0,-50)
+        toast.duration=Toast.LENGTH_SHORT
+        toast.view = layout
+        toast.show()
+    }
+
     override fun onChildChanged(p0: DataSnapshot, p1: String?) {
 
-        Log.d("abcde", p0.key)
 
         var ref = p0.ref.orderByKey().limitToLast(1)
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -229,11 +250,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         if (msg?.type == "message") x = msg?.message
                         else if (msg?.type == "photo") x = "사진"
                         else x = "NULL!"
-                        Toast.makeText(
-                            applicationContext,
-                            "${msg?.nickname} : $x",
-                            Toast.LENGTH_SHORT
-                        ).show()
+//                        Toast.makeText(
+//                            applicationContext,
+//                            "${msg?.nickname} : $x",
+//                            Toast.LENGTH_SHORT
+//                        ).show()
+                        toast(x!!,msg?.nickname!!,myUtil.stringToBitmap(msg?.profile))
                     }
                 }
             }
@@ -530,7 +552,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 friendy.nickname!!,
                 friendy.key!!,
                 friendy.phone!!,
-                myUtil.bitmapToString(bit!!),
+                myUtil.bitmapToString(bit),
                 friendy.university!!,
                 friendy.department!!,
                 friendy.gender.toString().toLowerCase()
@@ -576,6 +598,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             inf.putExtra("nickname", myInfos?.nickname)
             inf.putExtra("key", myUid)
             inf.putExtra("image",data?.getStringExtra("image"))
+            inf.putExtra("profile",myUtil.putDataHolder(myProfile))
             startActivityForResult(inf, 3)
 
             // 채팅방 추가요망

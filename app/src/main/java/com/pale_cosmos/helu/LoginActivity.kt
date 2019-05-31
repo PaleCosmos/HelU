@@ -183,7 +183,8 @@ class LoginActivity : AppCompatActivity() {
 
     private fun makeCustomToast(msg: String, xSet: Int, ySet: Int) {
         var view: View =
-            getLayoutInflater().inflate(R.layout.toastborder, findViewById<ViewGroup>(R.id.toast_layout_root))
+            getLayoutInflater().inflate(R.layout.toastborder, findViewById<ViewGroup>(R.id.toast_layout
+            ))
         var text: TextView = view.findViewById(R.id.text)
         text.setTextColor(Color.WHITE)
         text.text = msg
