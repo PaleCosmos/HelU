@@ -220,13 +220,7 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
         mChatView.setOptionButtonColor(R.color.primary_darker)
     }
 
-    fun updateStatusBarColor(color: String) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val window = window
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.statusBarColor = Color.parseColor(color)
-        }
-    }
+
 
     override fun onClick(v: View?) {
 

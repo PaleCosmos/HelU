@@ -43,6 +43,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.SimpleTarget
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -295,6 +296,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onDestroy() {
+        FirebaseAuth.getInstance().signOut()
 
         Fragment2.myList = arrayListOf<Friends>()
         super.onDestroy()
@@ -405,10 +407,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
+        if (resultCode == Activity.RESULT_OK) { // 로그아웃
+
             startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+
+
             finish()
         } else if (resultCode == 99) {
+
             finish()
         } else if (resultCode == 75) {
             var profileUri = data?.getParcelableExtra("profileUri") as Uri

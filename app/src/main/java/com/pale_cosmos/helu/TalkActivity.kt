@@ -1,5 +1,6 @@
 package com.pale_cosmos.helu
 
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Resources
@@ -8,15 +9,19 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Vibrator
 import android.provider.MediaStore
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.github.bassaer.chatmessageview.model.ChatUser
+import com.github.bassaer.chatmessageview.model.Message
 import com.google.firebase.database.*
 import com.google.firebase.storage.StorageReference
 import com.pale_cosmos.helu.util.myUtil
 import kotlinx.android.synthetic.main.activity_talk.*
+import kotlinx.android.synthetic.main.activity_u_chat.*
 import java.io.File
 
 class TalkActivity : AppCompatActivity(), View.OnClickListener {
@@ -47,9 +52,71 @@ class TalkActivity : AppCompatActivity(), View.OnClickListener {
             .child("talk").child(uid)
         getImageIcon()
         initializationChayView()
+        addChildListender(myDB) // 글로벌화시켜야함
         // 아직 미구현@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     }
+private fun addChildListender(ref:DatabaseReference)
+{
+    ref.addChildEventListener(object : ChildEventListener {
+        override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+        }
 
+        override fun onCancelled(p0: DatabaseError) {
+        }
+
+        override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+            val data = p0.getValue(ChatValue::class.java)
+            var user:ChatUser?=null
+            var flag = true
+            if(data?.key == uid) {
+                user = me
+                flag=true
+                areyou=true
+            }
+            else{
+                user=you
+                flag=false
+                if (areyou) (getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(40)
+                areyou = false
+            }
+            when (data?.type) {
+                "message" -> {
+
+                    var message = Message.Builder()
+                        .setUser(user)
+                        .setRight(flag)
+                        .setText(data.message!!)
+                        .hideIcon(flag)
+                        .build()
+                    Handler().post {
+                        mtalk.receive(message)
+                    }
+                }
+                "photo" -> {
+                    var message = Message.Builder()
+                        .setUser(user)
+                        .setRight(flag)
+                        .setType(Message.Type.PICTURE)
+                        .setPicture(myUtil.stringToBitmap(data?.photo))
+                        .setText("")
+                        .hideIcon(flag)
+                        .build()
+                    Handler().post {
+                        mtalk.receive(message)
+                    }
+                }
+            }
+        }
+
+        override fun onChildRemoved(p0: DataSnapshot) {
+
+        }
+
+        override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+
+        }
+    })
+}
     private fun getImageIcon() {
         dbr = FirebaseDatabase.getInstance().reference.child("users").child(uid).child("photo")
         dbr.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -97,10 +164,32 @@ class TalkActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun sendImage(map: Bitmap) {
-
-
+        val msg = ChatValue()
+        msg.type = "photo"
+        msg.key = uid
+        msg.message = ""
+        msg.photo = myUtil.bitmapToString(map)
+        myDB.push().setValue(msg)
+        yourDB.push().setValue(msg)
     }
+    override fun onClick(v: View?) {
 
+
+        var text = mtalk.inputText
+
+        if (!text.isBlank()) {
+
+            val msg = ChatValue()
+            msg.type = "message"
+            msg.key = uid
+            msg.message = text
+            msg.photo = ""
+            myDB.push().setValue(msg)
+            yourDB.push().setValue(msg)
+
+            mtalk.inputText = ""
+        }
+    }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -124,10 +213,7 @@ class TalkActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    override fun onClick(v: View?) {
 
-
-    }
 
     override fun onBackPressed() {
         finish()

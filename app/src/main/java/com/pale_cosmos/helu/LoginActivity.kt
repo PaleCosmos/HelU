@@ -131,7 +131,7 @@ class LoginActivity : AppCompatActivity() {
                         //var user = auth?.currentUser?.displayName
                         var uid = auth?.currentUser!!.uid
                         var myInfo: UserInfo?
-
+//                    if(task.)
 
 
 
