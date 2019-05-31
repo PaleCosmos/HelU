@@ -30,7 +30,7 @@ import kotlinx.android.synthetic.main.activity_u_chat.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 
-class UchatActivity : AppCompatActivity(), View.OnClickListener {
+class UchatActivity : AppCompatActivity(), View.OnClickListener, ChildEventListener {
     lateinit var database: FirebaseDatabase
 
     var dataRef: DatabaseReference? = null
@@ -57,7 +57,7 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         areyou = true
-        myUtil.updateStatusBarColor(window,"#E43F3F")
+        myUtil.updateStatusBarColor(window, "#E43F3F")
         setContentView(R.layout.activity_u_chat)
         initializationChatView()
         initialization()
@@ -108,87 +108,67 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun deleteChildListener(ref: DatabaseReference) {
-        ref.addChildEventListener(object : ChildEventListener {
-            override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-            }
-
-            override fun onCancelled(p0: DatabaseError) {
-            }
-
-            override fun onChildAdded(p0: DataSnapshot, p1: String?) {
-
-
-            }
-
-            override fun onChildRemoved(p0: DataSnapshot) {
-                if (myquitcheck) {
-                    var res = Intent(this@UchatActivity, BackKeyPress::class.java)
-                    res.putExtra("code", 2)
-                    startActivityForResult(res, 1)
-                    deleteMyLog()
-                }
-            }
-
-            override fun onChildChanged(p0: DataSnapshot, p1: String?) {
-
-            }
-        })
+        ref.addChildEventListener(this)
     }
 
     private fun addChildListener(ref: DatabaseReference) {
-        ref.addChildEventListener(object : ChildEventListener {
-            override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-            }
-
-            override fun onCancelled(p0: DatabaseError) {
-            }
-
-            override fun onChildAdded(p0: DataSnapshot, p1: String?) {
-                val data = p0.getValue(ChatValue::class.java)
-
-                when (data?.type) {
-                    "message" -> {
-                        if (areyou) (getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(40)
-                        areyou = false
-                        var message = Message.Builder()
-                            .setUser(you)
-                            .setRight(false)
-                            .setText(data.message!!)
-                            .hideIcon(false)
-                            .build()
-                        Handler().post {
-                            mChatView.receive(message)
-                        }
-                    }
-                    "photo" -> {
-                        if (areyou) (getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(40)
-                        areyou = false
-
-                        var message = Message.Builder()
-                            .setUser(you)
-                            .setRight(false)
-                            .setType(Message.Type.PICTURE)
-                            .setPicture(myUtil.stringToBitmap(data?.photo))
-                            .setText("")
-                            .hideIcon(false)
-                            .build()
-                        Handler().post {
-                            mChatView.receive(message)
-                        }
-                    }
-                }
-            }
-
-            override fun onChildRemoved(p0: DataSnapshot) {
-
-            }
-
-            override fun onChildChanged(p0: DataSnapshot, p1: String?) {
-
-            }
-        })
+        ref.addChildEventListener(this)
     }
 
+    override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+    }
+
+    override fun onCancelled(p0: DatabaseError) {
+    }
+
+    override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+        val data = p0.getValue(ChatValue::class.java)
+
+        when (data?.type) {
+            "message" -> {
+                if (areyou) (getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(40)
+                areyou = false
+                var message = Message.Builder()
+                    .setUser(you)
+                    .setRight(false)
+                    .setText(data.message!!)
+                    .hideIcon(false)
+                    .build()
+                Handler().post {
+                    mChatView.receive(message)
+                }
+            }
+            "photo" -> {
+                if (areyou) (getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(40)
+                areyou = false
+
+                var message = Message.Builder()
+                    .setUser(you)
+                    .setRight(false)
+                    .setType(Message.Type.PICTURE)
+                    .setPicture(myUtil.stringToBitmap(data?.photo))
+                    .setText("")
+                    .hideIcon(false)
+                    .build()
+                Handler().post {
+                    mChatView.receive(message)
+                }
+            }
+        }
+    }
+
+    override fun onChildRemoved(p0: DataSnapshot) {
+        if (myquitcheck) {
+            var res = Intent(this@UchatActivity, BackKeyPress::class.java)
+            res.putExtra("code", 2)
+            startActivityForResult(res, 1)
+            deleteMyLog()
+        }
+    }
+
+    override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+
+    }
 
     private fun initializationChatView() {
 
@@ -219,7 +199,6 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
         })
         mChatView.setOptionButtonColor(R.color.primary_darker)
     }
-
 
 
     override fun onClick(v: View?) {
@@ -332,7 +311,7 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
                 myquitcheck = false
                 finish()
             }
-            337->finish()
+            337 -> finish()
             75 -> {
                 var profileUri = data?.getParcelableExtra("profileUri") as Uri
 
@@ -355,6 +334,7 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
     override fun onDestroy() {
         super.onDestroy()
         deleteMyLog()
+        myDataRef.removeEventListener(this)
         myquitcheck = false
     }
 

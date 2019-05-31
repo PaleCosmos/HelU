@@ -41,6 +41,8 @@ class myUtil {
         val logIn_cred = "Login credentials"
         @JvmStatic
         var mDataHolder = ConcurrentHashMap<String, Any?>()
+        @JvmStatic
+        var whatChat:String?="null"
 
         @JvmStatic
         fun stringToBitmap(encodedString: String): Bitmap {

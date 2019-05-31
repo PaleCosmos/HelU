@@ -24,7 +24,7 @@ import kotlinx.android.synthetic.main.activity_talk.*
 import kotlinx.android.synthetic.main.activity_u_chat.*
 import java.io.File
 
-class TalkActivity : AppCompatActivity(), View.OnClickListener {
+class TalkActivity : AppCompatActivity(), View.OnClickListener, ChildEventListener {
     lateinit var myFriend: Friends
     lateinit var me: ChatUser
     lateinit var you: ChatUser
@@ -44,79 +44,79 @@ class TalkActivity : AppCompatActivity(), View.OnClickListener {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         myUtil.updateStatusBarColor(window, "#E43F3F")
         myNick = intent.getStringExtra("nickname")
-        uid =intent.getStringExtra("key")
+        uid = intent.getStringExtra("key")
         myFriend = myUtil.popDataHolder(intent.getStringExtra("info")) as Friends
         myDB = FirebaseDatabase.getInstance().reference.child("users").child(uid)
             .child("talk").child(myFriend.key)
-        yourDB=FirebaseDatabase.getInstance().reference.child("users").child(myFriend.key)
+        yourDB = FirebaseDatabase.getInstance().reference.child("users").child(myFriend.key)
             .child("talk").child(uid)
         getImageIcon()
         initializationChayView()
         addChildListender(myDB) // 글로벌화시켜야함
         // 아직 미구현@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     }
-private fun addChildListender(ref:DatabaseReference)
-{
-    ref.addChildEventListener(object : ChildEventListener {
-        override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+
+    private fun addChildListender(ref: DatabaseReference) {
+        ref.addChildEventListener(this)
+    }
+
+    override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+    }
+
+    override fun onCancelled(p0: DatabaseError) {
+    }
+
+    override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+        val data = p0.getValue(ChatValue::class.java)
+        var user: ChatUser? = null
+        var flag = true
+        if (data?.key == uid) {
+            user = me
+            flag = true
+            areyou = true
+        } else {
+            user = you
+            flag = false
+            if (areyou) (getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(40)
+            areyou = false
         }
+        when (data?.type) {
+            "message" -> {
 
-        override fun onCancelled(p0: DatabaseError) {
-        }
-
-        override fun onChildAdded(p0: DataSnapshot, p1: String?) {
-            val data = p0.getValue(ChatValue::class.java)
-            var user:ChatUser?=null
-            var flag = true
-            if(data?.key == uid) {
-                user = me
-                flag=true
-                areyou=true
-            }
-            else{
-                user=you
-                flag=false
-                if (areyou) (getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(40)
-                areyou = false
-            }
-            when (data?.type) {
-                "message" -> {
-
-                    var message = Message.Builder()
-                        .setUser(user)
-                        .setRight(flag)
-                        .setText(data.message!!)
-                        .hideIcon(flag)
-                        .build()
-                    Handler().post {
-                        mtalk.receive(message)
-                    }
-                }
-                "photo" -> {
-                    var message = Message.Builder()
-                        .setUser(user)
-                        .setRight(flag)
-                        .setType(Message.Type.PICTURE)
-                        .setPicture(myUtil.stringToBitmap(data?.photo))
-                        .setText("")
-                        .hideIcon(flag)
-                        .build()
-                    Handler().post {
-                        mtalk.receive(message)
-                    }
+                var message = Message.Builder()
+                    .setUser(user)
+                    .setRight(flag)
+                    .setText(data.message!!)
+                    .hideIcon(flag)
+                    .build()
+                Handler().post {
+                    mtalk.receive(message)
                 }
             }
+            "photo" -> {
+                var message = Message.Builder()
+                    .setUser(user)
+                    .setRight(flag)
+                    .setType(Message.Type.PICTURE)
+                    .setPicture(myUtil.stringToBitmap(data?.photo))
+                    .setText("")
+                    .hideIcon(flag)
+                    .build()
+                Handler().post {
+                    mtalk.receive(message)
+                }
+            }
         }
+    }
 
-        override fun onChildRemoved(p0: DataSnapshot) {
+    override fun onChildRemoved(p0: DataSnapshot) {
 
-        }
+    }
 
-        override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+    override fun onChildChanged(p0: DataSnapshot, p1: String?) {
 
-        }
-    })
-}
+    }
+
     private fun getImageIcon() {
         dbr = FirebaseDatabase.getInstance().reference.child("users").child(uid).child("photo")
         dbr.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -132,6 +132,11 @@ private fun addChildListender(ref:DatabaseReference)
             }
         })
 
+    }
+
+    override fun onDestroy() {
+        myUtil.whatChat = "null"
+        super.onDestroy()
     }
 
     private fun initializationChayView() {
@@ -168,11 +173,12 @@ private fun addChildListender(ref:DatabaseReference)
         msg.type = "photo"
         msg.key = uid
         msg.message = ""
-        msg.nickname=myFriend.nickname
+        msg.nickname = myFriend.nickname
         msg.photo = myUtil.bitmapToString(map)
         myDB.push().setValue(msg)
         yourDB.push().setValue(msg)
     }
+
     override fun onClick(v: View?) {
 
 
@@ -183,7 +189,7 @@ private fun addChildListender(ref:DatabaseReference)
             val msg = ChatValue()
             msg.type = "message"
             msg.key = uid
-            msg.nickname=myFriend.nickname
+            msg.nickname = myFriend.nickname
             msg.message = text
             msg.photo = ""
             myDB.push().setValue(msg)
@@ -192,6 +198,7 @@ private fun addChildListender(ref:DatabaseReference)
             mtalk.inputText = ""
         }
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -214,7 +221,6 @@ private fun addChildListender(ref:DatabaseReference)
 
         }
     }
-
 
 
     override fun onBackPressed() {

@@ -56,7 +56,7 @@ import java.io.File
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, View.OnClickListener,
-    View.OnLongClickListener {
+    View.OnLongClickListener, ChildEventListener {
 
     var im = R.id.nav_gallery
     var builder: AlertDialog.Builder? = null
@@ -179,31 +179,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         var imagesRef = fs.reference.child("profile/$myUid.png")
 
 
-//        GlideApp.with(applicationContext).asBitmap().load(imagesRef)
-//            .override(100, 100)
-//            .diskCacheStrategy(DiskCacheStrategy.NONE)
-//            .skipMemoryCache(true)
-//            .placeholder(R.drawable.profile)
-//            .error(R.drawable.profile)
-//            .into(object : SimpleTarget<Bitmap>() {
-//                override fun onResourceReady(
-//                    resource: Bitmap,
-//                    transition: com.bumptech.glide.request.transition.Transition<in Bitmap>?
-//                ) {
-//                    profile.setImageBitmap(resource)
-//
-//                }
-//            })
-
         database.reference.child("users").child("$myUid").child("photo")
-            .addValueEventListener(object : ValueEventListener {
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onCancelled(p0: DatabaseError) {
+
+                }
+
                 override fun onDataChange(p0: DataSnapshot) {
                     profile.setImageBitmap(myUtil.stringToBitmap(p0.getValue(String::class.java)!!))
                     frag2.view?.findViewById<CircleImageView>(R.id.friendPhotoImg)
                         ?.setImageBitmap(myUtil.stringToBitmap(p0.getValue(String::class.java)!!))
-                }
-
-                override fun onCancelled(p0: DatabaseError) {
                 }
             })
 
@@ -216,50 +201,52 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun traceMyTalk(ref: DatabaseReference) {
-        ref.addChildEventListener(object : ChildEventListener {
+        ref.addChildEventListener(this)
+    }
+
+    override fun onCancelled(p0: DatabaseError) {
+
+    }
+
+    override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+    }
+
+    override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+
+        Log.d("abcde", p0.key)
+
+        var ref = p0.ref.orderByKey().limitToLast(1)
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
 
             }
 
-            override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-            }
-
-            override fun onChildChanged(p0: DataSnapshot, p1: String?) {
-
-                Log.d("abcde", p0.key)
-                var ref = p0.ref.orderByKey().limitToLast(1)
-                ref.addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onCancelled(p0: DatabaseError) {
-
+            override fun onDataChange(p1: DataSnapshot) {
+                for (data in p1.children) {
+                    val msg = data.getValue(ChatValue::class.java)
+                    if (msg?.key != myUid && myUtil.whatChat != p0.key) {
+                        var x: String? = null
+                        if (msg?.type == "message") x = msg?.message
+                        else if (msg?.type == "photo") x = "사진"
+                        else x = "NULL!"
+                        Toast.makeText(
+                            applicationContext,
+                            "${msg?.nickname} : $x",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
-
-                    override fun onDataChange(p1: DataSnapshot) {
-                        for (data in p1.children) {
-                            val msg = data.getValue(ChatValue::class.java)
-                            if (msg?.key != myUid) {
-                                var x: String? = null
-                                if (msg?.type == "message") x = msg?.message
-                                else if (msg?.type == "photo") x = "사진"
-                                else x = "NULL!"
-                                Toast.makeText(
-                                    applicationContext,
-                                    "${msg?.nickname} : $x",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        }
-                    }
-
-                })
+                }
             }
 
-            override fun onChildAdded(p0: DataSnapshot, p1: String?) {
-            }
-
-            override fun onChildRemoved(p0: DataSnapshot) {
-
-            }
         })
+
+    }
+
+    override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+    }
+
+    override fun onChildRemoved(p0: DataSnapshot) {
+
     }
 
     override fun onClick(v: View?) {
@@ -356,6 +343,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onDestroy() {
         FirebaseAuth.getInstance().signOut()
+        talkReference.removeEventListener(this)
 //        talkReference.removeEventListener(ChildEventListener())
         Fragment2.myList = arrayListOf<Friends>()
         super.onDestroy()
