@@ -168,6 +168,7 @@ private fun addChildListender(ref:DatabaseReference)
         msg.type = "photo"
         msg.key = uid
         msg.message = ""
+        msg.nickname=myFriend.nickname
         msg.photo = myUtil.bitmapToString(map)
         myDB.push().setValue(msg)
         yourDB.push().setValue(msg)
@@ -182,6 +183,7 @@ private fun addChildListender(ref:DatabaseReference)
             val msg = ChatValue()
             msg.type = "message"
             msg.key = uid
+            msg.nickname=myFriend.nickname
             msg.message = text
             msg.photo = ""
             myDB.push().setValue(msg)

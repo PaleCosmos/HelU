@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     var initFrag = 0  // 0-> frag2 ,1->frag3, 2->frag4
     lateinit var header: View
     lateinit var myUid: String
-
+    lateinit var talkReference: DatabaseReference
 
     var frag2: androidx.fragment.app.Fragment = Fragment2()
 
@@ -107,6 +107,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         myUid = intent.getStringExtra("key") // myUID
         databaseReference = database.reference.child("users").child("$myUid").child("friends")
+        talkReference = database.reference.child("users").child("$myUid").child("talk")
 
 //        uidReference = authReference.child("$myUid.png")
 //        myInfos = intent.getSerializableExtra(myUtil.myUserInfo) as UserInfo?
@@ -211,9 +212,55 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setCheckedItem(R.id.nav_gallery)
         nav_view.menu.performIdentifierAction(R.id.nav_gallery, 0)
-
+        traceMyTalk(talkReference)
     }
 
+    private fun traceMyTalk(ref: DatabaseReference) {
+        ref.addChildEventListener(object : ChildEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+
+            override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+            }
+
+            override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+
+                Log.d("abcde", p0.key)
+                var ref = p0.ref.orderByKey().limitToLast(1)
+                ref.addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onCancelled(p0: DatabaseError) {
+
+                    }
+
+                    override fun onDataChange(p1: DataSnapshot) {
+                        for (data in p1.children) {
+                            val msg = data.getValue(ChatValue::class.java)
+                            if (msg?.key != myUid) {
+                                var x: String? = null
+                                if (msg?.type == "message") x = msg?.message
+                                else if (msg?.type == "photo") x = "사진"
+                                else x = "NULL!"
+                                Toast.makeText(
+                                    applicationContext,
+                                    "${msg?.nickname} : $x",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    }
+
+                })
+            }
+
+            override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+            }
+
+            override fun onChildRemoved(p0: DataSnapshot) {
+
+            }
+        })
+    }
 
     override fun onClick(v: View?) {
         var id = v?.id
@@ -237,7 +284,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         initFrag = 0
                     }
                     2 -> {
-                        im = myUtil.rotateFragment(R.id.nav_slideshow, supportFragmentManager, frag3, frag2, frag4)
+                        im = myUtil.rotateFragment(
+                            R.id.nav_slideshow,
+                            supportFragmentManager,
+                            frag3,
+                            frag2,
+                            frag4
+                        )
                         nav_view.setCheckedItem(im)
                         initFrag = 1
                     }
@@ -246,7 +299,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.fab2 -> {
                 when (initFrag) {
                     0 -> {
-                        im = myUtil.rotateFragment(R.id.nav_slideshow, supportFragmentManager, frag3, frag2, frag4)
+                        im = myUtil.rotateFragment(
+                            R.id.nav_slideshow,
+                            supportFragmentManager,
+                            frag3,
+                            frag2,
+                            frag4
+                        )
                         nav_view.setCheckedItem(im)
                         initFrag = 1
                     }
@@ -297,7 +356,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onDestroy() {
         FirebaseAuth.getInstance().signOut()
-
+//        talkReference.removeEventListener(ChildEventListener())
         Fragment2.myList = arrayListOf<Friends>()
         super.onDestroy()
     }
@@ -335,7 +394,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     adapter_depart.setDropDownViewResource(R.layout.spinner_dropdown_item)
                     spinner_child.adapter = adapter_depart
                     spinner_child.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                        override fun onItemSelected(
+                            parent: AdapterView<*>?,
+                            view: View?,
+                            position: Int,
+                            id: Long
+                        ) {
                             choice_dm = adapter_depart.getItem(position).toString()
                         }
 
@@ -441,7 +505,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             val baos = ByteArrayOutputStream()
             bitg.compress(Bitmap.CompressFormat.PNG, 100, baos)
-            FirebaseStorage.getInstance().reference.child("profile").child("$myUid.png").putBytes(baos.toByteArray())
+            FirebaseStorage.getInstance().reference.child("profile").child("$myUid.png")
+                .putBytes(baos.toByteArray())
             database.reference.child("users").child(myUid).child("photo").setValue(myUtil.bitmapToString(bitg))
 
             var myFile = File(profileUri.path)
@@ -520,8 +585,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //            Toast.makeText(applicationContext, "채팅이시작되면돼", Toast.LENGTH_SHORT).show()
             var inf = Intent(this@MainActivity, TalkActivity::class.java)
             inf.putExtra("info", data?.getStringExtra("info"))
-            inf.putExtra("nickname",myInfos?.nickname)
-            inf.putExtra("key",myUid)
+            inf.putExtra("nickname", myInfos?.nickname)
+            inf.putExtra("key", myUid)
             startActivityForResult(inf, 3)
 
             // 채팅방 추가요망

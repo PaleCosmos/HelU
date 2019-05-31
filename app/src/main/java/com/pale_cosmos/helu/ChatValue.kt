@@ -7,6 +7,7 @@ import java.io.Serializable
 
 @IgnoreExtraProperties
 class ChatValue :Serializable{
+    var nickname:String??=""
     var type:String?=""
     var key:String?=""
     var message:String? =""
@@ -20,6 +21,7 @@ class ChatValue :Serializable{
 
         var result = HashMap<String,Any?>()
         result.put("type",type)
+        result.put("nickname",nickname)
         result.put("key",key)
         result.put("message",message)
         result.put("photo",photo)
