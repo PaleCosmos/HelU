@@ -50,8 +50,10 @@ class MainAdapter(items: ArrayList<Friends>, activity: Activity) : RecyclerView.
                             myView.setOnClickListener {
                                 var k = Intent(activity.applicationContext, FriendViewActivity::class.java)
                                 var holderId = myUtil.putDataHolder(item)
+                                var bitmaps = myUtil.putDataHolder(p0.getValue(String::class.java))
                                 myUtil.whatChat = item.key
                                 k.putExtra("info", holderId)
+                                k.putExtra("image",bitmaps)
                                 activity.startActivityForResult(k, 1)
 
                             }

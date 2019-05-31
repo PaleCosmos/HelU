@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatSpinner
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.pale_cosmos.helu.R
 import java.io.ByteArrayOutputStream
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -43,6 +44,11 @@ class myUtil {
         var mDataHolder = ConcurrentHashMap<String, Any?>()
         @JvmStatic
         var whatChat:String?="null"
+        @JvmStatic
+        fun defaultProfile(context:Context):Bitmap
+        {
+            return BitmapFactory.decodeResource(context.resources, R.drawable.profile)
+        }
 
         @JvmStatic
         fun stringToBitmap(encodedString: String): Bitmap {

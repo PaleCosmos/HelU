@@ -575,6 +575,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             inf.putExtra("info", data?.getStringExtra("info"))
             inf.putExtra("nickname", myInfos?.nickname)
             inf.putExtra("key", myUid)
+            inf.putExtra("image",data?.getStringExtra("image"))
             startActivityForResult(inf, 3)
 
             // 채팅방 추가요망

@@ -51,6 +51,7 @@ class FriendViewActivity : AppCompatActivity() {
         bbbs1.setOnClickListener {
             val tend = Intent()
             tend.putExtra("info",myUtil.putDataHolder(info))
+            tend.putExtra("image",intent.getStringExtra("image"))
             setResult(201735,tend)
             finish()
         }
