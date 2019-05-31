@@ -14,14 +14,16 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
+import com.pale_cosmos.helu.util.myUtil
 import kotlinx.android.synthetic.main.activity_friend_view.*
 
 
 class FriendViewActivity : AppCompatActivity() {
-    lateinit var nickname:String
-    lateinit var uid:String
-    lateinit var phone:String
-    var reference:StorageReference?=null
+    lateinit var nickname: String
+    lateinit var uid: String
+    lateinit var phone: String
+    var reference: StorageReference? = null
+    lateinit var info: Friends
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -30,14 +32,14 @@ class FriendViewActivity : AppCompatActivity() {
         setContentView(R.layout.activity_friend_view)
         window.setFeatureDrawableResource(Window.FEATURE_NO_TITLE, android.R.drawable.ic_dialog_alert)
 
+        info = myUtil.popDataHolder(intent.getStringExtra("info")) as Friends
+        uid = info.key
+        reference = FirebaseStorage.getInstance().getReference("profile/$uid.png")
 
-        uid = intent.getStringExtra("key")
-        reference=FirebaseStorage.getInstance().getReference("profile/$uid.png")
 
-Log.d("zxcvzxcv",uid)
-        nickname = intent.getStringExtra("nickname")
-        vvw.text=nickname
-        phone=intent.getStringExtra("phone")
+        nickname = info.nickname
+        vvw.text = nickname
+        phone = info.phone
 
         GlideApp.with(applicationContext)
             .load(reference)
@@ -47,7 +49,9 @@ Log.d("zxcvzxcv",uid)
             .into(akal)
 
         bbbs1.setOnClickListener {
-            setResult(201735)
+            val tend = Intent()
+            tend.putExtra("info",myUtil.putDataHolder(info))
+            setResult(201735,tend)
             finish()
         }
         bbbs2.setOnClickListener {
@@ -72,10 +76,12 @@ Log.d("zxcvzxcv",uid)
 
 
     }
+
     override fun onBackPressed() {
         finish()
         return
     }
+
     override fun setRequestedOrientation(requestedOrientation: Int) {
         if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
             super.setRequestedOrientation(requestedOrientation)

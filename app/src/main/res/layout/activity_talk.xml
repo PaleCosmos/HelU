@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              tools:context=".TalkActivity"
+              android:layout_height="match_parent">
+    <com.github.bassaer.chatmessageview.view.ChatView
+            android:id="@+id/mtalk"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:option_button_enable="true"
+            app:text_selectable="true"
+            app:message_font_size="18sp"
+            app:time_label_font_size="13sp"
+    />
+</LinearLayout>

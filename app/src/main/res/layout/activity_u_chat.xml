@@ -15,6 +15,5 @@
             app:text_selectable="true"
             app:message_font_size="18sp"
             app:time_label_font_size="13sp"
-
     />
 </LinearLayout>

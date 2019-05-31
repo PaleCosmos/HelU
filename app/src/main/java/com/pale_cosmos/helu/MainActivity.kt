@@ -296,9 +296,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onDestroy() {
 
-        Fragment2.myList =  arrayListOf<Friends>()
+        Fragment2.myList = arrayListOf<Friends>()
         super.onDestroy()
     }
+
     private fun initialization() {
 
 
@@ -446,12 +447,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             var bit = myUtil.popDataHolder(holderId) as Bitmap
             var myfriend = Friends()
             myfriend.setValue(
-                    friendy.nickname!!,
-            friendy.key!!,
-            friendy.phone!!,
-            myUtil.bitmapToString(bit),
-            friendy.university!!,
-            friendy.department!!
+                friendy.nickname!!,
+                friendy.key!!,
+                friendy.phone!!,
+                myUtil.bitmapToString(bit),
+                friendy.university!!,
+                friendy.department!!,
+                friendy.gender!!.toString().toLowerCase()
             )
             //어댑터에추가
             Fragment2.myList.add(myfriend)
@@ -471,7 +473,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 friendy.phone!!,
                 myUtil.bitmapToString(bit!!),
                 friendy.university!!,
-                friendy.department!!
+                friendy.department!!,
+                friendy.gender.toString().toLowerCase()
             )
             databaseReference.child(myfriend.key).addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(p0: DataSnapshot) {
@@ -507,9 +510,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             intents.putExtra("code", 3)
             startActivityForResult(intents, 1)
-        }else if(resultCode==201735)
-        {
-            Toast.makeText(applicationContext,"채팅이시작되면돼",Toast.LENGTH_SHORT).show()
+        } else if (resultCode == 201735) {
+//            Toast.makeText(applicationContext, "채팅이시작되면돼", Toast.LENGTH_SHORT).show()
+            var inf = Intent(this@MainActivity, TalkActivity::class.java)
+            inf.putExtra("info", data?.getStringExtra("info"))
+            inf.putExtra("nickname",myInfos?.nickname)
+            inf.putExtra("key",myUid)
+            startActivityForResult(inf, 3)
+
+            // 채팅방 추가요망
         }
     }
 }

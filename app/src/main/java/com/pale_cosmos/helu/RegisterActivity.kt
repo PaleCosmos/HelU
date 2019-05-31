@@ -143,7 +143,8 @@ class RegisterActivity : AppCompatActivity() {
                                 phones,
                                 "0",
                                 choice_univ!!,
-                                choice_depart!!
+                                choice_depart!!,
+                                gender.toString().toLowerCase()
                             )
 
                             // JPG 파일인지 확인 필요
@@ -156,7 +157,7 @@ class RegisterActivity : AppCompatActivity() {
 
                             var mm = Friends()
                             mm.setValue("박상현","p26hrHybdpZIv3glbpCWu8jHkYo1","01076777296","0","가천대학교",
-                                "소프트웨어학과")
+                                "소프트웨어학과","true")
                             databaseReference?.child("users")?.child(user!!.uid)?.child("friends")
                                 ?.child("p26hrHybdpZIv3glbpCWu8jHkYo1")?.setValue(mm)
                             databaseReference?.child("users")?.child("p26hrHybdpZIv3glbpCWu8jHkYo1")?.child("friends")

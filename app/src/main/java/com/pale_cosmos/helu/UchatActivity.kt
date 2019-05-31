@@ -20,9 +20,6 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.target.SimpleTarget
-import com.bumptech.glide.request.transition.Transition
 import com.github.bassaer.chatmessageview.model.ChatUser
 import com.github.bassaer.chatmessageview.model.Message
 import com.google.firebase.database.*
@@ -60,7 +57,7 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         areyou = true
-        updateStatusBarColor("#E43F3F")
+        myUtil.updateStatusBarColor(window,"#E43F3F")
         setContentView(R.layout.activity_u_chat)
         initializationChatView()
         initialization()
@@ -80,8 +77,6 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
         intents.putExtra("depart", depart)
         intents.putExtra("wantgender", wantgenderString)
 
-
-        Log.d("INTENTERROR","UCHATACTIVITY TO SOCKETRECEIVEDIALOG")
         startActivityForResult(intents, 1)
         database = FirebaseDatabase.getInstance()
 
@@ -99,8 +94,7 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener {
         } else {
             "false"
         }
-//        myInfo = intent.getSerializableExtra("USERINFO") as UserInfo?
-        Log.d("INTENTERROR","UCHATACTIVITY FROM MAINACTIVITY")
+
         var holderId = intent.getStringExtra(myUtil.myUserInfo)
         myInfo = myUtil.popDataHolder(holderId) as UserInfo
 

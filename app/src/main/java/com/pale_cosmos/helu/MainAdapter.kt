@@ -18,14 +18,16 @@ import com.google.firebase.database.ValueEventListener
 import com.pale_cosmos.helu.util.myUtil
 import kotlinx.android.synthetic.main.main_rv_item.view.*
 
-class MainAdapter(items:ArrayList<Friends>, activity: Activity) : RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
+class MainAdapter(items: ArrayList<Friends>, activity: Activity) : RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
 
     var items = ArrayList<Friends>()
-    lateinit var activity:Activity
-init{
-    this.items=items
-    this.activity=activity
-}
+    lateinit var activity: Activity
+
+    init {
+        this.items = items
+        this.activity = activity
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int) = MainViewHolder(parent)
 
     override fun getItemCount(): Int = items.size
@@ -33,28 +35,27 @@ init{
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         items[position].let { item ->
             with(holder) {
-//                if (item.photo != null) friendPhoto.setImageBitmap(myUtil.stringToBitmap(item.photo))
-                FirebaseDatabase.getInstance().reference.child("users").child(item.key).child("photo").addListenerForSingleValueEvent(object:ValueEventListener{
-                    override fun onCancelled(p0: DatabaseError) {
-                    }
-
-                    override fun onDataChange(p0: DataSnapshot) {
-                        friendPhoto.setImageBitmap(myUtil.stringToBitmap(p0.getValue(String::class.java)!!))
-                        friendName.text = item.nickname
-                        friendUniv.text = item.university
-                        friendDepart.text = item.department
-                        friendPhone.text = myUtil.phoneToString(item.phone)
-                        myView.setOnClickListener {
-                            var k = Intent(activity.applicationContext,FriendViewActivity::class.java)
-                            k.putExtra("nickname",item.nickname)
-                            k.putExtra("key",item.key)
-                            k.putExtra("phone",item.phone)
-                            activity.startActivityForResult(k,1)
-
-
+                //                if (item.photo != null) friendPhoto.setImageBitmap(myUtil.stringToBitmap(item.photo))
+                FirebaseDatabase.getInstance().reference.child("users").child(item.key).child("photo")
+                    .addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onCancelled(p0: DatabaseError) {
                         }
-                    }
-                })
+
+                        override fun onDataChange(p0: DataSnapshot) {
+                            friendPhoto.setImageBitmap(myUtil.stringToBitmap(p0.getValue(String::class.java)!!))
+                            friendName.text = item.nickname
+                            friendUniv.text = item.university
+                            friendDepart.text = item.department
+                            friendPhone.text = myUtil.phoneToString(item.phone)
+                            myView.setOnClickListener {
+                                var k = Intent(activity.applicationContext, FriendViewActivity::class.java)
+                                var holderId = myUtil.putDataHolder(item)
+                                k.putExtra("info", holderId)
+                                activity.startActivityForResult(k, 1)
+
+                            }
+                        }
+                    })
 
             }
         }

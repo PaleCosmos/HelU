@@ -15,10 +15,11 @@ class Friends(
     var photo: String = ""
     var university: String = ""
     var department: String = ""
+    var gender:String=""
 
     fun setValue(
         nickname: String, key: String, phone: String, photo: String?
-        , university: String, department: String
+        , university: String, department: String, gender:String
     ) {
         this.nickname = nickname
         this.key = key
@@ -27,6 +28,7 @@ class Friends(
         this.photo = photo
         this.university = university
         this.department = department
+        this.gender=gender
     }
 
     @Exclude
@@ -39,6 +41,7 @@ class Friends(
         result.put("photo", photo)
         result.put("university", university)
         result.put("department", department)
+        result.put("gender",gender)
         return result
     }
 }

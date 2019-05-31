@@ -83,6 +83,11 @@ android:theme="@style/Theme.AppCompat.Dialog"/>
                   android:theme="@style/AppTheme.Dark"
 
         />
+        <activity android:name=".TalkActivity"
+                  android:label=""
+                  android:theme="@style/AppTheme.Dark"
+
+        />
         <activity
                 android:name=".LoginActivity"
                 android:label=""
