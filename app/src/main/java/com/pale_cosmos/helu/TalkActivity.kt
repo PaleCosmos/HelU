@@ -33,10 +33,12 @@ class TalkActivity : AppCompatActivity(), View.OnClickListener {
     lateinit var dbr: DatabaseReference
     lateinit var str: StorageReference
     lateinit var myProfile: Bitmap
+    lateinit var yourProfile: Bitmap
     lateinit var myDB: DatabaseReference
     lateinit var yourDB: DatabaseReference
     lateinit var uid: String
     lateinit var myNick: String
+    var fg= true
     var areyou = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,12 +49,14 @@ class TalkActivity : AppCompatActivity(), View.OnClickListener {
         myNick = intent.getStringExtra("nickname")
         uid = intent.getStringExtra("key")
         myFriend = myUtil.popDataHolder(intent.getStringExtra("info")) as Friends
+        yourProfile = myUtil.stringToBitmap(myUtil.popDataHolder(intent.getStringExtra("image")) as String)
         you = ChatUser(
             1,
             myFriend.nickname,
-            myUtil.stringToBitmap(myUtil.popDataHolder(intent.getStringExtra("image")) as String)
+            yourProfile
         )
-        myProfile = (myUtil.popDataHolder(intent.getStringExtra("profile"))as Bitmap)
+//        myProfile = (myUtil.popDataHolder(intent.getStringExtra("profile")) as Bitmap)
+        myProfile = myUtil.stringToBitmap(myUtil.myProfile!!)
         me = ChatUser(0, myNick, BitmapFactory.decodeResource(resources, R.drawable.face_2))
         myDB = FirebaseDatabase.getInstance().reference.child("users").child(uid)
             .child("talk").child(myFriend.key)
@@ -86,7 +90,7 @@ class TalkActivity : AppCompatActivity(), View.OnClickListener {
                     if (areyou) (getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(40)
                     areyou = false
                 }
-                var setting = ChatUser(1, data?.nickname!!, myUtil.stringToBitmap(data?.profile))
+                val setting = ChatUser(0, data?.nickname!!, myUtil.stringToBitmap(data.profile))
                 when (data?.type) {
 
                     "message" -> {
@@ -99,6 +103,7 @@ class TalkActivity : AppCompatActivity(), View.OnClickListener {
                             .build()
                         Handler().post {
                             mtalk.receive(message)
+                            fg=false
                         }
                     }
                     "photo" -> {
@@ -113,6 +118,7 @@ class TalkActivity : AppCompatActivity(), View.OnClickListener {
                         Handler().post {
                             mtalk.receive(message)
                         }
+                        fg=false
                     }
                 }
             }
@@ -184,7 +190,10 @@ class TalkActivity : AppCompatActivity(), View.OnClickListener {
         msg.type = "photo"
         msg.key = uid
         msg.message = ""
-        msg.nickname = myFriend.nickname
+        msg.yourkey = myFriend.key
+        msg.yourprofile = myUtil.bitmapToString(yourProfile)
+        msg.yournickname = myFriend.nickname
+        msg.nickname = myNick
         msg.photo = myUtil.bitmapToString(map)
         msg.profile = myUtil.bitmapToString(myProfile)
         myDB.push().setValue(msg)
@@ -201,9 +210,12 @@ class TalkActivity : AppCompatActivity(), View.OnClickListener {
             val msg = ChatValue()
             msg.type = "message"
             msg.key = uid
-            msg.nickname = myFriend.nickname
+            msg.nickname = myNick
             msg.message = text
             msg.profile = myUtil.bitmapToString(myProfile)
+            msg.yourkey = myFriend.key
+            msg.yourprofile = myUtil.bitmapToString(yourProfile)
+            msg.yournickname = myFriend.nickname
             msg.photo = ""
             myDB.push().setValue(msg)
             yourDB.push().setValue(msg)

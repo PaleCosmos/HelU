@@ -22,6 +22,7 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatSpinner
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.pale_cosmos.helu.R
+import com.pale_cosmos.helu.UserInfo
 import java.io.ByteArrayOutputStream
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -29,7 +30,12 @@ import java.util.concurrent.ConcurrentHashMap
 class myUtil {
 
     companion object {
-
+        @JvmStatic
+        var myInfo: UserInfo?=null
+        @JvmStatic
+        var myKey =""
+        @JvmStatic
+        var myProfile:String?=null
         @JvmStatic
         val storageAddress = "gs://palecosmos-helu.appspot.com/"
         @JvmStatic
@@ -40,8 +46,10 @@ class myUtil {
         val autoLog = "AUTOLOGIN"
         @JvmStatic
         val logIn_cred = "Login credentials"
+
         @JvmStatic
         var mDataHolder = ConcurrentHashMap<String, Any?>()
+
         @JvmStatic
         var whatChat:String?="null"
         @JvmStatic

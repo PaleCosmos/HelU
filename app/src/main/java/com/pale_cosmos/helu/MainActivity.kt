@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var imageLog: Bitmap
     lateinit var chatlog: UchatInfo
     lateinit var man: RadioButton
-    lateinit var myProfile:Bitmap
+    lateinit var myProfile: Bitmap
     lateinit var startChat: Button
     lateinit var adapter_univ: ArrayAdapter<CharSequence>
     lateinit var adapter_depart: ArrayAdapter<CharSequence>
@@ -107,6 +107,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //        authReference = storageReference.child("profile")
 
         myUid = intent.getStringExtra("key") // myUID
+        myUtil.myKey = myUid
         databaseReference = database.reference.child("users").child("$myUid").child("friends")
         talkReference = database.reference.child("users").child("$myUid").child("talk")
 
@@ -187,7 +188,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
 
                 override fun onDataChange(p0: DataSnapshot) {
-                    myProfile=myUtil.stringToBitmap(p0.getValue(String::class.java)!!)
+                    myProfile = myUtil.stringToBitmap(p0.getValue(String::class.java)!!)
                     profile.setImageBitmap(myProfile)
                     frag2.view?.findViewById<CircleImageView>(R.id.friendPhotoImg)
                         ?.setImageBitmap(myUtil.stringToBitmap(p0.getValue(String::class.java)!!))
@@ -213,22 +214,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onChildMoved(p0: DataSnapshot, p1: String?) {
     }
 
-    fun toast(msg:String,nick:String,bit:Bitmap)
-    {
-        var layout = layoutInflater.inflate(R.layout.toastborder,findViewById<ViewGroup>(R.id.toast_layout))
+    fun toast(msg: String, nick: String, bit: Bitmap?) {
+        var layout = layoutInflater.inflate(R.layout.toastborder, findViewById<ViewGroup>(R.id.toast_layout))
         var messageView = layout.findViewById<TextView>(R.id.toast_message)
         var profileView = layout.findViewById<CircleImageView>(R.id.toast_image)
-        var nameView=layout.findViewById<TextView>(R.id.toast_name)
+        var nameView = layout.findViewById<TextView>(R.id.toast_name)
         var msg_clip = ""
-        if(msg.length>20)msg_clip=msg.substring(0,20) +"..."
-        else msg_clip=msg
+        if (msg.length > 20) msg_clip = msg.substring(0, 20) + "..."
+        else msg_clip = msg
         var toast = Toast(applicationContext)
-        nameView.text=nick
-        profileView.setImageBitmap(bit)
-        messageView.text=msg_clip
+        nameView.text = nick
 
-        toast.setGravity(Gravity.CENTER,0,-50)
-        toast.duration=Toast.LENGTH_SHORT
+        profileView.setImageBitmap(bit)
+        messageView.text = msg_clip
+
+        toast.setGravity(Gravity.CENTER, 0, -50)
+        toast.duration = Toast.LENGTH_SHORT
         toast.view = layout
         toast.show()
     }
@@ -255,8 +256,25 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //                            "${msg?.nickname} : $x",
 //                            Toast.LENGTH_SHORT
 //                        ).show()
-                        toast(x!!,msg?.nickname!!,myUtil.stringToBitmap(msg?.profile))
+
+
+                        toast(x!!, msg?.nickname!!, myUtil.stringToBitmap(msg?.profile))
                     }
+                    var c:ChatValue?=null
+                    var fg = false
+                    var position:Int = 0
+                    for (x in Fragment3.myList) {
+                        if (x.key == msg?.key) {
+                            c=x
+                            fg=true
+                            break
+                        }
+                        position++
+                    }
+                    if(fg)
+                        Fragment3.myAdapter.deleteItem(position)
+                    Fragment3.myList.add(msg!!)
+                    Fragment3.myAdapter.notifyDataSetChanged()
                 }
             }
 
@@ -367,7 +385,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         FirebaseAuth.getInstance().signOut()
         talkReference.removeEventListener(this)
 //        talkReference.removeEventListener(ChildEventListener())
-        Fragment2.myList = arrayListOf<Friends>()
+        Fragment2.myAdapter.deleteAll()
+
+        Fragment3.myAdapter.deleteAll()
+
         super.onDestroy()
     }
 
@@ -379,8 +400,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         bd.putString("myInfo", holderId)
         bd.putString("key", myUid)
-
+        var bd2 = Bundle()
+        bd2.putString("key", myUid)
         frag2.arguments = bd
+        frag3.arguments = bd2
         myUtil.initFragment(R.id.fragmentS, supportFragmentManager, frag2, frag3, frag4)
         addListener()
 
@@ -537,11 +560,28 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 friendy.gender!!.toString().toLowerCase()
             )
             //어댑터에추가
-            Fragment2.myList.add(myfriend)
-            Fragment2.myAdapter.notifyDataSetChanged()
+            databaseReference.child(myfriend.key).addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(p0: DataSnapshot) {
+                    var x = p0.getValue(Friends::class.java)
+                    when (x?.key == myfriend.key) {
+                        true -> {
+                            Toast.makeText(this@MainActivity, "우린 이미 친구에요!", Toast.LENGTH_SHORT).show()
+                        }
+                        false -> {
+                            Fragment2.myList.add(myfriend)
+                            Fragment2.myAdapter.notifyDataSetChanged()
+                            databaseReference.child(myfriend.key).setValue(myfriend)
+                            toast("친구가되었습니다!","",null)
+                        }
 
-            databaseReference.child(myfriend.key).removeValue()
-            databaseReference.child(myfriend.key).setValue(myfriend)
+                    }
+
+                }
+
+                override fun onCancelled(p0: DatabaseError) {
+
+                }
+            })
             //친구추가창
         } else if (resultCode == 7070) {
             var friendy = chatlog
@@ -568,6 +608,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             Fragment2.myList.add(myfriend)
                             Fragment2.myAdapter.notifyDataSetChanged()
                             databaseReference.child(myfriend.key).setValue(myfriend)
+                            toast("친구가되었습니다!","",null)
                         }
 
                     }
@@ -597,8 +638,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             inf.putExtra("info", data?.getStringExtra("info"))
             inf.putExtra("nickname", myInfos?.nickname)
             inf.putExtra("key", myUid)
-            inf.putExtra("image",data?.getStringExtra("image"))
-            inf.putExtra("profile",myUtil.putDataHolder(myProfile))
+            inf.putExtra("image", data?.getStringExtra("image"))
+            inf.putExtra("profile", myUtil.putDataHolder(myProfile))
             startActivityForResult(inf, 3)
 
             // 채팅방 추가요망

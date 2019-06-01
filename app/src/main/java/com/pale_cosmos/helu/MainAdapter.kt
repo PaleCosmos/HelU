@@ -64,6 +64,19 @@ class MainAdapter(items: ArrayList<Friends>, activity: Activity) : RecyclerView.
         }
     }
 
+    fun deleteItem(position:Int)
+    {
+        items.removeAt(position)
+        notifyItemRemoved(position)
+        notifyItemChanged(position,items.size)
+    }
+    fun deleteAll()
+    {
+
+        items = ArrayList()
+        notifyDataSetChanged()
+    }
+
     inner class MainViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
         LayoutInflater.from(parent.context).inflate(R.layout.main_rv_item, parent, false)
     ) {

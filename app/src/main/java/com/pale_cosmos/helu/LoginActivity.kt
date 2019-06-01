@@ -145,7 +145,9 @@ class LoginActivity : AppCompatActivity() {
 
 //                                intents.putExtra(myUtil.myUserInfo, myInfo)
                                 var holderId = myUtil.putDataHolder(myInfo)
-
+                                myUtil.myInfo = myInfo
+                                myUtil.myProfile=myInfo?.photo
+                                myUtil.myKey=uid
                                 intents.putExtra(myUtil.myUserInfo, holderId)
 
                                 intents.putExtra("key", uid)

@@ -15,6 +15,9 @@ class ChatValue :Serializable{
     var profile:String=""
 
 
+    var yourkey:String=""
+    var yournickname:String=""
+    var yourprofile:String=""
 
     @Exclude
     fun toMap():Map<String,Any?>
@@ -23,7 +26,10 @@ class ChatValue :Serializable{
         var result = HashMap<String,Any?>()
         result.put("type",type)
         result.put("nickname",nickname)
+        result.put("yournickname",yournickname)
         result.put("key",key)
+        result.put("yourprofile",profile)
+        result.put("yourkey",yourkey)
         result.put("message",message)
         result.put("photo",photo)
         result.put("profile",profile)
