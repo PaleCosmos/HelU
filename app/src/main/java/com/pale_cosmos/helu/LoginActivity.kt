@@ -148,6 +148,7 @@ class LoginActivity : AppCompatActivity() {
                                 myUtil.myInfo = myInfo
                                 myUtil.myProfile=myInfo?.photo
                                 myUtil.myKey=uid
+                                Log.d("qwer",myUtil.myInfo?.nickname)
                                 intents.putExtra(myUtil.myUserInfo, holderId)
 
                                 intents.putExtra("key", uid)

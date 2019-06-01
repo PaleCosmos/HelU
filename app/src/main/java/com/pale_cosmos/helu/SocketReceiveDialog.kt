@@ -102,7 +102,7 @@ class SocketReceiveDialog : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (!socket.isConnected) socket.close()
+       socket.close()
     }
 
 

@@ -124,6 +124,7 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener, ChildEventListe
     override fun onChildAdded(p0: DataSnapshot, p1: String?) {
         val data = p0.getValue(ChatValue::class.java)
 
+        if(data?.key!=myUtil.myKey)
         when (data?.type) {
             "message" -> {
                 if (areyou) (getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(40)
@@ -302,7 +303,7 @@ class UchatActivity : AppCompatActivity(), View.OnClickListener, ChildEventListe
             10043 -> { // 친구추가
                 var res = Intent()
                 res.putExtra("friend", yourInfo)
-                res.putExtra("icon", yourIcon)
+                res.putExtra("icon", myUtil.putDataHolder(yourIcon))
                 setResult(7979, res)
                 myquitcheck = false
                 finish()

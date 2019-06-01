@@ -48,7 +48,7 @@ class myUtil {
         val logIn_cred = "Login credentials"
 
         @JvmStatic
-        var mDataHolder = ConcurrentHashMap<String, Any?>()
+        lateinit var mDataHolder: ConcurrentHashMap<String, Any?>
 
         @JvmStatic
         var whatChat:String?="null"
@@ -59,7 +59,7 @@ class myUtil {
         }
 
         @JvmStatic
-        fun stringToBitmap(encodedString: String): Bitmap {
+        fun stringToBitmap(encodedString: String?): Bitmap {
             var encodeByte = Base64.decode(encodedString, Base64.DEFAULT)
             var image = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.size)
             return image
@@ -186,14 +186,17 @@ class myUtil {
             fab: FloatingActionButton,
             fab2: FloatingActionButton,
             fab3: FloatingActionButton,
+            fab4:FloatingActionButton,
             a: Int,
             b: Int
         ) {
             fab.startAnimation(AnimationUtils.loadAnimation(applicationContext, a))
             fab2.startAnimation(AnimationUtils.loadAnimation(applicationContext, b))
             fab3.startAnimation(AnimationUtils.loadAnimation(applicationContext, b))
+            fab4.startAnimation(AnimationUtils.loadAnimation(applicationContext, b))
             fab2.isClickable = false
             fab3.isClickable = false
+            fab4.isClickable=false
         }
 
         @JvmStatic
@@ -202,14 +205,17 @@ class myUtil {
             fab: FloatingActionButton,
             fab2: FloatingActionButton,
             fab3: FloatingActionButton,
+            fab4:FloatingActionButton,
             a: Int,
             b: Int
         ) {
             fab.startAnimation(AnimationUtils.loadAnimation(applicationContext, a))
             fab2.startAnimation(AnimationUtils.loadAnimation(applicationContext, b))
             fab3.startAnimation(AnimationUtils.loadAnimation(applicationContext, b))
+            fab4.startAnimation(AnimationUtils.loadAnimation(applicationContext, b))
             fab2.isClickable = true
             fab3.isClickable = true
+            fab4.isClickable=true
 
         }
 

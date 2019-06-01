@@ -57,9 +57,10 @@ class Fragment3 : Fragment() {
                             Log.d("mytag1", p0.key)
                             for (data in p0.children) {
                                 val log = data.getValue(ChatValue::class.java)
-                                Log.d("mytag2", data.key)
-                                Log.d("mytag3", log?.key)
-                                myList.add(log!!)
+//                                Log.d("mytag2", data.key)
+//                                Log.d("mytag3", log?.key)
+                               if(log!=null)
+                                    myList.add(log)
                             }
                         }
 

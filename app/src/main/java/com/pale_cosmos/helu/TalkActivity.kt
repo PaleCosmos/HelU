@@ -64,6 +64,22 @@ class TalkActivity : AppCompatActivity(), View.OnClickListener {
             .child("talk").child(uid)
         getImageIcon()
         initializationChayView()
+
+        yourDB.addListenerForSingleValueEvent(object:ValueEventListener{
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+              if(p0.getValue(ChatValue::class.java)==null)
+              {
+                  var x = ChatValue()
+                  x.type = "test"
+                  yourDB.push().setValue(x)
+
+              }
+            }
+        })
         addChildListender(myDB) // 글로벌화시켜야함
         // 아직 미구현@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     }
@@ -78,6 +94,7 @@ class TalkActivity : AppCompatActivity(), View.OnClickListener {
 
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                 val data = p0.getValue(ChatValue::class.java)
+                if(data?.type =="test")return
                 var user: ChatUser? = null
                 var flag = true
                 if (data?.key == uid) {

@@ -15,37 +15,53 @@
             android:id="@+id/fab3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginEnd="25dp"
-            android:layout_marginBottom="200dp"
-            app:pressedTranslationZ="12dp"
-            app:elevation="6dp"
+            android:layout_gravity="bottom|start"
+
+            android:layout_marginBottom="60dp"
+            app:elevation="1dp"
+            app:borderWidth="0dp"
+            app:pressedTranslationZ="1dp"
+
             android:visibility="invisible"
-            app:backgroundTint="@color/primary"
-            app:srcCompat="@drawable/upto"/>
+            android:layout_marginStart="80dp"
+            app:backgroundTint="#55000000"
+            app:srcCompat="@drawable/leftto"/>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginEnd="25dp"
-            app:elevation="6dp"
+            android:layout_gravity="bottom|right"
+            android:layout_marginEnd="80dp"
+
             android:visibility="invisible"
-            android:layout_marginBottom="130dp"
-            app:pressedTranslationZ="12dp"
-            app:backgroundTint="@color/primary"
-            app:srcCompat="@drawable/downto"/>
+            android:layout_marginBottom="60dp"
+            app:elevation="1dp"
+            app:borderWidth="0dp"
+            app:pressedTranslationZ="1dp"
+            app:backgroundTint="#45000000"
+            app:srcCompat="@drawable/rightto"/>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginEnd="25dp"
-            android:layout_marginBottom="25dp"
-            app:elevation="6dp"
-            app:pressedTranslationZ="12dp"
-            app:backgroundTint="@color/primary"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_marginBottom="60dp"
+            app:elevation="1dp"
+            app:borderWidth="0dp"
+            app:pressedTranslationZ="1dp"
+            app:backgroundTint="#45000000"
             app:srcCompat="@drawable/outline_add_white_18dp"/>
-
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_marginBottom="130dp"
+            android:visibility="invisible"
+            app:elevation="1dp"
+            app:borderWidth="0dp"
+            app:pressedTranslationZ="1dp"
+            app:backgroundTint="#45000000"
+            app:srcCompat="@drawable/paburic"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

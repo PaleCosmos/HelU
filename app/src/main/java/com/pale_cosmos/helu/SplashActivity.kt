@@ -18,6 +18,7 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.pale_cosmos.helu.util.myUtil
+import java.util.concurrent.ConcurrentHashMap
 
 class SplashActivity : AppCompatActivity() {
 
@@ -30,7 +31,7 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
-
+        myUtil.mDataHolder= ConcurrentHashMap()
         myUtil.updateStatusBarColor(window, "#E43F3F")
         setContentView(R.layout.splash)
 
@@ -121,7 +122,9 @@ class SplashActivity : AppCompatActivity() {
                             intents.putExtra("university", myInfo?.university)
                             intents.putExtra("department", myInfo?.department)
 
-
+                            myUtil.myInfo = myInfo
+                            myUtil.myProfile=myInfo?.photo
+                            myUtil.myKey=uid
                             startActivity(intents)//메인으로바로넘어감
                             finish()
 

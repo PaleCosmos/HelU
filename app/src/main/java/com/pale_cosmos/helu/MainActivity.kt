@@ -62,6 +62,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     var builder: AlertDialog.Builder? = null
     var dialogView: View? = null
     var backKeyPressedTime: Long = 0L
+    var btck = false
     lateinit var imageLog: Bitmap
     lateinit var chatlog: UchatInfo
     lateinit var man: RadioButton
@@ -260,22 +261,26 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                         toast(x!!, msg?.nickname!!, myUtil.stringToBitmap(msg?.profile))
                     }
-                    var c:ChatValue?=null
+                    var c: ChatValue? = null
                     var fg = false
-                    var position:Int = 0
-                    for (x in Fragment3.myList) {
-                        if (x.key == msg?.key) {
-                            c=x
-                            fg=true
+                    var position: Int = 0
+                    for (x in Fragment3.myAdapter.items) {
+                        if (x.key == msg?.key||
+                                x.key==msg?.yourkey) {
+                            c = x
+                            fg = true
                             break
                         }
+
                         position++
                     }
-                    if(fg)
+                    if (fg)
                         Fragment3.myAdapter.deleteItem(position)
+
                     Fragment3.myList.add(msg!!)
                     Fragment3.myAdapter.notifyDataSetChanged()
                 }
+
             }
 
         })
@@ -290,6 +295,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onClick(v: View?) {
+        if (currentFocus != null) {
+            (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+                .hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+        }
         var id = v?.id
         when (id) {
             R.id.fab -> {
@@ -346,14 +355,28 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     }
                 }
             }
+            R.id.fab4->{
+                if (currentFocus != null) {
+                    (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+                        .hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+                }
+                drawer_layout.openDrawer(GravityCompat.END)
+            }
         }
     }
-
+//var X =Runnable { if(btck){rotateFab(); btck = false} }
     override fun onLongClick(v: View?): Boolean {
         var id = v?.id
+
         when (id) {
             R.id.fab -> {
+//                btck = btck xor(true)
+//
                 rotateFab()
+//                if(btck) {
+//                    Handler().postDelayed(X, 4000)
+//                }
+//                Handler().removeCallbacks(X)
                 myUtil.viberate(applicationContext, 100)
             }
 
@@ -364,11 +387,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun rotateFab() {
         when (isFabOpen) {
             true -> {
-                myUtil.rotateTrue(applicationContext, fab, fab2, fab3, R.anim.rotate_backward, R.anim.fab_close)
+                myUtil.rotateTrue(applicationContext, fab, fab2, fab3,fab4, R.anim.rotate_backward, R.anim.fab_close)
                 isFabOpen = false
             }
             false -> {
-                myUtil.rotateFalse(applicationContext, fab, fab2, fab3, R.anim.rotate_forward, R.anim.fab_open)
+                myUtil.rotateFalse(applicationContext, fab, fab2, fab3,fab4, R.anim.rotate_forward, R.anim.fab_open)
                 isFabOpen = true
             }
         }
@@ -379,6 +402,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         fab.setOnClickListener(this)
         fab2.setOnClickListener(this)
         fab3.setOnClickListener(this)
+        fab4.setOnClickListener(this)
     }
 
     override fun onDestroy() {
@@ -571,7 +595,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             Fragment2.myList.add(myfriend)
                             Fragment2.myAdapter.notifyDataSetChanged()
                             databaseReference.child(myfriend.key).setValue(myfriend)
-                            toast("친구가되었습니다!","",null)
+                            toast("친구가되었습니다!", "", null)
                         }
 
                     }
@@ -608,7 +632,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             Fragment2.myList.add(myfriend)
                             Fragment2.myAdapter.notifyDataSetChanged()
                             databaseReference.child(myfriend.key).setValue(myfriend)
-                            toast("친구가되었습니다!","",null)
+                            toast("친구가되었습니다!", "", null)
                         }
 
                     }
@@ -623,7 +647,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             //databaseReference.child(myfriend.key).removeValue()
 
-        } else if (resultCode == 7978) {
+        }
+        else if (resultCode == 7978) {
             var intents = Intent(this@MainActivity, BackKeyPress::class.java)
             chatlog = data?.getSerializableExtra("friend") as UchatInfo
 

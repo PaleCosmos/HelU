@@ -172,8 +172,8 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener {
                 var resultUri = result.uri
 
                 tenty.putExtra("profileUri", resultUri)
-
-                setResult(75, tenty)
+                if(integerByResult==5)setResult(175, tenty)
+               else  setResult(75, tenty)
                 finish()
 
             }

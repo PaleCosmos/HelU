@@ -7,8 +7,7 @@ import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.view.LayoutInflater
-import android.view.ViewGroup
+import android.view.*
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.util.Util
@@ -27,12 +26,45 @@ class SubAdapter(items: ArrayList<ChatValue>, activity: Activity) : RecyclerView
     var items = ArrayList<ChatValue>()
     var activity: Activity
 
+
     init {
         this.items = items
         this.activity = activity
     }
 
+    inner class SubViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
+        LayoutInflater.from(parent.context).inflate(R.layout.sub_rv_item, parent, false)
+    ), View.OnCreateContextMenuListener {
+        val friendPhoto = itemView.friendPhotoImg2
+        val friendName = itemView.nameTv!!
+        val friendMessage = itemView.messageTv
+        var myView = itemView
+        var onEditMenu = MenuItem.OnMenuItemClickListener {
+            if (it.itemId == 1001) {
+                FirebaseDatabase.getInstance().reference.child("users").child(myUtil.myKey)
+                    .child("talk").child(items.get(adapterPosition).key!!).removeValue()
+                items.removeAt(adapterPosition)
+                notifyItemRemoved(adapterPosition)
+                notifyItemRangeChanged(adapterPosition, items.size)
+
+            }
+            true
+        }
+
+        init {
+            myView.setOnCreateContextMenuListener(this)
+        }
+
+        override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
+            var delete = menu?.add(Menu.NONE, 1001, 1, "삭제")
+            delete?.setOnMenuItemClickListener(onEditMenu)
+        }
+
+
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int) = SubViewHolder(parent)
+
 
     override fun getItemCount(): Int = items.size
 
@@ -40,7 +72,7 @@ class SubAdapter(items: ArrayList<ChatValue>, activity: Activity) : RecyclerView
         items[position].let { item ->
             with(holder) {
                 //                if (item.photo != null) friendPhoto.setImageBitmap(myUtil.stringToBitmap(item.photo))
-               var profile:Bitmap? = null
+                var profile: Bitmap? = null
                 when (item.key) {
                     myUtil.myKey -> {
                         profile = myUtil.stringToBitmap(item.yourprofile)
@@ -48,7 +80,7 @@ class SubAdapter(items: ArrayList<ChatValue>, activity: Activity) : RecyclerView
                         friendName.text = item.yournickname
                     }
                     else -> {
-                        profile=myUtil.stringToBitmap(item.profile)
+                        profile = myUtil.stringToBitmap(item.profile)
                         friendPhoto.setImageBitmap(profile)
                         friendName.text = item.nickname
 
@@ -69,11 +101,15 @@ class SubAdapter(items: ArrayList<ChatValue>, activity: Activity) : RecyclerView
                 }
                 friendMessage.text = clip
                 var information = myUtil.myInfo
-                var image = myUtil.putDataHolder(profile)//니이미지집어넣기
+                var image = myUtil.putDataHolder(item.yourprofile)//니이미지집어넣기
 //                var holder = myUtil.putDataHolder(information?.photo)//내프로필집어넣기
+                myView.setOnCreateContextMenuListener { menu, v, menuInfo ->
+                    var delete = menu.add(Menu.NONE, 1001, 1, "삭제")
+                    delete.setOnMenuItemClickListener(onEditMenu)
+                }
                 myView.setOnClickListener {
-                    var inf = Intent(activity,TalkActivity::class.java)
-                    inf.putExtra("info", myUtil.putDataHolder(item))
+                    var inf = Intent(activity, TalkActivity::class.java)
+                    inf.putExtra("info", myUtil.putDataHolder(typeCasting(item)))
                     inf.putExtra("nickname", information?.nickname)
                     inf.putExtra("key", myUtil.myKey)
                     inf.putExtra("image", image)
@@ -85,10 +121,30 @@ class SubAdapter(items: ArrayList<ChatValue>, activity: Activity) : RecyclerView
         }
     }
 
+    fun typeCasting(chatValue: ChatValue): Friends {
+        var friends = Friends()
+        if (myUtil.myKey == chatValue.key) {
+            friends.setValue(
+                chatValue.yournickname,
+                chatValue.yourkey,
+                chatValue.yourprofile, "", "", "", ""
+            )
+
+        } else {
+            friends.setValue(
+                chatValue.nickname!!,
+                chatValue.key!!,
+                chatValue.profile, "", "", "", ""
+            )
+        }
+
+        return friends
+    }
+
     fun deleteItem(position: Int) {
         items.removeAt(position)
         notifyItemRemoved(position)
-        notifyItemChanged(position, items.size)
+        notifyItemRangeChanged(position, items.size)
     }
 
     fun deleteAll() {
@@ -96,13 +152,5 @@ class SubAdapter(items: ArrayList<ChatValue>, activity: Activity) : RecyclerView
         notifyDataSetChanged()
     }
 
-    inner class SubViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
-        LayoutInflater.from(parent.context).inflate(R.layout.sub_rv_item, parent, false)
-    ) {
-        val friendPhoto = itemView.friendPhotoImg2
-        val friendName = itemView.nameTv!!
-        val friendMessage = itemView.messageTv
-        var myView = itemView
 
-    }
 }
