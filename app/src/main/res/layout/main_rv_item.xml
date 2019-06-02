@@ -74,11 +74,12 @@
                 android:id="@+id/phoneTv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="144dp"
+
                 android:textSize="10sp"
                 app:layout_constraintBottom_toBottomOf="@+id/universityTv"
-                app:layout_constraintStart_toEndOf="@+id/universityTv"
                 app:layout_constraintTop_toTopOf="@+id/universityTv"
+                app:layout_constraintEnd_toEndOf="parent"
+
                 tools:text="000-0000-0000" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -31,11 +31,11 @@ class myUtil {
 
     companion object {
         @JvmStatic
-        var myInfo: UserInfo?=null
+        var myInfo: UserInfo? = null
         @JvmStatic
-        var myKey =""
+        var myKey = ""
         @JvmStatic
-        var myProfile:String?=null
+        var myProfile: String? = null
         @JvmStatic
         val storageAddress = "gs://palecosmos-helu.appspot.com/"
         @JvmStatic
@@ -51,10 +51,10 @@ class myUtil {
         lateinit var mDataHolder: ConcurrentHashMap<String, Any?>
 
         @JvmStatic
-        var whatChat:String?="null"
+        var whatChat: String? = "null"
+
         @JvmStatic
-        fun defaultProfile(context:Context):Bitmap
-        {
+        fun defaultProfile(context: Context): Bitmap {
             return BitmapFactory.decodeResource(context.resources, R.drawable.profile)
         }
 
@@ -186,7 +186,7 @@ class myUtil {
             fab: FloatingActionButton,
             fab2: FloatingActionButton,
             fab3: FloatingActionButton,
-            fab4:FloatingActionButton,
+            fab4: FloatingActionButton,
             a: Int,
             b: Int
         ) {
@@ -196,7 +196,7 @@ class myUtil {
             fab4.startAnimation(AnimationUtils.loadAnimation(applicationContext, b))
             fab2.isClickable = false
             fab3.isClickable = false
-            fab4.isClickable=false
+            fab4.isClickable = false
         }
 
         @JvmStatic
@@ -205,7 +205,7 @@ class myUtil {
             fab: FloatingActionButton,
             fab2: FloatingActionButton,
             fab3: FloatingActionButton,
-            fab4:FloatingActionButton,
+            fab4: FloatingActionButton,
             a: Int,
             b: Int
         ) {
@@ -215,7 +215,7 @@ class myUtil {
             fab4.startAnimation(AnimationUtils.loadAnimation(applicationContext, b))
             fab2.isClickable = true
             fab3.isClickable = true
-            fab4.isClickable=true
+            fab4.isClickable = true
 
         }
 
@@ -374,14 +374,39 @@ class myUtil {
             return obj
 
         }
+
         @JvmStatic
-        fun get_Internet(context: Context):Int{
+        fun get_Internet(context: Context): Int {
             var cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             var activeNetworking = cm.activeNetworkInfo
-            if(activeNetworking.type== ConnectivityManager.TYPE_WIFI)return 1
-            else if(activeNetworking.type== ConnectivityManager.TYPE_MOBILE)return 2
+            if (activeNetworking.type == ConnectivityManager.TYPE_WIFI) return 1
+            else if (activeNetworking.type == ConnectivityManager.TYPE_MOBILE) return 2
             return 0
         }
 
+        @JvmStatic
+        fun resizeBitmapImage(source: Bitmap, maxResolution: Int):Bitmap {
+            val width = source.width
+            val height = source.height
+            var newWidth = width
+            var newHeight = height
+            var rate = 0.0f
+            if (width > height) {
+                if (maxResolution < width) {
+                    rate = maxResolution / (width as Float)
+                    newHeight = (height * rate) as Int
+                    newWidth = maxResolution
+                }
+            } else {
+                if (maxResolution < height) {
+                    rate = maxResolution / (height as Float)
+                    newWidth = (width * rate) as Int
+                    newHeight = maxResolution
+                }
+            }
+
+            return Bitmap.createScaledBitmap(source,newWidth,newHeight,true)
+
+        }
     }
 }

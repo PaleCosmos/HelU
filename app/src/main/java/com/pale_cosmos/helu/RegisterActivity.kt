@@ -180,7 +180,6 @@ class RegisterActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
 
-        Log.d("hala", "Register terminated")
     }
 
     private fun allNotEnabled() =

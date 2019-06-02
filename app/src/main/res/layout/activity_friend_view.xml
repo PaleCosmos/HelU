@@ -42,11 +42,12 @@ android:layout_marginTop="10dp"
     android:layout_below="@id/xcv"/>
     <!-- //end 타이틀바 -->
     <RelativeLayout android:layout_width="match_parent" android:layout_height="50dp"
+                    android:id="@+id/aws"
                     android:layout_below="@+id/vvw">
     <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
 
             android:layout_alignParentStart="true"
-            android:background="@drawable/custom_button"
+            android:backgroundTint="#ffffff"
             android:textColor="@color/primary_dark"
             android:id="@+id/bbbs1"
             android:layout_toStartOf="@+id/centerView"
@@ -57,10 +58,22 @@ android:layout_marginTop="10dp"
     <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_toEndOf="@id/centerView"
             android:layout_alignParentEnd="true"
-            android:background="@drawable/custom_button"
+            android:backgroundTint="#ffffff"
             android:textColor="@color/primary_dark"
             android:id="@+id/bbbs2"
             android:text="전화하기"/>
+    </RelativeLayout>
+    <RelativeLayout android:layout_width="match_parent"
+                    android:layout_below="@+id/aws"
+                    android:layout_height="wrap_content">
+        <Button android:layout_width="match_parent" android:layout_height="wrap_content"
+
+          android:layout_centerInParent="true"
+                android:backgroundTint="#ffffff"
+                android:textColor="@color/primary_dark"
+                android:id="@+id/bbbs3"
+                android:text="위치 공유"/>
+
     </RelativeLayout>
     <!-- Notice -->
 

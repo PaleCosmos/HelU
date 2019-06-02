@@ -107,13 +107,13 @@ class TalkActivity : AppCompatActivity(), View.OnClickListener {
                     if (areyou) (getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(40)
                     areyou = false
                 }
-                val setting = ChatUser(0, data?.nickname!!, myUtil.stringToBitmap(data.profile))
+                var setting = ChatUser(0, data?.nickname!!, myUtil.stringToBitmap(data.profile))
                 when (data?.type) {
 
                     "message" -> {
 
                         var message = Message.Builder()
-                            .setUser(setting)
+                            .setUser(user)
                             .setRight(flag)
                             .setText(data.message!!)
                             .hideIcon(flag)
@@ -125,7 +125,7 @@ class TalkActivity : AppCompatActivity(), View.OnClickListener {
                     }
                     "photo" -> {
                         var message = Message.Builder()
-                            .setUser(setting)
+                            .setUser(user)
                             .setRight(flag)
                             .setType(Message.Type.PICTURE)
                             .setPicture(myUtil.stringToBitmap(data?.photo))

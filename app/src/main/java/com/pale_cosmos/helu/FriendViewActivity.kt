@@ -16,6 +16,7 @@ import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
 import com.pale_cosmos.helu.util.myUtil
 import kotlinx.android.synthetic.main.activity_friend_view.*
+import java.lang.Exception
 
 
 class FriendViewActivity : AppCompatActivity() {
@@ -74,8 +75,19 @@ class FriendViewActivity : AppCompatActivity() {
                 .check()
 
         }
+        bbbs3.setOnClickListener{
+            try {
+                var tt = Intent(Intent.ACTION_VIEW, Uri.parse("way_w3w://start/${Integer.toString(Integer.parseInt(phone)%999999)}"))
+                startActivity(tt)
+            }catch(e:Exception)
+            {
+                e.printStackTrace()
+                Toast.makeText(applicationContext,"W3W를 설치해주세요.",Toast.LENGTH_SHORT).show()
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + "com.jungh0.w3w_map")))
+            }
 
 
+        }
     }
 
     override fun onBackPressed() {

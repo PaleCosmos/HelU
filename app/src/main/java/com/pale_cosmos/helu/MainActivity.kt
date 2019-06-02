@@ -2,16 +2,12 @@ package com.pale_cosmos.helu
 
 
 import android.app.Activity
-import android.content.ContentUris
 import android.content.Context
 
 import android.content.Intent
 import android.content.pm.ActivityInfo
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-
-import android.graphics.Color
 
 import android.net.Uri
 
@@ -85,6 +81,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var myUid: String
     lateinit var talkReference: DatabaseReference
 
+
     var frag2: androidx.fragment.app.Fragment = Fragment2()
 
     var frag3: androidx.fragment.app.Fragment = Fragment3()
@@ -141,6 +138,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             startActivityForResult(intents, 1)
             drawer_layout.closeDrawer(GravityCompat.END)
         }
+
         fab.tag = "DRAG Button"
         val toggle = object : ActionBarDrawerToggle(
             this, drawer_layout, null, R.string.navigation_drawer_open, R.string.navigation_drawer_close
@@ -265,8 +263,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     var fg = false
                     var position: Int = 0
                     for (x in Fragment3.myAdapter.items) {
-                        if (x.key == msg?.key||
-                                x.key==msg?.yourkey) {
+                        if (x.key == msg?.key ||
+                            x.key == msg?.yourkey
+                        ) {
                             c = x
                             fg = true
                             break
@@ -355,7 +354,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     }
                 }
             }
-            R.id.fab4->{
+            R.id.fab4 -> {
                 if (currentFocus != null) {
                     (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
                         .hideSoftInputFromWindow(currentFocus?.windowToken, 0)
@@ -364,7 +363,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
     }
-//var X =Runnable { if(btck){rotateFab(); btck = false} }
+
+    //var X =Runnable { if(btck){rotateFab(); btck = false} }
     override fun onLongClick(v: View?): Boolean {
         var id = v?.id
 
@@ -387,11 +387,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun rotateFab() {
         when (isFabOpen) {
             true -> {
-                myUtil.rotateTrue(applicationContext, fab, fab2, fab3,fab4, R.anim.rotate_backward, R.anim.fab_close)
+                myUtil.rotateTrue(applicationContext, fab, fab2, fab3, fab4, R.anim.rotate_backward, R.anim.fab_close)
                 isFabOpen = false
             }
             false -> {
-                myUtil.rotateFalse(applicationContext, fab, fab2, fab3,fab4, R.anim.rotate_forward, R.anim.fab_open)
+                myUtil.rotateFalse(applicationContext, fab, fab2, fab3, fab4, R.anim.rotate_forward, R.anim.fab_open)
                 isFabOpen = true
             }
         }
@@ -555,15 +555,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 .into(frag2.view?.findViewById(R.id.friendPhotoImg)!!)
 
 //            uidReference.delete()
-            var bitg = MediaStore.Images.Media.getBitmap(
-                contentResolver,
-                profileUri
+
+
+            var bitg = Bitmap.createScaledBitmap(
+                MediaStore.Images.Media.getBitmap(
+                    contentResolver,
+                    profileUri
+                ), 150, 150, true
             )
 
             val baos = ByteArrayOutputStream()
-            bitg.compress(Bitmap.CompressFormat.PNG, 100, baos)
+            bitg.compress(Bitmap.CompressFormat.PNG, 10, baos)
             FirebaseStorage.getInstance().reference.child("profile").child("$myUid.png")
                 .putBytes(baos.toByteArray())
+
+
+
             database.reference.child("users").child(myUid).child("photo").setValue(myUtil.bitmapToString(bitg))
 
             var myFile = File(profileUri.path)
@@ -647,8 +654,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             //databaseReference.child(myfriend.key).removeValue()
 
-        }
-        else if (resultCode == 7978) {
+        } else if (resultCode == 7978) {
             var intents = Intent(this@MainActivity, BackKeyPress::class.java)
             chatlog = data?.getSerializableExtra("friend") as UchatInfo
 
