@@ -13,6 +13,7 @@ Firebase Authentication makes your identification number (We call it 'Key' or 'U
 In this case, we use your key to find your partner.
 when you start chat, HELU sends your information (Key, University, Department) to HELU subServer.
 The subServer (writed in JAVA) matches you and your partner whose information you want.
+Your message information will be removed when you exit U chat.
 
 ### 3. Friend 
 After You exit U chat, If you want, You can add partner in your friends.
@@ -21,6 +22,13 @@ You can chat with your partner and call partner's mobile.
 If you installed "W3W_Map" in your mobile, You can use our information to trace friend's location in "W3W_Map"
 
 ### 4. Talk
-
+As with U chat, you can send text message or photo.
+But it never be removed automatically, You can remove the information in 'Chat' tap when you want.
 
 ### 5. Qua-Talk (my Deaprtment chatting)
+Qua-Talk is chatting with students in your department.
+The information never be removed.
+
+# Screen Shot
+
+
