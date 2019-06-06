@@ -71,5 +71,15 @@ https://play.google.com/store/apps/details?id=com.pale_cosmos.helu
 </div>
 
 ## License
+#### We used the following open source libraries:
 
+###### AVLoading Indicator View (jack wang) : https://github.com/81813780/AVLoadingIndicatorView
+###### Chat Message View (Tsubasa Nakayama) : https://github.com/bassaer/ChatMessageView
+###### Android Image Cropper (Arthur Teplitzki) : https://github.com/ArthurHub/Android-Image-Cropper
+###### Ted PErmission (Ted Park) : https://github.com/ParkSangGwon/TedPermission
+###### Glide (Google, Inc) : https://github.com/bumptech/glide
 
+#### You can see this also in HELU.
+<div>
+  <img src="https://user-images.githubusercontent.com/43880597/59009446-950acc80-8868-11e9-97d3-d69b79c599d9.png" width="18%"></img>
+</div>
