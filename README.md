@@ -9,7 +9,11 @@ Your information is stored in Firebase Authentication and Realtime Database.
 you should your e-mail, password, nickname, phone number, university, department and gender.
 Firebase Authentication makes your identification number (We call it 'Key' or 'UID')
 
-![Alt text](/C:/Users/박상현/Desktop/mp/image1.png)
+<div>
+  <img src="https://user-images.githubusercontent.com/43880597/59008198-a94cca80-8864-11e9-9034-b17d29590cb7.png" width="30%"></img>
+   <img src="https://user-images.githubusercontent.com/43880597/59008201-abaf2480-8864-11e9-912e-2aabd5813e20.png" width="30%"></img>
+    <img src="https://user-images.githubusercontent.com/43880597/59008204-ace05180-8864-11e9-921c-f3dc5278687f.png" width="30%"></img>
+</div>
 
 ### 2. U chat (Realtime Random Chatting)
 In this case, we use your key to find your partner.
