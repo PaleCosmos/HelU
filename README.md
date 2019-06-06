@@ -10,9 +10,9 @@ https://play.google.com/store/apps/details?id=com.pale_cosmos.helu
 ###### Firebase Authentication makes your identification number (We call it 'Key' or 'UID')
 
 <div>
-  <img src="https://user-images.githubusercontent.com/43880597/59008198-a94cca80-8864-11e9-9034-b17d29590cb7.png" width="30%"></img>
-   <img src="https://user-images.githubusercontent.com/43880597/59008201-abaf2480-8864-11e9-912e-2aabd5813e20.png" width="30%"></img>
-    <img src="https://user-images.githubusercontent.com/43880597/59008204-ace05180-8864-11e9-921c-f3dc5278687f.png" width="30%"></img>
+  <img src="https://user-images.githubusercontent.com/43880597/59008198-a94cca80-8864-11e9-9034-b17d29590cb7.png" width="20%"></img>
+   <img src="https://user-images.githubusercontent.com/43880597/59008201-abaf2480-8864-11e9-912e-2aabd5813e20.png" width="20%"></img>
+    <img src="https://user-images.githubusercontent.com/43880597/59008204-ace05180-8864-11e9-921c-f3dc5278687f.png" width="20%"></img>
 </div>
 
 ### 2. U chat (Realtime Random Chatting)
@@ -20,6 +20,13 @@ https://play.google.com/store/apps/details?id=com.pale_cosmos.helu
 ###### when you start chat, HELU sends your information (Key, University, Department) to HELU subServer.
 ###### The subServer (writed in JAVA) matches you and your partner whose information you want.
 ###### Your message information will be removed when you exit U chat.
+
+<div>
+  <img src="https://user-images.githubusercontent.com/43880597/59008515-a1d9f100-8865-11e9-88d0-c2c5fe36bd07.png" width="20%"></img>
+   <img src="https://user-images.githubusercontent.com/43880597/59008516-a2728780-8865-11e9-8cc1-7efafbfe70e1.png" width="20%"></img>
+    <img src="https://user-images.githubusercontent.com/43880597/59008517-a2728780-8865-11e9-88fc-58b7ddc8b7b7.png" width="20%"></img>
+    <img src="https://user-images.githubusercontent.com/43880597/59008513-a1d9f100-8865-11e9-8f17-efc2c48839b1.png" width="20%"></img>
+</div>
 
 ### 3. Friend 
 ###### After You exit U chat, If you want, You can add partner in your friends.
