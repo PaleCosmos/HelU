@@ -3,11 +3,13 @@ https://play.google.com/store/apps/details?id=com.pale_cosmos.helu
 
 HELU is a real-time random chat application that allows you to chat with unspecified students with your desired university and department.
 
-# Contents
+## Contents
 ### 1. Sign in & Sign up
 Your information is stored in Firebase Authentication and Realtime Database.
 you should your e-mail, password, nickname, phone number, university, department and gender.
 Firebase Authentication makes your identification number (We call it 'Key' or 'UID')
+
+![Alt text](/C:/Users/박상현/Desktop/mp/image1.png)
 
 ### 2. U chat (Realtime Random Chatting)
 In this case, we use your key to find your partner.
@@ -29,6 +31,6 @@ But it never be removed automatically, You can remove the information in 'Chat' 
 Qua-Talk is chatting with students in your department.
 The information never be removed.
 
-# Screen Shot
+## License
 
 
