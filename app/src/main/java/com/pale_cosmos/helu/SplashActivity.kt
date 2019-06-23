@@ -31,16 +31,21 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
-        myUtil.mDataHolder= ConcurrentHashMap()
+        myUtil.mDataHolder = ConcurrentHashMap()
         myUtil.updateStatusBarColor(window, "#E43F3F")
         setContentView(R.layout.splash)
 
-        when(myUtil.get_Internet(applicationContext))
-        {
-            0->{Toast.makeText(applicationContext,"인터넷 연걸이 불안정합니다.",Toast.LENGTH_SHORT).show()
-            finish()}
-       1->{Toast.makeText(applicationContext,"WIFI로 접속합니다.",Toast.LENGTH_SHORT).show()}
-            2->{Toast.makeText(applicationContext,"LTE로 접속합니다..",Toast.LENGTH_SHORT).show()}
+        when (myUtil.get_Internet(applicationContext)) {
+            0 -> {
+                Toast.makeText(applicationContext, "인터넷 연걸이 불안정합니다.", Toast.LENGTH_SHORT).show()
+                finish()
+            }
+            1 -> {
+                Toast.makeText(applicationContext, "WIFI로 접속합니다.", Toast.LENGTH_SHORT).show()
+            }
+            2 -> {
+                Toast.makeText(applicationContext, "LTE로 접속합니다..", Toast.LENGTH_SHORT).show()
+            }
         }
 
         sh_Pref = getSharedPreferences(myUtil.logIn_cred, Context.MODE_PRIVATE)
@@ -60,8 +65,6 @@ class SplashActivity : AppCompatActivity() {
 
         }
     }
-
-
 
 
     inner class ContentReceive : AsyncTask<String, Void, String>() {
@@ -123,8 +126,8 @@ class SplashActivity : AppCompatActivity() {
                             intents.putExtra("department", myInfo?.department)
 
                             myUtil.myInfo = myInfo
-                            myUtil.myProfile=myInfo?.photo
-                            myUtil.myKey=uid
+                            myUtil.myProfile = myInfo?.photo
+                            myUtil.myKey = uid
                             startActivity(intents)//메인으로바로넘어감
                             finish()
 
