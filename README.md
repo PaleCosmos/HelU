@@ -1,5 +1,5 @@
 # HelU
-https://play.google.com/store/apps/details?id=com.pale_cosmos.helu
+https://play.google.com/store/apps/details?id=com.pale_cosmos.helu (REMOVED)
 
 ###### HELU is a real-time random chat application that allows you to chat with unspecified students with your desired university and department.
 ## Contents
